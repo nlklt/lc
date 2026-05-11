@@ -316,7 +316,7 @@
                                                         <DataTemplate>
                                                             <CheckBox Content="{Binding Name}"
                                                                       Style="{StaticResource CheckBoxThreeStateStyle}"
-                                                                      Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                      Foreground="{DynamicResource TextPrimaryBrush}"
                                                                       IsThreeState="True"
                                                                       IsChecked="{Binding State, Mode=TwoWay,
                                                                       Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"

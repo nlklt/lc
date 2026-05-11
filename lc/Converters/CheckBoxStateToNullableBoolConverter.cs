@@ -16,8 +16,8 @@ namespace lc.Converters
         {
             return value switch
             {
-                CheckBoxState.Include => true,
-                CheckBoxState.Exclude => false,
+                CheckBoxState.Include => false,
+                CheckBoxState.Exclude => true,
                 _ => null
             };
         }
@@ -26,8 +26,8 @@ namespace lc.Converters
         {
             return value switch
             {
-                true => CheckBoxState.Include,
-                false => CheckBoxState.Exclude,
+                false => CheckBoxState.Include,
+                true => CheckBoxState.Exclude,
                 _ => CheckBoxState.Neutral
             };
         }

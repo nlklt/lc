@@ -3,7 +3,7 @@
     public enum CheckBoxState
     {
         Neutral,
-        Include,
-        Exclude
+        Exclude,
+        Include
     }
 }

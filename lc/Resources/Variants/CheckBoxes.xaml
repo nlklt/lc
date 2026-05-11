@@ -10,7 +10,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="CheckBox">
-                    <Border x:Name="CheckBox" CornerRadius="4" Padding="6,4">
+                    <Border x:Name="CheckBox" CornerRadius="4" Padding="4,2">
                         <Grid SnapsToDevicePixels="True" x:Name="ThreeStateCheckBox">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -18,8 +18,7 @@
                             </Grid.ColumnDefinitions>
 
                             <Border x:Name="Box"
-                                    Width="14"
-                                    Height="14"
+                                    Width="16" Height="16"
                                     Margin="0,0,8,0"
                                     VerticalAlignment="Center"
                                     CornerRadius="4"
@@ -37,22 +36,22 @@
                                           Visibility="Collapsed" />
                                 </Grid>
 
-                                <Border.Style>
-                                    <Style TargetType="Border">
-                                        <Setter Property="Background" Value="Transparent"/>
-                                        <Style.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="True">
-                                                <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
-                                            </Trigger>
-                                        </Style.Triggers>
-                                    </Style>
-                                </Border.Style>
                             </Border>
 
                             <ContentPresenter Grid.Column="1"
                                               VerticalAlignment="Center"
                                               RecognizesAccessKey="True" />
                         </Grid>
+                        <Border.Style>
+                            <Style TargetType="Border">
+                                <Setter Property="Background" Value="Transparent"/>
+                                <Style.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
                     </Border>
 
                     <ControlTemplate.Triggers>
@@ -60,13 +59,13 @@
                             <Setter TargetName="ThreeStateCheckBox" Property="Background" Value="{StaticResource SecondaryHoverBrush}" />
                         </Trigger>
 
-                        <Trigger Property="IsChecked" Value="False">
+                        <Trigger Property="IsChecked" Value="True">
                             <Setter TargetName="Box" Property="Background" Value="{StaticResource ErrorBrush}" />
                             <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource TransparentBrush}" />
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
                         </Trigger>
 
-                        <Trigger Property="IsChecked" Value="True">
+                        <Trigger Property="IsChecked" Value="False">
                             <Setter TargetName="Box" Property="Background" Value="{StaticResource SuccessBrush}" />
                             <Setter TargetName="Box" Property="BorderBrush" Value="{StaticResource TransparentBrush}" />
                             <Setter TargetName="CheckMark" Property="Visibility" Value="Visible" />
@@ -94,7 +93,7 @@
                     <Border x:Name="CheckBox" 
                         Background="Transparent"
                         CornerRadius="4" 
-                        Padding="6,4">
+                        Padding="4,2">
                         <Grid SnapsToDevicePixels="True">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="Auto" />
@@ -102,8 +101,8 @@
                             </Grid.ColumnDefinitions>
 
                             <Border x:Name="Box"
-                                Width="18"
-                                Height="18"
+                                Width="16"
+                                Height="16"
                                 Margin="0,0,8,0"
                                 VerticalAlignment="Center"
                                 CornerRadius="4"

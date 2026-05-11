@@ -278,33 +278,13 @@ namespace lc.Data.Repositories
                 parameters.Add(new SqlParameter("@SearchText", $"%{criteria.SearchText.Trim()}%"));
             }
 
-            if (criteria.PublisherId.HasValue)
-            {
-                sql.AppendLine("AND b.PublisherId = @PublisherId");
-                parameters.Add(new SqlParameter("@PublisherId", criteria.PublisherId.Value));
-            }
+            AddIncludeExcludeFilter(sql, parameters, "b.BookStatus", criteria.IncludeBookStatuses, criteria.ExcludeBookStatuses, "BookStatus");
 
-            if (criteria.BookStatuses.Count > 0)
-            {
-                sql.AppendLine($"AND b.BookStatus IN ({BuildInList(criteria.BookStatuses, parameters, "BookStatus")})");
-            }
+            AddIncludeExcludeFilter(sql, parameters, "b.WritingStatus", criteria.IncludeWritingStatuses, criteria.ExcludeWritingStatuses, "WritingStatus");
 
-            if (criteria.WritingStatuses.Count > 0)
-            {
-                sql.AppendLine($"AND b.WritingStatus IN ({BuildInList(criteria.WritingStatuses, parameters, "WritingStatus")})");
-            }
+            AddIncludeExcludeFilter(sql, parameters, "b.Language", criteria.IncludeLanguages, criteria.ExcludeLanguages, "Language");
 
-            if (criteria.Language.HasValue)
-            {
-                sql.AppendLine("AND b.Language = @Language");
-                parameters.Add(new SqlParameter("@Language", (int)criteria.Language.Value));
-            }
-
-            if (criteria.AgeRating.HasValue)
-            {
-                sql.AppendLine("AND b.AgeRating = @AgeRating");
-                parameters.Add(new SqlParameter("@AgeRatingFrom", criteria.AgeRating.Value));
-            }
+            AddIncludeExcludeFilter(sql, parameters, "b.AgeRating", criteria.IncludeAgeRatings, criteria.ExcludeAgeRatings, "AgeRating");
 
             if (criteria.RatingFrom.HasValue)
             {
@@ -374,6 +354,28 @@ namespace lc.Data.Repositories
             }
 
             return result;
+        }
+
+        private void AddIncludeExcludeFilter<T>(
+            StringBuilder sql,
+            List<SqlParameter> parameters,
+            string columnName,
+            IReadOnlyList<T> includeList,
+            IReadOnlyList<T> excludeList,
+            string paramNamePrefix
+            )
+        {
+            if (includeList != null && includeList.Count > 0)
+            {
+                var inList = BuildInList(includeList, parameters, $"{paramNamePrefix}Inc");
+                sql.AppendLine($"AND {columnName} IN ({inList})");
+            }
+
+            if (excludeList != null && excludeList.Count > 0)
+            {
+                var notInList = BuildInList(excludeList, parameters, $"{paramNamePrefix}Exc");
+                sql.AppendLine($"AND {columnName} NOT IN ({notInList})");
+            }
         }
 
         private static void AddTagFilter(StringBuilder sql, List<SqlParameter> parameters, BookFilterCriteria criteria)

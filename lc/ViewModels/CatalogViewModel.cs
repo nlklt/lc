@@ -305,22 +305,27 @@ namespace lc.ViewModels
             return new BookFilterCriteria
             {
                 SearchText = string.IsNullOrWhiteSpace(SearchText) ? null : SearchText.Trim(),
+                
                 IncludeTagIds = [.. TagOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value.TagId)],
                 ExcludeTagIds = [.. TagOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value.TagId)],
+                
                 IncludeCategoryIds = [.. CategoryOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value.CategoryId)],
                 ExcludeCategoryIds = [.. CategoryOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value.CategoryId)],
+                
                 StrictTagMatch = this.IsStrictTagMatch,
                 StrictCategoryMatch = this.IsStrictCategoryMatch,
-                BookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
-                WritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
 
-                Language = LanguageOptions.Count(x => x.State == CheckBoxState.Exclude) == 1
-                    ? LanguageOptions.First(x => x.State == CheckBoxState.Exclude).Value
-                    : null,
+                IncludeBookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
+                ExcludeBookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
 
-                AgeRating = AgeRatingOptions.Count(x => x.State == CheckBoxState.Exclude) == 1
-                    ? AgeRatingOptions.First(x => x.State == CheckBoxState.Exclude).Value
-                    : null,
+                IncludeWritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
+                ExcludeWritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
+
+                IncludeLanguages = [.. LanguageOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
+                ExcludeLanguages = [.. LanguageOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
+
+                IncludeAgeRatings = [.. AgeRatingOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
+                ExcludeAgeRatings = [.. AgeRatingOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
 
                 RatingFrom = Rating.From,
                 RatingTo = Rating.To,

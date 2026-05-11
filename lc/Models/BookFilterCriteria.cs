@@ -6,22 +6,26 @@ namespace lc.Models
     {
         public string? SearchText { get; set; }
 
-        public int? PublisherId { get; set; }
-
-        public List<BookStatus> BookStatuses { get; set; } = [];
-        public List<WritingStatus> WritingStatuses { get; set; } = [];
-
-        public List<int> IncludeTagIds { get; set; } = [];
-        public List<int> ExcludeTagIds { get; set; } = [];
+        public bool StrictTagMatch { get; set; }
+        public bool StrictCategoryMatch { get; set; }
 
         public List<int> IncludeCategoryIds { get; set; } = [];
         public List<int> ExcludeCategoryIds { get; set; } = [];
 
-        public bool StrictTagMatch { get; set; }
-        public bool StrictCategoryMatch { get; set; }
+        public List<int> IncludeTagIds { get; set; } = [];
+        public List<int> ExcludeTagIds { get; set; } = [];
 
-        public Language? Language { get; set; }
-        public int? AgeRating { get; set; }
+        public List<BookStatus> IncludeBookStatuses { get; set; } = [];
+        public List<BookStatus> ExcludeBookStatuses { get; set; } = [];
+
+        public List<WritingStatus> IncludeWritingStatuses { get; set; } = [];
+        public List<WritingStatus> ExcludeWritingStatuses { get; set; } = [];
+
+        public List<Language> IncludeLanguages { get; set; } = [];
+        public List<Language> ExcludeLanguages { get; set; } = [];
+
+        public List<int> IncludeAgeRatings { get; set; } = [];
+        public List<int> ExcludeAgeRatings { get; set; } = [];
 
         public double? RatingFrom { get; set; }
         public double? RatingTo { get; set; }

@@ -13,7 +13,7 @@
     <Grid Background="{StaticResource BackgroundBrush}" Margin="4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="275"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -93,7 +93,7 @@
                 <ListBox.ItemTemplate>
                     <DataTemplate>
                         <Border Background="Transparent"
-                                Width="160" 
+                                Width="166" 
                                 Cursor="Hand">
 
                             <!-- Переход в детали ЛКМ -->
@@ -105,7 +105,7 @@
 
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="236"/>
+                                    <RowDefinition Height="245"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
@@ -137,7 +137,7 @@
                                 </Border> -->
 
                                 <!-- Инфо -->
-                                <StackPanel Grid.Row="1" Margin="0,4,0,0">
+                                <StackPanel Grid.Row="1" Margin="0,0,0,0">
                                     <TextBlock Text="{Binding Title}"
                                        FontSize="14"
                                        FontWeight="SemiBold"

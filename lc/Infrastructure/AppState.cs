@@ -8,6 +8,7 @@ namespace lc.Infrastructure
 {
     public class AppState : ObservableObject
     {
+        private ViewModelBase _prevViewModel = null!;
         private ViewModelBase _currentViewModel = null!;
         private User? _currentUser;
         private Chapter? _selectedChapter;
@@ -15,10 +16,19 @@ namespace lc.Infrastructure
         private CultureInfo _currentCulture = new CultureInfo("ru-RU");
         private string _currentTheme = "Dark";
 
+        public ViewModelBase PrevViewModel
+        {
+            get => _prevViewModel;
+            set =>  SetProperty(ref _prevViewModel, value);
+        }
         public ViewModelBase CurrentViewModel
         {
             get => _currentViewModel;
-            set => SetProperty(ref _currentViewModel, value);
+            set
+            {
+                _prevViewModel = _currentViewModel;
+                SetProperty(ref _currentViewModel, value);
+            }
         }
         public User? CurrentUser
         {

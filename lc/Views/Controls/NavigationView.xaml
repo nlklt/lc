@@ -82,7 +82,7 @@
 
                     <Button Style="{StaticResource NavButtonStyle}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="💝" Style="{StaticResource IconTextStyle}" />
+                            <TextBlock Text="❤" Style="{StaticResource IconTextStyle}" />
                             <TextBlock Text="Избранное" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>

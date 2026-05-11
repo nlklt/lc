@@ -1,6 +1,6 @@
 ﻿using lc.Models;
 
-namespace lc.Data.Repositories.Interfaces
+namespace lc.Services.Interfaces
 {
     public interface IUserLibraryService
     {
@@ -8,6 +8,13 @@ namespace lc.Data.Repositories.Interfaces
         Task AddBookToListAsync(int userId, int listId, int bookId);
         Task RemoveBookFromListAsync(int userId, int listId, int bookId);
         Task<IReadOnlyList<BookListItem>> GetBooksFromListAsync(int userId, int listId);
+
+        Task<bool> IsBookInLibraryAsync(int bookId);
+        Task<bool> IsBookFavoriteAsync(int bookId);
+
+        Task AddToLibraryAsync(int bookId);
+        Task AddToFavoritesAsync(int bookId);
+        Task RemoveFromFavoritesAsync(int bookId);
     }
 
     public sealed class UserLibraryListDto

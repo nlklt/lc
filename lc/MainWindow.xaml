@@ -10,7 +10,7 @@
         xmlns:conv="clr-namespace:lc.Converters"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
         mc:Ignorable="d"
-        Title="lc" Height="450" Width="800">
+        Title="lc" Height="450" Width="1440">
 
     <WindowChrome.WindowChrome>
         <WindowChrome CaptionHeight="32" 

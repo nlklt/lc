@@ -5,7 +5,7 @@ namespace lc.Services
     public interface IBookService
     {
         Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria);
-        //Task<Book?> GetBookDetailsAsync(int bookId);
+        Task<Book?> GetByIdAsync(int bookId);
         Task<int> CreateDraftAsync(Book book);
         Task UpdateDraftAsync(Book book);
         Task PublishAsync(int bookId);

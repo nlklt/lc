@@ -1,5 +1,4 @@
 ﻿using lc.Commands;
-using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure;
 using lc.Models;
 using lc.Models.Enums;

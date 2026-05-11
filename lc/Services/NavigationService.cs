@@ -21,6 +21,14 @@ namespace lc.Services
             _appState.CurrentViewModel = viewModel;
         }
 
+        public void GoBack()
+        {
+            if (!CanNavigate(_appState.PrevViewModel))
+                return;
+
+            _appState.CurrentViewModel = _appState.PrevViewModel;
+        }
+
         private bool CanNavigate(ViewModelBase viewModel)
         {
             if (viewModel is null)

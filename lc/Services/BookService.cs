@@ -33,6 +33,9 @@ namespace lc.Services
         public Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria)
            => _bookRepository.SearchAsync(criteria);
 
+        public Task<Book?> GetByIdAsync(int bookId) 
+            => _bookRepository.GetByIdAsync(bookId);
+
         public async Task<int> CreateDraftAsync(Book book)
         {
             if (book is null)

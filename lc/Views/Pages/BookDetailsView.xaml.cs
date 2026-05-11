@@ -18,7 +18,7 @@ namespace lc.Views.Pages
     /// <summary>
     /// Логика взаимодействия для BookDetailsView.xaml
     /// </summary>
-    public partial class BookDetailsView : Page
+    public partial class BookDetailsView : UserControl
     {
         public BookDetailsView()
         {

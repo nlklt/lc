@@ -203,14 +203,18 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
-                                        <StackPanel Orientation="Horizontal" Margin="8,8,8,4">
-                                            <Button Style="{StaticResource PrimaryButtonStyle}"
+                                        <Grid Margin="8,8,8,4">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Button Grid.Column="0" Style="{StaticResource PrimaryButtonStyle}"
                                                     Command="{Binding ApplyFiltersCommand}"
                                                     Content="Применить" Margin="0,0,12,0"/>
-                                            <Button Style="{StaticResource SecondaryButtonStyle}"
+                                            <Button Grid.Column="1" Style="{StaticResource SecondaryButtonStyle}"
                                                     Command="{Binding ResetFiltersCommand}"
                                                     Content="Сбросить всё" />
-                                        </StackPanel>
+                                        </Grid>
                                     </StackPanel>
                                 </DataTemplate>
                             </Setter.Value>

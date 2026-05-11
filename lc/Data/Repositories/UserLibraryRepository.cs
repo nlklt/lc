@@ -2,6 +2,7 @@
 using lc.Infrastructure.Data;
 using lc.Models;
 using lc.Models.Enums;
+using lc.Services.Interfaces;
 using Microsoft.Data.SqlClient;
 
 namespace lc.Infrastructure.Repositories.Sql

@@ -5,5 +5,6 @@ namespace lc.Services.Interfaces
     public interface INavigationService
     {
         void Navigate(ViewModelBase viewModel);
+        public void GoBack();
     }
 }

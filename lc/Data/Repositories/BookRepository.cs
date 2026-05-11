@@ -83,91 +83,89 @@ namespace lc.Data.Repositories
         public async Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false)
         {
             const string sql = @"
-            SELECT 
-                b.BookId,
-                b.PublisherId,
-                u.UserId AS PublisherUserId,
-                u.UserName AS PublisherUserName,
-                u.AvatarPath AS PublisherAvatarPath,
-                b.Title,
-                b.AuthorName,
-                b.Description,
-                b.CoverImagePath,
-                b.BookStatus,
-                b.WritingStatus,
-                b.Language,
-                b.AgeRating,
-                b.SymbolsCount,
-                b.ChaptersCount,
-                b.Views,
-                b.Rating,
-                b.CreatedAt,
-                b.UpdatedAt
-            FROM Books b
-            JOIN Users u ON u.UserId = b.PublisherId
-            WHERE b.BookId = @BookId;
+    SELECT 
+        b.BookId, b.PublisherId, b.Title, b.AuthorName, b.Description, b.CoverImagePath,
+        b.BookStatus, b.WritingStatus, b.Language, b.AgeRating, b.SymbolsCount, 
+        b.ChaptersCount, b.Views, b.Rating, b.CreatedAt, b.UpdatedAt,
+        u.UserId AS PublisherUserId, u.UserName AS PublisherUserName, u.AvatarPath AS PublisherAvatarPath
+    FROM Books b
+    JOIN Users u ON u.UserId = b.PublisherId
+    WHERE b.BookId = @BookId;
 
-            SELECT t.TagId, t.Name
-            FROM BookTags bt
-            JOIN Tags t ON t.TagId = bt.TagId
-            WHERE bt.BookId = @BookId
-            ORDER BY t.Name;
+    SELECT t.TagId, t.Name FROM BookTags bt JOIN Tags t ON t.TagId = bt.TagId WHERE bt.BookId = @BookId ORDER BY t.Name;
+    SELECT c.CategoryId, c.Name FROM BookCategories bc JOIN Categories c ON c.CategoryId = bc.CategoryId WHERE bc.BookId = @BookId ORDER BY c.Name;";
 
-            SELECT c.CategoryId, c.Name
-            FROM BookCategories bc
-            JOIN Categories c ON c.CategoryId = bc.CategoryId
-            WHERE bc.BookId = @BookId
-            ORDER BY c.Name;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", bookId);
-
-            await using var reader = await command.ExecuteReaderAsync();
-
-            // Книга
-            if (!await reader.ReadAsync())
-                return null;
-
-            var book = MapBook(reader);
-
-            // Теги
-            await reader.NextResultAsync();
-            while (await reader.ReadAsync())
+            try
             {
-                book.Tags.Add(new Tag
+                await using var connection = SqlConnectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                await using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@BookId", bookId);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (!await reader.ReadAsync()) return null;
+
+                var book = new Book
                 {
-                    TagId = reader.GetInt32(reader.GetOrdinal("TagId")),
-                    Name = reader.GetString(reader.GetOrdinal("Name"))
-                });
-            }
+                    BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
+                    PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
+                    Publisher = new User
+                    {
+                        UserId = reader.GetInt32(reader.GetOrdinal("PublisherUserId")),
+                        UserName = reader.IsDBNull(reader.GetOrdinal("PublisherUserName")) ? "Unknown" : reader.GetString(reader.GetOrdinal("PublisherUserName"))
+                    },
+                    Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? "" : reader.GetString(reader.GetOrdinal("Title")),
+                    AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? "" : reader.GetString(reader.GetOrdinal("AuthorName")),
+                    Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? "" : reader.GetString(reader.GetOrdinal("Description")),
+                    CoverImagePath = reader.IsDBNull(reader.GetOrdinal("CoverImagePath")) ? null : reader.GetString(reader.GetOrdinal("CoverImagePath")),
+                    BookStatus = (BookStatus)reader.GetInt32(reader.GetOrdinal("BookStatus")),
+                    WritingStatus = (WritingStatus)reader.GetInt32(reader.GetOrdinal("WritingStatus")),
+                    Language = (Language)reader.GetInt32(reader.GetOrdinal("Language")),
+                    AgeRating = reader.GetInt32(reader.GetOrdinal("AgeRating")),
+                    SymbolsCount = (int)reader.GetInt64(reader.GetOrdinal("SymbolsCount")),
+                    ChaptersCount = reader.GetInt32(reader.GetOrdinal("ChaptersCount")),
+                    Views = reader.GetInt32(reader.GetOrdinal("Views")),
+                    Rating = (double)reader.GetDecimal(reader.GetOrdinal("Rating")),
+                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                    UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
+                    Tags = new List<Tag>(),
+                    Categories = new List<Category>(),
+                };
 
-            // Категории
-            await reader.NextResultAsync();
-            while (await reader.ReadAsync())
-            {
-                book.Categories.Add(new Category
+                // Теги
+                if (await reader.NextResultAsync())
                 {
-                    CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                    Name = reader.GetString(reader.GetOrdinal("Name"))
-                });
-            }
+                    while (await reader.ReadAsync())
+                    {
+                        book.Tags.Add(new Tag
+                        {
+                            TagId = reader.GetInt32(0),
+                            Name = reader.GetString(1)
+                        });
+                    }
+                }
 
-            // Главы
-            if (includeChapters)
-            {
-                book.Chapters = [.. await _chapterRepository.GetByBookIdAsync(book.BookId)];
-            }
+                // Категории
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        book.Categories.Add(new Category
+                        {
+                            CategoryId = reader.GetInt32(0),
+                            Name = reader.GetString(1)
+                        });
+                    }
+                }
 
-            // Комментарии
-            if (includeComments)
-            {
-                book.Comments = [.. await _commentRepository.GetByBookIdAsync(book.BookId)];
-            }
+                if (includeChapters) book.Chapters = [.. await _chapterRepository.GetByBookIdAsync(book.BookId)];
+                if (includeComments) book.Comments = [.. await _commentRepository.GetByBookIdAsync(book.BookId)];
 
-            return book;
+                return book;
+            }
+            catch (Exception) { throw; }
         }
 
         private static Book MapBook(SqlDataReader reader)

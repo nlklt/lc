@@ -1,0 +1,196 @@
+﻿<UserControl x:Class="lc.Views.Pages.EditBookView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="clr-namespace:lc.ViewModels"
+             Loaded="EditBookView_Loaded">
+
+    <UserControl.Resources>
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+    </UserControl.Resources>
+
+    <Grid Background="{StaticResource BackgroundBrush}" Margin="12">
+        <Border Background="{StaticResource SurfaceBrush}"
+                CornerRadius="12"
+                Padding="16">
+
+            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                          HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="2*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <StackPanel Grid.Column="0" Margin="0,0,16,0">
+
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode, StringFormat=Режим: {0}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="{Binding IsEditMode, Converter={StaticResource BoolToVisibilityConverter}}" Visibility="Collapsed"/>
+
+                        <TextBlock Text="Книга"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Margin="0,0,0,16"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                        <TextBlock Text="Название" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Автор" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding AuthorName, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Издатель" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding PublisherId, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Обложка (путь к файлу)" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding CoverImagePath, UpdateSourceTrigger=PropertyChanged}"
+                                 Margin="0,0,0,10"/>
+
+                        <TextBlock Text="Описание" Style="{StaticResource FieldLabel}"/>
+                        <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 Height="120"
+                                 VerticalScrollBarVisibility="Auto"
+                                 Margin="0,0,0,10"/>
+
+                        <StackPanel Orientation="Horizontal">
+                            <StackPanel Width="160" Margin="0,0,12,0">
+                                <TextBlock Text="Статус книги" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding BookStatuses}"
+                                          SelectedItem="{Binding SelectedBookStatus, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Width="180" Margin="0,0,12,0">
+                                <TextBlock Text="Статус написания" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding WritingStatuses}"
+                                          SelectedItem="{Binding SelectedWritingStatus, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Width="140">
+                                <TextBlock Text="Язык" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding Languages}"
+                                          SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                            <StackPanel Width="120" Margin="0,0,12,0">
+                                <TextBlock Text="Возраст" Style="{StaticResource FieldLabel}"/>
+                                <ComboBox ItemsSource="{Binding AgeRatings}"
+                                          SelectedItem="{Binding SelectedAgeRating, Mode=TwoWay}"/>
+                            </StackPanel>
+
+                            <StackPanel Width="140" Margin="0,0,12,0">
+                                <TextBlock Text="Символы" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Text="{Binding SymbolsCount, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+
+                            <StackPanel Width="120">
+                                <TextBlock Text="Главы" Style="{StaticResource FieldLabel}"/>
+                                <TextBox Text="{Binding ChaptersCount, UpdateSourceTrigger=PropertyChanged}"/>
+                            </StackPanel>
+                        </StackPanel>
+
+                        <TextBlock Text="{Binding ErrorMessage}"
+                                   Foreground="Tomato"
+                                   Margin="0,12,0,0"
+                                   TextWrapping="Wrap"/>
+
+                        <StackPanel Orientation="Horizontal" Margin="0,16,0,0">
+                            <Button Content="Сохранить"
+                                    Command="{Binding SaveCommand}"
+                                    Width="120"
+                                    Margin="0,0,12,0"/>
+
+                            <Button Content="Отмена"
+                                    Command="{Binding CancelCommand}"
+                                    Width="120"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+
+                        <TextBlock Text="Категории"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                        <Border Background="{StaticResource BackgroundBrush}"
+                                CornerRadius="8"
+                                Padding="10"
+                                Margin="0,0,0,12">
+                            <ScrollViewer Height="240">
+                                <ItemsControl ItemsSource="{Binding CategoryItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}"
+                                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                      Margin="0,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+
+                        <TextBlock Text="Теги"
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+
+                        <Border Background="{StaticResource BackgroundBrush}"
+                                CornerRadius="8"
+                                Padding="10">
+                            <ScrollViewer Height="240">
+                                <ItemsControl ItemsSource="{Binding TagItems}">
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <CheckBox Content="{Binding Name}"
+                                                      IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                                                      Margin="0,2,0,2"/>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+                            </ScrollViewer>
+                        </Border>
+
+                    </StackPanel>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

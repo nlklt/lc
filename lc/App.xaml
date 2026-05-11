@@ -1,0 +1,63 @@
+﻿<Application x:Class="lc.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:lc"
+             xmlns:vm="clr-namespace:lc.ViewModels"
+             xmlns:vp="clr-namespace:lc.Views.Pages"
+             xmlns:conv="clr-namespace:lc.Converters"
+             xmlns:vc="clr-namespace:lc.Views.Controls"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/Resources/Themes/Dark.xaml"/>
+                <ResourceDictionary Source="/Resources/Themes/Brushes.xaml"/>
+                <ResourceDictionary Source="/Resources/Themes/Metrics.xaml"/>
+                
+                <ResourceDictionary Source="/Resources/Controls/Text.xaml"/>
+                <ResourceDictionary Source="/Resources/Controls/Button.xaml"/>
+                <ResourceDictionary Source="/Resources/Controls/ListBox.xaml"/>
+                <ResourceDictionary Source="/Resources/Controls/ComboBox.xaml"/>
+                <ResourceDictionary Source="/Resources/Controls/DatePicker.xaml"/>
+                
+                <ResourceDictionary Source="/Resources/Variants/Buttons.xaml"/>
+                <ResourceDictionary Source="/Resources/Variants/Inputs.xaml"/>
+                <ResourceDictionary Source="/Resources/Variants/CheckBoxes.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+
+            <conv:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
+            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <conv:NullableDoubleToStringConverter x:Key="NullableDoubleToStringConverter" />
+            <conv:CheckBoxStateToNullableBoolConverter x:Key="CheckBoxStateToNullableBoolConverter" />
+
+            <DataTemplate DataType="{x:Type vm:CatalogViewModel}">
+                <vp:CatalogView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:EditBookViewModel}">
+                <vp:EditBookView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:LoginViewModel}">
+                <vp:LoginView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:RegisterViewModel}">
+                <vp:RegisterView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:BookDetailsViewModel}">
+                <vp:BookDetailsView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+                <vp:ProfileView />
+            </DataTemplate>
+
+            <DataTemplate DataType="{x:Type vm:ReaderViewModel}">
+                <vp:ReaderView />
+            </DataTemplate>
+            
+        </ResourceDictionary>
+    </Application.Resources>
+</Application>

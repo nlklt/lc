@@ -38,48 +38,6 @@ namespace lc.Infrastructure.Repositories.Sql
             return result;
         }
 
-        public async Task AddBookToListAsync(int userId, int listId, int bookId)
-        {
-            const string sql = @"
-            IF NOT EXISTS
-            (
-                SELECT 1
-                FROM UserLibraryListBooks
-                WHERE UserId = @UserId AND ListId = @ListId AND BookId = @BookId
-            )
-            BEGIN
-                INSERT INTO UserLibraryListBooks (UserId, ListId, BookId, AddedAt)
-                VALUES (@UserId, @ListId, @BookId, SYSDATETIME())
-            END";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@UserId", userId);
-            command.Parameters.AddWithValue("@ListId", listId);
-            command.Parameters.AddWithValue("@BookId", bookId);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        public async Task RemoveBookFromListAsync(int userId, int listId, int bookId)
-        {
-            const string sql = @"
-            DELETE FROM UserLibraryListBooks
-            WHERE UserId = @UserId AND ListId = @ListId AND BookId = @BookId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@UserId", userId);
-            command.Parameters.AddWithValue("@ListId", listId);
-            command.Parameters.AddWithValue("@BookId", bookId);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
         public async Task<IReadOnlyList<BookListItem>> GetBooksFromListAsync(int userId, int listId)
         {
             const string sql = @"
@@ -143,6 +101,91 @@ namespace lc.Infrastructure.Repositories.Sql
             }
 
             return result;
+        }
+
+        public async Task AddBookToListAsync(int userId, int listId, int bookId)
+        {
+            const string sql = @"
+            IF NOT EXISTS
+            (
+                SELECT 1
+                FROM UserLibraryListBooks
+                WHERE UserId = @UserId AND ListId = @ListId AND BookId = @BookId
+            )
+            BEGIN
+                INSERT INTO UserLibraryListBooks (UserId, ListId, BookId, AddedAt)
+                VALUES (@UserId, @ListId, @BookId, SYSDATETIME())
+            END";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@ListId", listId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task RemoveBookFromListAsync(int userId, int listId, int bookId)
+        {
+            const string sql = @"
+            DELETE FROM UserLibraryListBooks
+            WHERE UserId = @UserId AND ListId = @ListId AND BookId = @BookId;";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@ListId", listId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task AddToFavoritesAsync(int userId, int bookId)
+        {
+            const string sql = @"
+            IF NOT EXISTS (SELECT 1 FROM Favorites WHERE UserId = @UserId AND BookId = @BookId)
+            BEGIN
+                INSERT INTO Favorites (UserId, BookId, AddedAt)
+                VALUES (@UserId, @BookId, SYSDATETIME())
+            END";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task RemoveFromFavoritesAsync(int userId, int bookId)
+        {
+            const string sql = "DELETE FROM Favorites WHERE UserId = @UserId AND BookId = @BookId";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task<bool> IsBookFavoriteAsync(int userId, int bookId)
+        {
+            const string sql = "SELECT COUNT(1) FROM Favorites WHERE UserId = @UserId AND BookId = @BookId";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+
+            var result = await command.ExecuteScalarAsync();
+            return Convert.ToInt32(result) > 0;
         }
     }
 }

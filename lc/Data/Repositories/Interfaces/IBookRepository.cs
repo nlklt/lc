@@ -5,14 +5,12 @@ namespace lc.Data.Repositories.Interfaces
 {
     public interface IBookRepository
     {
+        Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false);
+        
         Task<int> CreateAsync(Book book);
         Task UpdateAsync(Book book);
         Task DeleteAsync(int bookId);
 
-        Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false);
-
         Task<IReadOnlyList<BookListItem>> SearchAsync(BookFilterCriteria criteria);
-
-        Task SetStatusAsync(int bookId, int status);
     }
 }

@@ -3,12 +3,72 @@
   "WorkspaceRootPath": "U:\\CourseProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\mainwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\idialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\idialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\infrastructure\\databaseinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\infrastructure\\databaseinitializer.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\readerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\readerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\catalogviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\catalogviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\iuserlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\iuserlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\interfaces\\iuserlibraryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\iuserlibraryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\ireaderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\ireaderservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\readerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\readerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\interfaces\\ichapterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\ichapterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\chapterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\chapterrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\chapterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\chapterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\ichapterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\ichapterservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\userlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\userlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\userlibraryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\userlibraryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -30,33 +90,150 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "MainWindow.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\MainWindow.xaml",
-              "RelativeDocumentMoniker": "lc\\MainWindow.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\MainWindow.xaml",
-              "RelativeToolTip": "lc\\MainWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-11T21:00:49.236Z",
+              "DocumentIndex": 1,
+              "Title": "DatabaseInitializer.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Infrastructure\\DatabaseInitializer.cs",
+              "RelativeDocumentMoniker": "lc\\Infrastructure\\DatabaseInitializer.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Infrastructure\\DatabaseInitializer.cs",
+              "RelativeToolTip": "lc\\Infrastructure\\DatabaseInitializer.cs",
+              "ViewState": "AgIAAN4AAAAAAAAAAAAswPsAAAAMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:34:08.416Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "CatalogView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\CatalogView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Pages\\CatalogView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\CatalogView.xaml",
-              "RelativeToolTip": "lc\\Views\\Pages\\CatalogView.xaml",
+              "DocumentIndex": 2,
+              "Title": "ReaderWindow.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\ReaderWindow.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Pages\\ReaderWindow.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\ReaderWindow.xaml",
+              "RelativeToolTip": "lc\\Views\\Pages\\ReaderWindow.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-11T20:59:18.553Z",
+              "WhenOpened": "2026-05-11T23:34:02.13Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "App.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\App.xaml",
+              "RelativeDocumentMoniker": "lc\\App.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\App.xaml",
+              "RelativeToolTip": "lc\\App.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-11T23:32:28.035Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "DialogService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\DialogService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\DialogService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\DialogService.cs",
+              "RelativeToolTip": "lc\\Services\\DialogService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAVAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:31:18.395Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "CatalogViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\CatalogViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\CatalogViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\CatalogViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\CatalogViewModel.cs",
+              "ViewState": "AgIAAG8BAAAAAAAAAAAAAIQBAAA0AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:30:16.465Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "BookDetailsViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\BookDetailsViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\BookDetailsViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\BookDetailsViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\BookDetailsViewModel.cs",
+              "ViewState": "AgIAABwBAAAAAAAAAAD4vzUBAAAUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T22:36:47.196Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "ReaderService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\ReaderService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\ReaderService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\ReaderService.cs",
+              "RelativeToolTip": "lc\\Services\\ReaderService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAA/AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:20:18.08Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "ChapterRepository.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\ChapterRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\ChapterRepository.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\ChapterRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\ChapterRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACMAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:19:59.084Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ChapterService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\ChapterService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\ChapterService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\ChapterService.cs",
+              "RelativeToolTip": "lc\\Services\\ChapterService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABEAAAArAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T22:43:24.562Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "UserLibraryService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\UserLibraryService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\UserLibraryService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\UserLibraryService.cs",
+              "RelativeToolTip": "lc\\Services\\UserLibraryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T21:43:39.322Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "UserLibraryRepository.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\UserLibraryRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\UserLibraryRepository.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\UserLibraryRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\UserLibraryRepository.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAAK4AAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T22:35:31.773Z",
               "EditorCaption": ""
             }
           ]
         },
         {
-          "DockedWidth": 1723,
-          "SelectedChildIndex": -1,
+          "DockedWidth": 1761,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -65,6 +242,84 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IDialogService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IDialogService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IDialogService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IDialogService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IDialogService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:30:32.626Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "IReaderService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IReaderService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IReaderService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IReaderService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IReaderService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:21:54.047Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "IChapterRepository.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IChapterRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IChapterRepository.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IChapterRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IChapterRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAcAAAAlAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T23:19:30.435Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "IUserLibraryRepository.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IUserLibraryRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IUserLibraryRepository.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IUserLibraryRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IUserLibraryRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAABAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T22:35:27.514Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "IUserLibraryService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T21:43:43.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "IChapterService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IChapterService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IChapterService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IChapterService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IChapterService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAIAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-11T22:43:30.656Z",
+              "EditorCaption": ""
             }
           ]
         }

@@ -1,20 +1,21 @@
 ﻿using lc.Models;
+using lc.Models.Enums;
 
 namespace lc.Services
 {
     public interface IBookService
     {
-        Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria);
-        Task<Book?> GetByIdAsync(int bookId);
-        Task<int> CreateDraftAsync(Book book);
-        Task UpdateDraftAsync(Book book);
-        Task PublishAsync(int bookId);
+        Task<Book?> GetBookByIdAsync(int bookId);
 
-        Task<int> SaveChapterAsync(int bookId, Chapter chapter);
-        Task<Book?> GetDraftAsync(int bookId);
+        Task<int> CreateBookAsync(Book book);
+        Task UpdateBookAsync(Book book);
+        Task DeleteBookAsync(int bookId);
+        Task PublishBookAsync(int bookId);
+        Task SaveBookAsync(int bookId);
+
         Task<ReaderSession?> OpenReaderAsync(int bookId, int? chapterNumber = null);
 
-        Task DeleteBookAsync(int bookId);
+        Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria);
 
         Task<IReadOnlyList<Category>> GetAllCategoriesAsync();
         Task<IReadOnlyList<Tag>> GetAllTagsAsync();
@@ -27,6 +28,5 @@ namespace lc.Services
         public Chapter? CurrentChapter { get; init; }
         public Chapter? PreviousChapter { get; init; }
         public Chapter? NextChapter { get; init; }
-        public IReadOnlyList<Comment> ChapterComments { get; internal set; }
     }
 }

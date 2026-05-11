@@ -9,18 +9,15 @@ namespace lc.Services
     {
         private readonly IBookRepository _bookRepository;
         private readonly IChapterRepository _chapterRepository;
-        private readonly ICommentRepository _commentRepository;
         private readonly IUserRepository _userRepository;
 
         public ReaderService(
             IBookRepository bookRepository,
             IChapterRepository chapterRepository,
-            ICommentRepository commentRepository,
             IUserRepository userRepository)
         {
             _bookRepository = bookRepository;
             _chapterRepository = chapterRepository;
-            _commentRepository = commentRepository;
             _userRepository = userRepository;
         }
 
@@ -54,61 +51,14 @@ namespace lc.Services
 
             var index = chapters.FindIndex(c => c.ChapterId == currentChapter.ChapterId);
 
-            var bookComments = await _commentRepository.GetByBookIdAsync(bookId);
-            var chapterComments = await _commentRepository.GetByChapterIdAsync(currentChapter.ChapterId);
-
             return new ReaderSession
             {
                 Book = book,
                 Chapters = chapters,
                 CurrentChapter = currentChapter,
                 PreviousChapter = index > 0 ? chapters[index - 1] : null,
-                NextChapter = index >= 0 && index < chapters.Count - 1 ? chapters[index + 1] : null,
-                ChapterComments = chapterComments
+                NextChapter = index >= 0 && index < chapters.Count - 1 ? chapters[index + 1] : null
             };
-        }
-
-        public async Task<int> AddChapterCommentAsync(int bookId, int chapterId, int userId, string text)
-        {
-            await EnsureUserCanCommentAsync(userId);
-            await EnsureBookExistsAndPublishedAsync(bookId);
-
-            var chapter = await _chapterRepository.GetByIdAsync(chapterId)
-                ?? throw new InvalidOperationException($"Глава с ChapterId={chapterId} не найдена.");
-
-            if (chapter.BookId != bookId)
-                throw new InvalidOperationException("Глава не принадлежит указанной книге.");
-
-            var comment = new Comment
-            {
-                UserId = userId,
-                BookId = bookId,
-                ChapterId = chapterId,
-                Text = NormalizeCommentText(text),
-                CreatedAt = DateTime.Now,
-                UpdatedAt = DateTime.Now
-            };
-
-            return await _commentRepository.CreateAsync(comment);
-        }
-
-        public Task<IReadOnlyList<Comment>> GetBookCommentsAsync(int bookId)
-        {
-            return _commentRepository.GetByBookIdAsync(bookId);
-        }
-
-        public Task<IReadOnlyList<Comment>> GetChapterCommentsAsync(int chapterId)
-        {
-            return _commentRepository.GetByChapterIdAsync(chapterId);
-        }
-
-        private async Task EnsureUserCanCommentAsync(int userId)
-        {
-            var user = await _userRepository.GetByIdAsync(userId)
-                ?? throw new InvalidOperationException($"Пользователь с ChapterId={userId} не найден.");
-
-            if (user.BlockedComments)
-                throw new InvalidOperationException("Пользователю запрещено оставлять комментарии.");
         }
 
         private async Task EnsureBookExistsAndPublishedAsync(int bookId)
@@ -118,14 +68,6 @@ namespace lc.Services
 
             if (book.BookStatus != BookStatus.Published)
                 throw new InvalidOperationException("Комментарий можно оставлять только к опубликованной книге.");
-        }
-
-        private static string NormalizeCommentText(string text)
-        {
-            if (string.IsNullOrWhiteSpace(text))
-                throw new InvalidOperationException("Комментарий не может быть пустым.");
-
-            return text.Trim();
         }
     }
 }

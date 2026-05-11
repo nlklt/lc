@@ -10,11 +10,101 @@ using System.Text;
 
 namespace lc.Data.Repositories
 {
-    public sealed class BookRepository(IChapterRepository chapterRepository, ICommentRepository commentRepository,
-        ITagRepository tagRepository, ICategoryRepository categoryRepository) : IBookRepository
+    public sealed class BookRepository(
+        IChapterRepository chapterRepository, 
+        ICommentRepository commentRepository,
+        ITagRepository tagRepository, 
+        ICategoryRepository categoryRepository
+        ) : IBookRepository
     {
         private readonly IChapterRepository _chapterRepository = chapterRepository;
         private readonly ICommentRepository _commentRepository = commentRepository;
+
+        public async Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false)
+        {
+            const string sql = @"
+            SELECT 
+                b.BookId, b.PublisherId, b.Title, b.AuthorName, b.Description, b.CoverImagePath,
+                b.BookStatus, b.WritingStatus, b.Language, b.AgeRating, b.SymbolsCount, 
+                b.ChaptersCount, b.Views, b.Rating, b.CreatedAt, b.UpdatedAt,
+                u.UserId AS PublisherUserId, u.UserName AS PublisherUserName, u.AvatarPath AS PublisherAvatarPath
+            FROM Books b
+            JOIN Users u ON u.UserId = b.PublisherId
+            WHERE b.BookId = @BookId;
+
+            SELECT t.TagId, t.Name FROM BookTags bt JOIN Tags t ON t.TagId = bt.TagId WHERE bt.BookId = @BookId ORDER BY t.Name;
+            SELECT c.CategoryId, c.Name FROM BookCategories bc JOIN Categories c ON c.CategoryId = bc.CategoryId WHERE bc.BookId = @BookId ORDER BY c.Name;";
+
+            try
+            {
+                await using var connection = SqlConnectionFactory.CreateConnection();
+                await connection.OpenAsync();
+
+                await using var command = new SqlCommand(sql, connection);
+                command.Parameters.AddWithValue("@BookId", bookId);
+
+                await using var reader = await command.ExecuteReaderAsync();
+
+                if (!await reader.ReadAsync()) return null;
+
+                var book = new Book
+                {
+                    BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
+                    PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
+                    Publisher = new User
+                    {
+                        UserId = reader.GetInt32(reader.GetOrdinal("PublisherUserId")),
+                        UserName = reader.IsDBNull(reader.GetOrdinal("PublisherUserName")) ? "Unknown" : reader.GetString(reader.GetOrdinal("PublisherUserName"))
+                    },
+                    Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? "" : reader.GetString(reader.GetOrdinal("Title")),
+                    AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? "" : reader.GetString(reader.GetOrdinal("AuthorName")),
+                    Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? "" : reader.GetString(reader.GetOrdinal("Description")),
+                    CoverImagePath = reader.IsDBNull(reader.GetOrdinal("CoverImagePath")) ? null : reader.GetString(reader.GetOrdinal("CoverImagePath")),
+                    BookStatus = (BookStatus)reader.GetInt32(reader.GetOrdinal("BookStatus")),
+                    WritingStatus = (WritingStatus)reader.GetInt32(reader.GetOrdinal("WritingStatus")),
+                    Language = (Language)reader.GetInt32(reader.GetOrdinal("Language")),
+                    AgeRating = reader.GetInt32(reader.GetOrdinal("AgeRating")),
+                    SymbolsCount = (int)reader.GetInt64(reader.GetOrdinal("SymbolsCount")),
+                    ChaptersCount = reader.GetInt32(reader.GetOrdinal("ChaptersCount")),
+                    Views = reader.GetInt32(reader.GetOrdinal("Views")),
+                    Rating = (double)reader.GetDecimal(reader.GetOrdinal("Rating")),
+                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
+                    UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
+                    Tags = new List<Tag>(),
+                    Categories = new List<Category>(),
+                };
+
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        book.Tags.Add(new Tag
+                        {
+                            TagId = reader.GetInt32(0),
+                            Name = reader.GetString(1)
+                        });
+                    }
+                }
+
+                if (await reader.NextResultAsync())
+                {
+                    while (await reader.ReadAsync())
+                    {
+                        book.Categories.Add(new Category
+                        {
+                            CategoryId = reader.GetInt32(0),
+                            Name = reader.GetString(1)
+                        });
+                    }
+                }
+
+                if (includeChapters) book.Chapters = [.. await _chapterRepository.GetByBookIdAsync(book.BookId)];
+                if (includeComments) book.Comments = [.. await _commentRepository.GetByBookIdAsync(book.BookId)];
+
+                return book;
+            }
+            catch (Exception) { throw; }
+        }
 
         public async Task<int> CreateAsync(Book book)
         {
@@ -78,127 +168,6 @@ namespace lc.Data.Repositories
             command.Parameters.AddWithValue("@BookId", bookId);
 
             await command.ExecuteNonQueryAsync();
-        }
-
-        public async Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false)
-        {
-            const string sql = @"
-    SELECT 
-        b.BookId, b.PublisherId, b.Title, b.AuthorName, b.Description, b.CoverImagePath,
-        b.BookStatus, b.WritingStatus, b.Language, b.AgeRating, b.SymbolsCount, 
-        b.ChaptersCount, b.Views, b.Rating, b.CreatedAt, b.UpdatedAt,
-        u.UserId AS PublisherUserId, u.UserName AS PublisherUserName, u.AvatarPath AS PublisherAvatarPath
-    FROM Books b
-    JOIN Users u ON u.UserId = b.PublisherId
-    WHERE b.BookId = @BookId;
-
-    SELECT t.TagId, t.Name FROM BookTags bt JOIN Tags t ON t.TagId = bt.TagId WHERE bt.BookId = @BookId ORDER BY t.Name;
-    SELECT c.CategoryId, c.Name FROM BookCategories bc JOIN Categories c ON c.CategoryId = bc.CategoryId WHERE bc.BookId = @BookId ORDER BY c.Name;";
-
-            try
-            {
-                await using var connection = SqlConnectionFactory.CreateConnection();
-                await connection.OpenAsync();
-
-                await using var command = new SqlCommand(sql, connection);
-                command.Parameters.AddWithValue("@BookId", bookId);
-
-                await using var reader = await command.ExecuteReaderAsync();
-
-                if (!await reader.ReadAsync()) return null;
-
-                var book = new Book
-                {
-                    BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
-                    PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
-                    Publisher = new User
-                    {
-                        UserId = reader.GetInt32(reader.GetOrdinal("PublisherUserId")),
-                        UserName = reader.IsDBNull(reader.GetOrdinal("PublisherUserName")) ? "Unknown" : reader.GetString(reader.GetOrdinal("PublisherUserName"))
-                    },
-                    Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? "" : reader.GetString(reader.GetOrdinal("Title")),
-                    AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? "" : reader.GetString(reader.GetOrdinal("AuthorName")),
-                    Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? "" : reader.GetString(reader.GetOrdinal("Description")),
-                    CoverImagePath = reader.IsDBNull(reader.GetOrdinal("CoverImagePath")) ? null : reader.GetString(reader.GetOrdinal("CoverImagePath")),
-                    BookStatus = (BookStatus)reader.GetInt32(reader.GetOrdinal("BookStatus")),
-                    WritingStatus = (WritingStatus)reader.GetInt32(reader.GetOrdinal("WritingStatus")),
-                    Language = (Language)reader.GetInt32(reader.GetOrdinal("Language")),
-                    AgeRating = reader.GetInt32(reader.GetOrdinal("AgeRating")),
-                    SymbolsCount = (int)reader.GetInt64(reader.GetOrdinal("SymbolsCount")),
-                    ChaptersCount = reader.GetInt32(reader.GetOrdinal("ChaptersCount")),
-                    Views = reader.GetInt32(reader.GetOrdinal("Views")),
-                    Rating = (double)reader.GetDecimal(reader.GetOrdinal("Rating")),
-                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                    UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
-                    Tags = new List<Tag>(),
-                    Categories = new List<Category>(),
-                };
-
-                // Теги
-                if (await reader.NextResultAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        book.Tags.Add(new Tag
-                        {
-                            TagId = reader.GetInt32(0),
-                            Name = reader.GetString(1)
-                        });
-                    }
-                }
-
-                // Категории
-                if (await reader.NextResultAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        book.Categories.Add(new Category
-                        {
-                            CategoryId = reader.GetInt32(0),
-                            Name = reader.GetString(1)
-                        });
-                    }
-                }
-
-                if (includeChapters) book.Chapters = [.. await _chapterRepository.GetByBookIdAsync(book.BookId)];
-                if (includeComments) book.Comments = [.. await _commentRepository.GetByBookIdAsync(book.BookId)];
-
-                return book;
-            }
-            catch (Exception) { throw; }
-        }
-
-        private static Book MapBook(SqlDataReader reader)
-        {
-            var book = new Book
-            {
-                BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
-                PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
-                Publisher = new User
-                {
-                    UserId = reader.GetInt32(reader.GetOrdinal("PublisherUserId")),
-                    UserName = reader.GetString(reader.GetOrdinal("PublisherUserName")),
-                    AvatarPath = reader.IsDBNull(reader.GetOrdinal("PublisherAvatarPath"))
-                        ? null
-                        : reader.GetString(reader.GetOrdinal("PublisherAvatarPath"))
-                },
-                Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? null : reader.GetString(reader.GetOrdinal("Title")),
-                AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? null : reader.GetString(reader.GetOrdinal("AuthorName")),
-                Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? null : reader.GetString(reader.GetOrdinal("Description")),
-                CoverImagePath = reader.IsDBNull(reader.GetOrdinal("CoverImagePath")) ? null : reader.GetString(reader.GetOrdinal("CoverImagePath")),
-                BookStatus = (BookStatus)reader.GetInt32(reader.GetOrdinal("BookStatus")),
-                WritingStatus = (WritingStatus)reader.GetInt32(reader.GetOrdinal("WritingStatus")),
-                Language = (Language)reader.GetInt32(reader.GetOrdinal("Language")),
-                AgeRating = reader.GetInt32(reader.GetOrdinal("AgeRating")),
-                SymbolsCount = reader.GetInt32(reader.GetOrdinal("SymbolsCount")),
-                ChaptersCount = reader.GetInt32(reader.GetOrdinal("ChaptersCount")),
-                Views = reader.GetInt64(reader.GetOrdinal("Views")),
-                Rating = reader.GetDouble(reader.GetOrdinal("Rating")),
-                CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt"))
-            };
-
-            return book;
         }
 
         private static void AddBookParameters(SqlCommand command, Book book)
@@ -462,20 +431,6 @@ namespace lc.Data.Repositories
             return string.Join(", ", names);
         }
 
-        private static string BuildValuesList(IReadOnlyList<int> values, List<SqlParameter> parameters, string prefix)
-        {
-            var rows = new List<string>(values.Count);
-
-            for (int i = 0; i < values.Count; i++)
-            {
-                var name = $"@{prefix}{i}";
-                parameters.Add(new SqlParameter(name, values[i]));
-                rows.Add($"({name})");
-            }
-
-            return string.Join(", ", rows);
-        }
-
         private static string BuildOrderBy(BookFilterCriteria criteria)
         {
             string column = criteria.SortField switch
@@ -558,22 +513,6 @@ namespace lc.Data.Repositories
             }
 
             return result;
-        }
-        public async Task SetStatusAsync(int bookId, int status)
-        {
-            const string sql = @"
-            UPDATE Books
-            SET BookStatus = @BookStatus, UpdatedAt = SYSDATETIME()
-            WHERE BookId = @BookId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", bookId);
-            command.Parameters.AddWithValue("@BookStatus", status);
-
-            await command.ExecuteNonQueryAsync();
         }
     }
 }

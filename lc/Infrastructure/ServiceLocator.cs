@@ -19,8 +19,10 @@ namespace lc.Infrastructure
         public static IUserLibraryService UserLibraryService { get; set; } = null!;
         
         public static IReaderService ReaderService { get; set; } = null!;
-        
         public static IDialogService DialogService { get; set; } = null!;
+        public static IChapterService ChapterService { get; set; } = null!;
+        public static ICommentService CommentService { get; set; } = null!;
+        public static IWindowService WindowService { get; set; } = null!;
 
         public static INavigationService NavigationService { get; } =
             new NavigationService(AppState);

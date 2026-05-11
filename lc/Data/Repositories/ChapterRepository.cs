@@ -7,6 +7,49 @@ namespace lc.Infrastructure.Repositories.Sql
 {
     public sealed class ChapterRepository : IChapterRepository
     {
+        public async Task<Chapter?> GetByIdAsync(int chapterId)
+        {
+            const string sql = @"
+            SELECT ChapterId, BookId, ChapterNumber, Title, Text, CreatedAt, UpdatedAt
+            FROM Chapters
+            WHERE ChapterId = @ChapterId;";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@ChapterId", chapterId);
+
+            await using var reader = await command.ExecuteReaderAsync();
+            if (!await reader.ReadAsync())
+                return null;
+
+            return Map(reader);
+        }
+
+        public async Task<List<Chapter>> GetByBookIdAsync(int bookId)
+        {
+            const string sql = @"
+            SELECT ChapterId, BookId, ChapterNumber, Title, Text, CreatedAt, UpdatedAt
+            FROM Chapters
+            WHERE BookId = @BookId
+            ORDER BY ChapterNumber;";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            await connection.OpenAsync();
+
+            await using var command = new SqlCommand(sql, connection);
+            command.Parameters.AddWithValue("@BookId", bookId);
+
+            var result = new List<Chapter>();
+            await using var reader = await command.ExecuteReaderAsync();
+
+            while (await reader.ReadAsync())
+                result.Add(Map(reader));
+
+            return result;
+        }
+
         public async Task<int> CreateAsync(Chapter chapter)
         {
             const string sql = @"
@@ -65,49 +108,6 @@ namespace lc.Infrastructure.Repositories.Sql
             command.Parameters.AddWithValue("@ChapterId", chapterId);
 
             await command.ExecuteNonQueryAsync();
-        }
-
-        public async Task<Chapter?> GetByIdAsync(int chapterId)
-        {
-            const string sql = @"
-            SELECT ChapterId, BookId, ChapterNumber, Title, Text, CreatedAt, UpdatedAt
-            FROM Chapters
-            WHERE ChapterId = @ChapterId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@ChapterId", chapterId);
-
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return null;
-
-            return Map(reader);
-        }
-
-        public async Task<IReadOnlyList<Chapter>> GetByBookIdAsync(int bookId)
-        {
-            const string sql = @"
-            SELECT ChapterId, BookId, ChapterNumber, Title, Text, CreatedAt, UpdatedAt
-            FROM Chapters
-            WHERE BookId = @BookId
-            ORDER BY ChapterNumber;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", bookId);
-
-            var result = new List<Chapter>();
-            await using var reader = await command.ExecuteReaderAsync();
-
-            while (await reader.ReadAsync())
-                result.Add(Map(reader));
-
-            return result;
         }
 
         private static void AddParameters(SqlCommand command, Chapter chapter)

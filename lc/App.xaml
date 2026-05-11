@@ -54,10 +54,6 @@
                 <vp:ProfileView />
             </DataTemplate>
 
-            <DataTemplate DataType="{x:Type vm:ReaderViewModel}">
-                <vp:ReaderView />
-            </DataTemplate>
-            
         </ResourceDictionary>
     </Application.Resources>
 </Application>

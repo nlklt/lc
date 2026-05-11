@@ -358,7 +358,7 @@ namespace lc.ViewModels
             if (book == null)
                 return;
 
-            var confirmed = await _dialogService.ConfirmAsync(
+            var confirmed = await _dialogService.ShowConfirmAsync(
                 "Удалить книгу",
                 $"Удалить книгу «{book.Title}»?");
 

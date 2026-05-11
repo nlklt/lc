@@ -171,24 +171,57 @@ END;
                     CommentId INT IDENTITY(1,1) PRIMARY KEY,
                     UserId INT NOT NULL,
                     BookId INT NOT NULL,
-                    ChapterId INT NULL,
                     Text NVARCHAR(MAX) NOT NULL,
                     CreatedAt DATETIME2 NOT NULL CONSTRAINT DF_Comments_CreatedAt DEFAULT(SYSDATETIME()),
                     UpdatedAt DATETIME2 NOT NULL CONSTRAINT DF_Comments_UpdatedAt DEFAULT(SYSDATETIME()),
                     CONSTRAINT FK_Comments_Users FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
                     CONSTRAINT FK_Comments_Books FOREIGN KEY (BookId) REFERENCES Books(BookId) ON DELETE CASCADE,
-                    CONSTRAINT FK_Comments_Chapters FOREIGN KEY (ChapterId) REFERENCES Chapters(ChapterId) ON DELETE NO ACTION
                 );
 
                 CREATE INDEX IX_Comments_BookId ON Comments(BookId);
                 CREATE INDEX IX_Comments_UserId ON Comments(UserId);
             END;
 
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'UserLibraryLists')
+            BEGIN
+                CREATE TABLE UserLibraryLists (
+                    ListId INT IDENTITY(1,1) PRIMARY KEY,
+                    UserId INT NOT NULL,
+                    Name NVARCHAR(100) NOT NULL,
+                    CONSTRAINT FK_LibraryLists_Users FOREIGN KEY (UserId) REFERENCES Users(UserId)
+                );
+            END;
+
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'UserLibraryListBooks')
+            BEGIN
+                CREATE TABLE UserLibraryListBooks (
+                    ListId INT NOT NULL,
+                    BookId INT NOT NULL,
+                    UserId INT NOT NULL,
+                    AddedAt DATETIME2 DEFAULT SYSDATETIME(),
+                    CONSTRAINT PK_UserLibraryListBooks PRIMARY KEY (ListId, BookId),
+                    CONSTRAINT FK_ListBooks_Lists FOREIGN KEY (ListId) REFERENCES UserLibraryLists(ListId) ON DELETE CASCADE,
+                    CONSTRAINT FK_ListBooks_Books FOREIGN KEY (BookId) REFERENCES Books(BookId) ON DELETE CASCADE
+                );
+            END;
+
+            IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'Favorites')
+            BEGIN
+                CREATE TABLE Favorites (
+                    UserId INT NOT NULL,
+                    BookId INT NOT NULL,
+                    AddedAt DATETIME2 DEFAULT SYSDATETIME(),
+                    CONSTRAINT PK_Favorites PRIMARY KEY (UserId, BookId),
+                    CONSTRAINT FK_Favorites_Users FOREIGN KEY (UserId) REFERENCES Users(UserId) ON DELETE CASCADE,
+                    CONSTRAINT FK_Favorites_Books FOREIGN KEY (BookId) REFERENCES Books(BookId) ON DELETE CASCADE
+                );
+            END;
+
             IF NOT EXISTS (SELECT * FROM sys.tables WHERE name = 'ReadingHistory')
             BEGIN
                 CREATE TABLE ReadingHistory
                 (
-                    ChapterId INT IDENTITY(1,1) PRIMARY KEY,
+                    HistoryId INT IDENTITY(1,1) PRIMARY KEY,
                     UserId INT NOT NULL,
                     BookId INT NOT NULL,
                     LastOpenedAt DATETIME2 NOT NULL CONSTRAINT DF_ReadingHistory_LastOpenedAt DEFAULT(SYSDATETIME()),

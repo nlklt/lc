@@ -29,14 +29,10 @@ namespace lc.Services
             _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
             _categoryRepository = categoryRepository;
         }
-
-        public Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria)
-           => _bookRepository.SearchAsync(criteria);
-
-        public Task<Book?> GetByIdAsync(int bookId) 
+        public Task<Book?> GetBookByIdAsync(int bookId) 
             => _bookRepository.GetByIdAsync(bookId);
 
-        public async Task<int> CreateDraftAsync(Book book)
+        public async Task<int> CreateBookAsync(Book book)
         {
             if (book is null)
                 throw new ArgumentNullException(nameof(book));
@@ -50,7 +46,7 @@ namespace lc.Services
             return await _bookRepository.CreateAsync(book);
         }
 
-        public async Task UpdateDraftAsync(Book book)
+        public async Task UpdateBookAsync(Book book)
         {
             if (book is null)
                 throw new ArgumentNullException(nameof(book));
@@ -59,9 +55,6 @@ namespace lc.Services
             if (existing is null)
                 throw new InvalidOperationException($"Книга с ChapterId={book.BookId} не найдена.");
 
-            if (existing.BookStatus != BookStatus.Draft)
-                throw new InvalidOperationException("Редактировать через UpdateDraftAsync можно только черновик.");
-
             NormalizeDraft(book);
 
             book.CreatedAt = existing.CreatedAt;
@@ -69,6 +62,11 @@ namespace lc.Services
             book.BookStatus = BookStatus.Draft;
 
             await _bookRepository.UpdateAsync(book);
+        }
+
+        public Task DeleteBookAsync(int bookId)
+        {
+            return _bookRepository.DeleteAsync(bookId);
         }
 
         public async Task<int> SaveChapterAsync(int bookId, Chapter chapter)
@@ -99,7 +97,7 @@ namespace lc.Services
             return chapter.ChapterId;
         }
 
-        public async Task PublishAsync(int bookId)
+        public async Task PublishBookAsync(int bookId)
         {
             var book = await _bookRepository.GetByIdAsync(bookId, includeChapters: true);
             if (book is null)
@@ -120,13 +118,25 @@ namespace lc.Services
             await _bookRepository.UpdateAsync(book);
         }
 
-        public async Task<Book?> GetDraftAsync(int bookId)
+        public async Task SaveBookAsync(int bookId)
         {
             var book = await _bookRepository.GetByIdAsync(bookId, includeChapters: true);
             if (book is null)
-                return null;
+                throw new InvalidOperationException($"Книга с ChapterId={bookId} не найдена.");
 
-            return book.BookStatus == BookStatus.Draft ? book : null;
+            if (book.BookStatus == BookStatus.Draft)
+                return;
+
+            var chapters = (book.Chapters ?? new List<Chapter>())
+                .OrderBy(c => c.ChapterNumber)
+                .ToList();
+
+            ValidateForPublish(book, chapters);
+
+            book.BookStatus = BookStatus.Published;
+            book.UpdatedAt = DateTime.Now;
+
+            await _bookRepository.UpdateAsync(book);
         }
 
         public async Task<ReaderSession?> OpenReaderAsync(int bookId, int? chapterNumber = null)
@@ -233,12 +243,8 @@ namespace lc.Services
             }
         }
 
-        public Task DeleteBookAsync(int bookId)
-        {
-            return _bookRepository.DeleteAsync(bookId);
-        }
-
-
+        public Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria)
+           => _bookRepository.SearchAsync(criteria);
         public async Task<IReadOnlyList<Category>> GetAllCategoriesAsync() 
             => (IReadOnlyList<Category>)await _categoryRepository.GetAllAsync();
         public async Task<IReadOnlyList<Tag>> GetAllTagsAsync() 

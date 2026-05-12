@@ -1,19 +1,14 @@
 ﻿using lc.Commands;
 using lc.Infrastructure;
+using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using System.Net;
-using System.Threading.Tasks;
-using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -31,6 +26,9 @@ namespace lc.ViewModels
         private readonly IUserLibraryService _userLibraryService;
         private readonly IWindowService _windowService;
 
+        private readonly IChapterRepository _chapterRepository;
+        private readonly ICommentRepository _commentRepository;
+
         private Book? _book;
         private ImageSource? _coverImage;
         private bool _isLoading;
@@ -43,22 +41,24 @@ namespace lc.ViewModels
         {
             _appState = ServiceLocator.AppState;
             _bookService = ServiceLocator.BookService;
-            _chapterService = ServiceLocator.ChapterService;
-            _commentService = ServiceLocator.CommentService;
             _dialogService = ServiceLocator.DialogService;
             _navigationService = ServiceLocator.NavigationService;
             _userLibraryService = ServiceLocator.UserLibraryService;
             _windowService = ServiceLocator.WindowService;
+            _chapterRepository = ServiceLocator.ChapterRepository;
+            _commentRepository = ServiceLocator.CommentRepository;
 
             BackCommand = new RelayCommand(_ => _navigationService.GoBack());
-            StartReadingCommand = new RelayCommand(async _ => await StartReadingAsync(), _ => CanRead);
-            OpenChapterCommand = new RelayCommand(async chapter => await OpenChapterAsync(chapter as Chapter), chapter => chapter is Chapter);
-            ToggleFavoriteCommand = new RelayCommand(async _ => await ToggleFavoriteAsync(), _ => CanFavorite);
-            ToggleLibraryCommand = new RelayCommand(async _ => await ToggleLibraryAsync(), _ => CanLibrary);
-            AddCommentCommand = new RelayCommand(async _ => await AddCommentAsync(), _ => CanAddComment);
-            EditBookCommand = new RelayCommand(_ => EditBook(), _ => CanManageBook);
-            DeleteBookCommand = new RelayCommand(async _ => await DeleteBookAsync(), _ => CanManageBook);
-            ReloadCommand = new RelayCommand(async _ => await ReloadAsync(), _ => BookId > 0);
+            StartReadingCommand = new RelayCommand(_ => StartReading(), _ => CanRead);
+            OpenChapterCommand = new RelayCommand(OpenChapter, _ => CanRead);
+            ToggleFavoriteCommand = new AsyncRelayCommand(async _ => await ToggleFavoriteAsync());
+
+            ToggleLibraryCommand = new AsyncRelayCommand(async _ => await AddToLibraryAsync(), _ => CanAddToLibrary);
+
+            AddCommentCommand = new AsyncRelayCommand(async _ => await AddCommentAsync(), _ => CanComment);
+            RateBookCommand = new AsyncRelayCommand(async rating => await RateBookAsync(rating), _ => IsAuthenticated);
+            EditBookCommand = new RelayCommand(_ => EditBook(), _ => CanEditOrDelete);
+            DeleteBookCommand = new AsyncRelayCommand(async _ => await DeleteBookAsync(), _ => CanEditOrDelete);
 
             _ = InitializeAsync(bookId);
             UpdateStateFromApp();
@@ -70,6 +70,17 @@ namespace lc.ViewModels
         public ObservableCollection<string> Categories { get; } = new();
         public ObservableCollection<Chapter> Chapters { get; } = new();
         public ObservableCollection<Comment> Comments { get; } = new();
+        public ObservableCollection<int> Ratings { get; } = new() { 0, 1, 2, 3, 4, 5 };
+
+        public string NewCommentText
+        {
+            get => _newCommentText;
+            set
+            {
+                if (SetProperty(ref _newCommentText, value))
+                    OnPropertyChanged(nameof(CanComment));
+            }
+        }
 
         public Book? Book
         {
@@ -79,13 +90,6 @@ namespace lc.ViewModels
                 if (SetProperty(ref _book, value))
                 {
                     OnPropertyChanged(string.Empty);
-                    OnPropertyChanged(nameof(CanRead));
-                    OnPropertyChanged(nameof(CanFavorite));
-                    OnPropertyChanged(nameof(CanLibrary));
-                    OnPropertyChanged(nameof(CanAddComment));
-                    OnPropertyChanged(nameof(CanManageBook));
-                    OnPropertyChanged(nameof(LibraryButtonText));
-                    OnPropertyChanged(nameof(FavoriteButtonText));
                 }
             }
         }
@@ -105,47 +109,36 @@ namespace lc.ViewModels
         public bool IsFavorite
         {
             get => _isFavorite;
-            set
-            {
-                if (SetProperty(ref _isFavorite, value))
-                    OnPropertyChanged(nameof(FavoriteButtonText));
-            }
+            set => SetProperty(ref _isFavorite, value);
         }
 
         public bool IsInLibrary
         {
             get => _isInLibrary;
-            set
-            {
-                if (SetProperty(ref _isInLibrary, value))
-                    OnPropertyChanged(nameof(LibraryButtonText));
-            }
-        }
-
-        public string NewCommentText
-        {
-            get => _newCommentText;
-            set => SetProperty(ref _newCommentText, value);
+            set => SetProperty(ref _isInLibrary, value);
         }
 
         public int SelectedRating
         {
             get => _selectedRating;
-            set => SetProperty(ref _selectedRating, value);
+            set
+            {
+                var clamped = Math.Clamp(value, 0, 5);
+                if (SetProperty(ref _selectedRating, clamped))
+                    OnPropertyChanged(nameof(CanComment));
+            }
         }
 
         public bool IsAuthenticated => _appState?.IsAuthenticated ?? false;
-        public bool CanRead => Book is not null && IsAuthenticated && Chapters.Count > 0;
+        public bool CanRead => Book is not null && IsAuthenticated;
         public bool CanFavorite => Book is not null && IsAuthenticated;
-        public bool CanLibrary => Book is not null && IsAuthenticated;
-        public bool CanAddComment => Book is not null && IsAuthenticated && SelectedRating > 0;
-        public bool CanManageBook => Book is not null && IsAuthenticated && IsCurrentUserOwnerOrAdmin();
+        public bool CanAddToLibrary => Book is not null && IsAuthenticated && !_isInLibrary;
+        public bool CanComment => IsAuthenticated && !string.IsNullOrWhiteSpace(NewCommentText);
 
-        public string LibraryButtonText => IsInLibrary ? "Убрать из списка" : "Добавить в список";
-        public string FavoriteButtonText => IsFavorite ? "Убрать из избранного" : "В избранное";
+        public bool CanEditOrDelete => IsAuthenticated && Book is not null &&
+            (_appState.CurrentUser?.UserId == Book.PublisherId || _appState.CurrentUser?.Role == UserRole.Admin);
 
         public string Title => Book?.Title ?? "Без названия";
-        public string Subtitle => BuildSubtitle();
         public string AuthorName => $"Автор: {Book?.AuthorName ?? "Не указан"}";
         public string PublisherName => $"Издатель: {Book?.Publisher?.UserName ?? "Не указан"}";
         public string Description => string.IsNullOrWhiteSpace(Book?.Description) ? "Описание отсутствует." : Book.Description;
@@ -162,13 +155,15 @@ namespace lc.ViewModels
 
         public ICommand BackCommand { get; }
         public ICommand StartReadingCommand { get; }
-        public ICommand OpenChapterCommand { get; }
         public ICommand ToggleFavoriteCommand { get; }
         public ICommand ToggleLibraryCommand { get; }
+        public ICommand ReloadCommand { get; }
+
+        public ICommand OpenChapterCommand { get; }
         public ICommand AddCommentCommand { get; }
+        public ICommand RateBookCommand { get; }
         public ICommand EditBookCommand { get; }
         public ICommand DeleteBookCommand { get; }
-        public ICommand ReloadCommand { get; }
 
         public async Task InitializeAsync(int bookId)
         {
@@ -184,45 +179,47 @@ namespace lc.ViewModels
             {
                 IsLoading = true;
 
+                if (_bookService == null) throw new Exception("BookService не инициализирован");
+
                 var book = await _bookService.GetBookByIdAsync(BookId);
                 Book = book;
 
                 LoadCollections(book);
                 CoverImage = LoadImageSource(book?.CoverImagePath);
 
+                if (_chapterRepository == null) throw new Exception("ChapterRepository не инициализирован");
+                var chapters = await _chapterRepository.GetByBookIdAsync(BookId);
+
                 Chapters.Clear();
-                var chapters = await _chapterService.GetByBookIdAsync(BookId);
-                foreach (var chapter in chapters)
+                foreach (var chapter in (chapters ?? Enumerable.Empty<Chapter>()).OrderBy(c => c.ChapterNumber))
                     Chapters.Add(chapter);
 
+                if (_commentRepository == null) throw new Exception("CommentRepository не инициализирован");
+
+                var comments = await _commentRepository.GetByBookIdAsync(BookId);
+
                 Comments.Clear();
-                var comments = await _commentService.GetByBookIdAsync(BookId);
-                foreach (var comment in comments)
+                foreach (var comment in (comments ?? Enumerable.Empty<Comment>()).OrderByDescending(c => c.CreatedAt))
                     Comments.Add(comment);
 
                 if (IsAuthenticated)
                 {
+                    if (_userLibraryService == null) throw new Exception("UserLibraryService не инициализирован");
                     IsInLibrary = await _userLibraryService.IsBookInLibraryAsync(BookId);
                     IsFavorite = await _userLibraryService.IsBookFavoriteAsync(BookId);
                 }
-                else
-                {
-                    IsInLibrary = false;
-                    IsFavorite = false;
-                }
-
-                OnPropertyChanged(nameof(CanRead));
-                OnPropertyChanged(nameof(CanAddComment));
-                OnPropertyChanged(nameof(CanManageBook));
-                OnPropertyChanged(nameof(ChaptersCountText));
             }
             catch (Exception ex)
             {
-                await _dialogService.ShowMessageAsync("Ошибка", $"Не удалось обновить данные: {ex.Message}");
+                if (_dialogService != null)
+                    await _dialogService.ShowMessageAsync("Ошибка", $"Не удалось обновить данные: {ex.Message}");
+                else
+                    System.Diagnostics.Debug.WriteLine($"Критическая ошибка: {ex.Message}");
             }
             finally
             {
                 IsLoading = false;
+                UpdateStateFromApp();
             }
         }
 
@@ -252,27 +249,37 @@ namespace lc.ViewModels
         {
             OnPropertyChanged(nameof(IsAuthenticated));
             OnPropertyChanged(nameof(CanRead));
-            OnPropertyChanged(nameof(CanAddComment));
+            OnPropertyChanged(nameof(CanComment));
             OnPropertyChanged(nameof(CanFavorite));
-            OnPropertyChanged(nameof(CanLibrary));
-            OnPropertyChanged(nameof(CanManageBook));
+            OnPropertyChanged(nameof(CanAddToLibrary));
+            OnPropertyChanged(nameof(CanEditOrDelete));
         }
 
-        private async Task StartReadingAsync()
+        private void StartReading()
         {
-            if (Book is null || Chapters.Count == 0) return;
-            await _windowService.OpenReaderAsync(Book.BookId, Chapters[0].ChapterId);
+            var firstChapter = Chapters.FirstOrDefault();
+            if (firstChapter != null)
+            {
+                OpenChapter(firstChapter);
+            }
+            else
+            {
+                _dialogService.ShowMessageAsync("Уведомление", "В этой книге пока нет глав.");
+            }
         }
 
-        private async Task OpenChapterAsync(Chapter? chapter)
+        private void OpenChapter(object? parameter)
         {
-            if (Book is null || chapter is null) return;
-            await _windowService.OpenReaderAsync(Book.BookId, chapter.ChapterId);
+            if (parameter is Chapter chapter && Book != null)
+            {
+                var readerWindow = new lc.Views.Windows.ReaderWindow(Book.BookId, chapter.ChapterId);
+                readerWindow.Show();
+            }
         }
 
         private async Task ToggleFavoriteAsync()
         {
-            if (Book is null) return;
+            if (Book is null || !IsAuthenticated) return;
 
             try
             {
@@ -293,28 +300,23 @@ namespace lc.ViewModels
             }
         }
 
-        private async Task ToggleLibraryAsync()
+        private async Task AddToLibraryAsync()
         {
-            if (Book is null) return;
+            if (Book is null || !IsAuthenticated) return;
 
             try
             {
                 if (IsInLibrary)
                 {
-                    await _userLibraryService.RemoveBookFromListAsync(
-                        _appState.CurrentUser!.UserId, 
-                        0, 
-                        Book.BookId);
+                    await _userLibraryService.RemoveFromLibraryAsync(Book.BookId);
                     IsInLibrary = false;
                 }
                 else
                 {
-                    await _userLibraryService.AddBookToListAsync(
-                        _appState.CurrentUser!.UserId,
-                        0,
-                        Book.BookId);
+                    await _userLibraryService.AddToLibraryAsync(Book.BookId);
                     IsInLibrary = true;
                 }
+                UpdateStateFromApp();
             }
             catch (Exception ex)
             {
@@ -324,41 +326,77 @@ namespace lc.ViewModels
 
         private async Task AddCommentAsync()
         {
-            if (Book is null || !IsAuthenticated) return;
-
-            var text = (NewCommentText ?? string.Empty).Trim();
-            if (string.IsNullOrWhiteSpace(text))
-            {
-                await _dialogService.ShowMessageAsync("Проверка", "Введите комментарий.");
-                return;
-            }
-
-            if (SelectedRating < 1 || SelectedRating > 10)
-            {
-                await _dialogService.ShowMessageAsync("Проверка", "Оценка должна быть от 1 до 10.");
-                return;
-            }
+            if (string.IsNullOrWhiteSpace(NewCommentText)) return;
 
             try
             {
-                var userId = _appState.CurrentUser!.UserId;
-                await _commentService.AddAsync(Book.BookId, userId, text, SelectedRating);
+                if (_appState?.CurrentUser == null)
+                {
+                    await _dialogService.ShowMessageAsync("Ошибка", "Необходимо войти в систему.");
+                    return;
+                }
 
+                if (_commentRepository == null)
+                {
+                    await _dialogService.ShowMessageAsync("Ошибка", "Репозиторий не инициализирован.");
+                    return;
+                }
+
+                var comment = new Comment
+                {
+                    UserId = _appState.CurrentUser.UserId,
+                    BookId = BookId,
+                    Text = NewCommentText,
+                    CreatedAt = DateTime.Now,
+                    UpdatedAt = DateTime.Now
+                };
+
+                await _commentRepository.CreateAsync(comment);
+
+                Comments.Insert(0, comment);
                 NewCommentText = string.Empty;
-                SelectedRating = 10;
-
-                await ReloadAsync();
             }
             catch (Exception ex)
             {
-                await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+                if (_dialogService != null)
+                    await _dialogService.ShowMessageAsync("Ошибка", $"Ошибка: {ex.Message}");
+            }
+        }
+
+        private async Task RateBookAsync(object? ratingParameter)
+        {
+            if (ratingParameter is string ratingStr && int.TryParse(ratingStr, out int rating))
+            {
+                try
+                {
+                    if (_appState?.CurrentUser == null)
+                    {
+                        await _dialogService.ShowMessageAsync("Ошибка", "Для оценки книги необходимо войти в аккаунт.");
+                        return;
+                    }
+
+                    if (_bookService == null)
+                    {
+                        await _dialogService.ShowMessageAsync("Ошибка", "Сервис книг недоступен.");
+                        return;
+                    }
+
+                    await _bookService.AddRatingAsync(BookId, _appState.CurrentUser.UserId, rating);
+
+                    await ReloadAsync();
+                    await _dialogService.ShowMessageAsync("Успех", "Оценка сохранена!");
+                }
+                catch (Exception ex)
+                {
+                    if (_dialogService != null)
+                        await _dialogService.ShowMessageAsync("Ошибка", $"Произошла ошибка при сохранении: {ex.Message}");
+                }
             }
         }
 
         private void EditBook()
         {
             if (Book is null) return;
-
             _navigationService.Navigate(new EditBookViewModel(Book.BookId));
         }
 
@@ -366,48 +404,19 @@ namespace lc.ViewModels
         {
             if (Book is null) return;
 
-            var confirmed = await _dialogService.ShowConfirmAsync(
-                "Удаление книги",
-                $"Удалить книгу «{Book.Title}»? Это действие нельзя отменить.");
-
-            if (!confirmed) return;
-
-            try
+            bool confirm = await _dialogService.ShowConfirmAsync("Внимание", "Вы уверены, что хотите безвозвратно удалить эту книгу?");
+            if (confirm)
             {
-                await _bookService.DeleteBookAsync(Book.BookId);
-                await _dialogService.ShowMessageAsync("Готово", "Книга удалена.");
-                _navigationService.GoBack();
+                try
+                {
+                    await _bookService.DeleteBookAsync(BookId);
+                    _navigationService.GoBack();
+                }
+                catch (Exception ex)
+                {
+                    await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+                }
             }
-            catch (Exception ex)
-            {
-                await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
-            }
-        }
-
-        private bool IsCurrentUserOwnerOrAdmin()
-        {
-            if (Book is null || _appState.CurrentUser is null) return false;
-
-            return _appState.CurrentUser.Role == UserRole.Admin
-                   || (Book.Publisher != null && Book.Publisher.UserId == _appState.CurrentUser.UserId);
-        }
-
-        private string BuildSubtitle()
-        {
-            if (Book is null) return string.Empty;
-
-            var parts = new List<string>();
-
-            if (!string.IsNullOrWhiteSpace(Book.AuthorName))
-                parts.Add(Book.AuthorName);
-
-            if (Book.CreatedAt != default)
-                parts.Add(Book.CreatedAt.ToString("yyyy", CultureInfo.CurrentCulture));
-
-            if (Book.Rating > 0)
-                parts.Add($"{Book.Rating:0.0} ★");
-
-            return string.Join(" • ", parts);
         }
 
         private static string FormatNumber(long value) => value.ToString("N0", CultureInfo.CurrentCulture);

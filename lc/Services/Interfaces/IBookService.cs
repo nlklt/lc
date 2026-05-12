@@ -12,6 +12,7 @@ namespace lc.Services
         Task DeleteBookAsync(int bookId);
         Task PublishBookAsync(int bookId);
         Task SaveBookAsync(int bookId);
+        Task AddRatingAsync(int bookId, int userId, int rating);
 
         Task<ReaderSession?> OpenReaderAsync(int bookId, int? chapterNumber = null);
 

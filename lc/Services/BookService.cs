@@ -1,13 +1,10 @@
-﻿using lc.Data.Repositories.Interfaces;
-using lc.Infrastructure.Data;
+﻿using lc.Data;
+using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
+using Dapper;
 using Microsoft.Data.SqlClient;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace lc.Services
 {
@@ -137,6 +134,56 @@ namespace lc.Services
             book.UpdatedAt = DateTime.Now;
 
             await _bookRepository.UpdateAsync(book);
+        }
+
+        public async Task AddRatingAsync(int bookId, int userId, int rating)
+        {
+            if (rating < 1 || rating > 5)
+                throw new ArgumentException("Оценка должна быть в диапазоне от 1 до 5.");
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            {
+                if (connection.State == System.Data.ConnectionState.Closed) connection.Open();
+
+                using (var transaction = connection.BeginTransaction())
+                {
+                    try
+                    {
+                        const string mergeSql = @"
+                        MERGE INTO BookRatings AS target
+                        USING (SELECT @BookId AS BookId, @UserId AS UserId) AS source
+                        ON (target.BookId = source.BookId AND target.UserId = source.UserId)
+                        WHEN MATCHED THEN
+                            UPDATE SET Rating = @Rating, RatedAt = GETDATE()
+                        WHEN NOT MATCHED THEN
+                            INSERT (BookId, UserId, Rating, RatedAt)
+                            VALUES (@BookId, @UserId, @Rating, GETDATE());";
+
+                        await connection.ExecuteAsync(mergeSql,
+                            new { BookId = bookId, UserId = userId, Rating = rating },
+                            transaction);
+
+
+                        const string updateBookSql = @"
+                        UPDATE Books 
+                        SET Rating = (
+                            SELECT AVG(CAST(Rating AS DECIMAL(3,2))) 
+                            FROM Books 
+                            WHERE BookId = @BookId
+                        )
+                        WHERE Id = @BookId";
+
+                        await connection.ExecuteAsync(updateBookSql, new { BookId = bookId }, transaction);
+
+                        transaction.Commit();
+                    }
+                    catch
+                    {
+                        transaction.Rollback();
+                        throw;
+                    }
+                }
+            }
         }
 
         public async Task<ReaderSession?> OpenReaderAsync(int bookId, int? chapterNumber = null)

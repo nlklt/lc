@@ -1,7 +1,4 @@
-﻿using System.Net;
-using static System.Net.Mime.MediaTypeNames;
-
-namespace lc.Models
+﻿namespace lc.Models
 {
     public class Chapter
     {

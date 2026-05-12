@@ -1,5 +1,5 @@
-﻿using lc.Data.Repositories.Interfaces;
-using lc.Infrastructure.Data;
+﻿using lc.Data;
+using lc.Data.Repositories.Interfaces;
 using lc.Models;
 using Microsoft.Data.SqlClient;
 

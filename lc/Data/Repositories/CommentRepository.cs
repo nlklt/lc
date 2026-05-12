@@ -1,4 +1,5 @@
-﻿using lc.Infrastructure.Data;
+﻿using lc.Data;
+using lc.Infrastructure.Data;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using Microsoft.Data.SqlClient;
@@ -34,10 +35,8 @@ namespace lc.Infrastructure.Repositories.Sql
         {
             const string sql = @"
             SELECT
-                c.CommentId, c.UserId, u.UserName, c.BookId,
-                c.Text, c.CreatedAt, c.UpdatedAt
+                c.CommentId, c.UserId, c.BookId, c.Text, c.CreatedAt, c.UpdatedAt
             FROM Comments c
-            JOIN Users u ON u.UserId = c.UserId
             WHERE c.BookId = @BookId
             ORDER BY c.CreatedAt DESC;";
 
@@ -61,14 +60,12 @@ namespace lc.Infrastructure.Repositories.Sql
             const string sql = @"
             INSERT INTO Comments
             (
-                UserId, BookId, ChapterId, Text,
-                CreatedAt, UpdatedAt
+                UserId, BookId, Text, CreatedAt, UpdatedAt
             )
             OUTPUT INSERTED.CommentId
             VALUES
             (
-                @UserId, @BookId, @Text,
-                @CreatedAt, @UpdatedAt
+                @UserId, @BookId, @Text, @CreatedAt, @UpdatedAt
             );";
 
             await using var connection = SqlConnectionFactory.CreateConnection();
@@ -130,11 +127,6 @@ namespace lc.Infrastructure.Repositories.Sql
             {
                 CommentId = reader.GetInt32(reader.GetOrdinal("CommentId")),
                 UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                User = new User
-                {
-                    UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                    UserName = reader.GetString(reader.GetOrdinal("UserName"))
-                },
                 BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
                 Text = reader.GetString(reader.GetOrdinal("Text")),
                 CreatedAt = reader.GetDateTimeSafe("CreatedAt"),

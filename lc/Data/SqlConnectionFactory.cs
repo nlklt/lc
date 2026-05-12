@@ -1,7 +1,7 @@
 ﻿using System.Configuration;
 using Microsoft.Data.SqlClient;
 
-namespace lc.Infrastructure.Data
+namespace lc.Data
 {
     public static class SqlConnectionFactory
     {

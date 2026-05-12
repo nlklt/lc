@@ -1,4 +1,5 @@
-﻿using lc.Infrastructure.Data;
+﻿using lc.Data;
+using lc.Infrastructure.Data;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using Microsoft.Data.SqlClient;
@@ -112,6 +113,7 @@ namespace lc.Infrastructure.Repositories.Sql
 
         private static void AddParameters(SqlCommand command, Chapter chapter)
         {
+            command.Parameters.AddWithValue("@ChapterId", chapter.ChapterId);
             command.Parameters.AddWithValue("@BookId", chapter.BookId);
             command.Parameters.AddWithValue("@ChapterNumber", chapter.ChapterNumber);
             command.Parameters.AddWithValue("@Title", (object?)chapter.Title ?? DBNull.Value);
@@ -124,7 +126,7 @@ namespace lc.Infrastructure.Repositories.Sql
         {
             return new Chapter
             {
-                ChapterId = reader.GetInt32(reader.GetOrdinal("Id")),
+                ChapterId = reader.GetInt32(reader.GetOrdinal("ChapterId")),
                 BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
                 ChapterNumber = reader.GetInt32(reader.GetOrdinal("ChapterNumber")),
                 Title = reader.GetNullableString("Title"),

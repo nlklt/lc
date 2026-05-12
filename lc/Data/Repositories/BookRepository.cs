@@ -1,5 +1,4 @@
 ﻿using lc.Data.Repositories.Interfaces;
-using lc.Infrastructure.Data;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Infrastructure.Repositories.Sql;
 using lc.Models;

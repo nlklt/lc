@@ -1,4 +1,5 @@
-﻿using lc.Data.Repositories.Interfaces;
+﻿using lc.Data;
+using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure.Data;
 using lc.Models;
 using lc.Models.Enums;
@@ -185,6 +186,67 @@ namespace lc.Infrastructure.Repositories.Sql
             command.Parameters.AddWithValue("@BookId", bookId);
 
             var result = await command.ExecuteScalarAsync();
+            return Convert.ToInt32(result) > 0;
+        }
+
+        public async Task AddToLibraryAsync(int userId, int bookId)
+        {
+            await using var connection = SqlConnectionFactory.CreateConnection();
+
+            const string query = """
+                INSERT INTO UserLibrary (UserId, BookId, AddedAt)
+                VALUES (@UserId, @BookId, @AddedAt)
+            """;
+
+            using var command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+            command.Parameters.AddWithValue("@AddedAt", DateTime.UtcNow);
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task RemoveFromLibraryAsync(int userId, int bookId)
+        {
+            await using var connection = SqlConnectionFactory.CreateConnection();
+
+            const string query = """
+                DELETE FROM UserLibrary
+                WHERE UserId = @UserId
+                  AND BookId = @BookId
+            """;
+
+            using var command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
+        }
+
+        public async Task<bool> IsBookInLibraryAsync(int userId, int bookId)
+        {
+            await using var connection = SqlConnectionFactory.CreateConnection();
+
+            const string query = """
+                SELECT COUNT(1)
+                FROM UserLibrary
+                WHERE UserId = @UserId
+                  AND BookId = @BookId
+            """;
+
+            using var command = new SqlCommand(query, connection);
+
+            command.Parameters.AddWithValue("@UserId", userId);
+            command.Parameters.AddWithValue("@BookId", bookId);
+
+            await connection.OpenAsync();
+
+            var result = await command.ExecuteScalarAsync();
+
             return Convert.ToInt32(result) > 0;
         }
     }

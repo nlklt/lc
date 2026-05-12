@@ -5,10 +5,10 @@ namespace lc
 {
     public partial class App : Application
     {
-        protected override void OnStartup(StartupEventArgs e)
+        protected override async void OnStartup(StartupEventArgs e)
         {
-            DatabaseInitializer.Initialize();
             base.OnStartup(e);
+            DatabaseInitializer.Initialize();
         }
     }
 }

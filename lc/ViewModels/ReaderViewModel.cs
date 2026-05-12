@@ -22,7 +22,6 @@ namespace lc.ViewModels
 
         public ReaderViewModel(int bookId, int? chapterId = null)
         {
-            _chapterService = ServiceLocator.ChapterService;
             _bookService = ServiceLocator.BookService;
             _dialogService = ServiceLocator.DialogService;
 

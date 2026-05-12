@@ -8,36 +8,24 @@ namespace lc.Infrastructure
 {
     public static class ServiceLocator
     {
+        public static ITagRepository            TagRepository { get; } = new TagRepository();
+        public static IUserRepository           UserRepository { get; } = new UserRepository();
+        public static IChapterRepository        ChapterRepository { get; } = new ChapterRepository();
+        public static ICommentRepository        CommentRepository { get; } = new CommentRepository();
+        public static ICategoryRepository       CategoryRepository { get; } = new CategoryRepository();
+        public static IUserLibraryRepository    UserLibraryRepository { get; } = new UserLibraryRepository();
+        public static IBookRepository           BookRepository { get; } = new BookRepository(ChapterRepository, CommentRepository, TagRepository, CategoryRepository);
+
         public static AppState AppState { get; } = new AppState();
 
-        public static IChapterRepository ChapterRepository { get; } = new ChapterRepository();
-        public static ICommentRepository CommentRepository { get; } = new CommentRepository();
-        public static ITagRepository TagRepository { get; } = new TagRepository();
-        public static ICategoryRepository CategoryRepository { get; } = new CategoryRepository();
-        public static IBookRepository BookRepository { get; } = new BookRepository(ChapterRepository, CommentRepository, TagRepository, CategoryRepository);
-        public static IBookService BookService { get; } = new BookService(BookRepository, ChapterRepository, TagRepository, CategoryRepository);
-        public static IUserLibraryService UserLibraryService { get; set; } = null!;
-        
-        public static IReaderService ReaderService { get; set; } = null!;
-        public static IDialogService DialogService { get; set; } = null!;
-        public static IChapterService ChapterService { get; set; } = null!;
-        public static ICommentService CommentService { get; set; } = null!;
-        public static IWindowService WindowService { get; set; } = null!;
+        public static IThemeService         ThemeService { get; } = new ThemeService();
+        public static IWindowService        WindowService { get; set; } = new WindowService();
+        public static IDialogService        DialogService { get; set; } = new DialogService();
+        public static INavigationService    NavigationService { get; } = new NavigationService(AppState);
+        public static IAuthService          AuthService { get; } = new AuthService(UserRepository, AppState);
+        public static IUserLibraryService   UserLibraryService { get; set; } = new UserLibraryService(UserLibraryRepository);
+        public static IReaderService        ReaderService { get; set; } = new ReaderService(BookRepository, ChapterRepository, UserRepository);
+        public static IBookService          BookService { get; } = new BookService(BookRepository, ChapterRepository, TagRepository, CategoryRepository);
 
-        public static INavigationService NavigationService { get; } =
-            new NavigationService(AppState);
-        public static IUserRepository UserRepository { get; } =
-            new UserRepository();
-        public static IThemeService ThemeService { get; } =
-            new ThemeService();
-        //public static ILanguageService LanguageService { get; } =
-        //    new LanguageService();
-        public static IAuthService AuthService { get; } =
-            new AuthService(
-                UserRepository,
-                AppState//,
-                //ThemeService,
-                //LanguageService
-                );
     }
 }

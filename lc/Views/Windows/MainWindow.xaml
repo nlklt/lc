@@ -44,7 +44,7 @@
         </Border>
 
         <!-- Навигационное меню -->
-        <vc:NavigationView Grid.Row="1" Grid.Column="0"/>
+        <vc:NavigationView Grid.Row="1" Grid.Column="0" Background="{DynamicResource TransparentBrush}"/>
 
         <!-- Основной контент -->
         <Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource BackgroundBrush}">

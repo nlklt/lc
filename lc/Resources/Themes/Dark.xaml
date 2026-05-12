@@ -12,7 +12,7 @@
 
     <Color x:Key="ColorAccent">#1565C0</Color>
 
-    <!-- Фон -->
+    <!-- Фон Background="#121212" -->
     <Color x:Key="ColorBackground">#0A0A0A</Color>
     <Color x:Key="ColorSurface">#1C1C1C</Color>
     <Color x:Key="ColorAltSurface">#2F2F2F</Color>

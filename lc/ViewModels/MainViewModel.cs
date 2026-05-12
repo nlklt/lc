@@ -70,8 +70,10 @@ namespace lc.ViewModels
 
         private void Initialize()
         {
-            if (CurrentViewModel == null)
+            if (_appState.CurrentUser == null)
                 _navigation.Navigate(new CatalogViewModel());
+            else
+                _navigation.Navigate(new ProfileViewModel());
         }
 
         private void Logout()

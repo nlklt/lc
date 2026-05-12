@@ -7,6 +7,8 @@ namespace lc.Commands
         private readonly Func<object?, Task> _execute;
         private readonly Func<object?, bool>? _canExecute;
         private bool _isExecuting;
+        private Func<Task> saveSettingsAsync;
+        private Func<object?, bool> canSaveSettings;
 
         public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
         {
@@ -18,6 +20,12 @@ namespace lc.Commands
         {
             _execute = execute;
             _canExecute = canExecute;
+        }
+
+        public AsyncRelayCommand(Func<Task> saveSettingsAsync, Func<object?, bool> canSaveSettings)
+        {
+            this.saveSettingsAsync = saveSettingsAsync;
+            this.canSaveSettings = canSaveSettings;
         }
 
         public bool IsExecuting

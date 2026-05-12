@@ -26,5 +26,10 @@ namespace lc.Commands
 
         public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
         public void Execute(object? parameter) => _execute(parameter);
+
+        internal void RaiseCanExecuteChanged()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

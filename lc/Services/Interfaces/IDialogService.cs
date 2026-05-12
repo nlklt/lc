@@ -5,6 +5,7 @@
         Task ShowMessageAsync(string title, string message);        // Постое соо
         Task<bool> ShowConfirmAsync(string title, string message);  // Соо об подтверждении
 
+        string? OpenFile(string title, string filter);
         Task<string?> ChooseListAsync(string title, string message, IReadOnlyList<string> options);
 
         bool? ShowLoginDialog();    // Окон входа

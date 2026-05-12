@@ -13,8 +13,8 @@
     </UserControl.DataContext>
     
     <Border Background="{StaticResource SurfaceBrush}"
-            BorderThickness="0" CornerRadius="0,8,0,0"
-            Margin="0,4,0,0" Padding="12">
+            BorderThickness="0" CornerRadius="8"
+            Margin="4,4,0,4" Padding="12">
 
         <DockPanel LastChildFill="True">
             <StackPanel DockPanel.Dock="Top"

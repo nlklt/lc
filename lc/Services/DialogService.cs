@@ -1,11 +1,27 @@
 ﻿using lc.Services.Interfaces;
 using lc.Views.Windows;
+using Microsoft.Win32;
 using System.Windows;
 
 namespace lc.Services
 {
     public class DialogService : IDialogService
     {
+        public string? OpenFile(string title, string filter)
+        {
+            OpenFileDialog openFileDialog = new OpenFileDialog
+            {
+                Title = title,
+                Filter = filter
+            };
+
+            if (openFileDialog.ShowDialog() == true)
+            {
+                return openFileDialog.FileName;
+            }
+            return null;
+        }
+
         public Task ShowMessageAsync(string title, string message)
         {
             MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);

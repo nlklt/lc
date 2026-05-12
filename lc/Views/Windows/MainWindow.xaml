@@ -38,7 +38,7 @@
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="—"  Style="{StaticResource CaptionButtonStyle}" Click="Minimize_Click"/>
                     <Button Content="☐" Style="{StaticResource CaptionButtonStyle}" Click="Maximize_Click"/>
-                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}"   Click="Close_Click"/>
+                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}"   Click="Close_Click" IsCancel="True"/>
                 </StackPanel>
             </Grid>
         </Border>

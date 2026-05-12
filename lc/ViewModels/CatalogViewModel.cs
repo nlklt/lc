@@ -185,6 +185,7 @@ namespace lc.ViewModels
 
             HookAppState();
             LoadStaticFilterOptions();
+            InitializeAsync();
         }
 
         private void HookAppState()

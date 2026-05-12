@@ -28,19 +28,21 @@ namespace lc.ViewModels
 
         public MainViewModel()
         {
-            //User newUser = new User();
-            //newUser.UserId = 12;
-            //newUser.UserName = "admin2";
-            //newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
-            //newUser.AvatarPath = "";
-            //newUser.BlockedComments = false;
-            //newUser.CreatedAt = DateTime.Now;
-            //newUser.Role = (UserRole)3;
-            //newUser.PreferredLanguage = (Language)0;
-            //newUser.PreferredTheme = "Dark";
-            //_appState.CurrentUser = newUser;
-
             _appState   = ServiceLocator.AppState;
+
+            User newUser = new();
+                newUser.UserId = 12;
+                newUser.UserName = "admin2";
+                newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
+                newUser.AvatarPath = "";
+                newUser.BlockedComments = false;
+                newUser.CreatedAt = DateTime.Now;
+                newUser.Role = (UserRole)3;
+                newUser.PreferredLanguage = (Language)0;
+                newUser.PreferredTheme = "Dark";
+
+            _appState.CurrentUser = newUser;
+
             _auth       = ServiceLocator.AuthService;
             _navigation = ServiceLocator.NavigationService;
 

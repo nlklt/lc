@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:lc.ViewModels"
         xmlns:conv="clr-namespace:lc.Converters"
+        xmlns:helpers="clr-namespace:lc.Helpers"
         mc:Ignorable="d"
         Title="Регистрация" 
         Width="400" SizeToContent="Height"
@@ -15,8 +16,34 @@
         FocusManager.FocusedElement="{Binding ElementName=UserNameTb}"
         d:DataContext="{d:DesignInstance Type=vm:RegisterViewModel}">
 
+    <WindowChrome.WindowChrome>
+        <WindowChrome CaptionHeight="32" 
+                      CornerRadius="0" GlassFrameThickness="0" 
+                      UseAeroCaptionButtons="True" />
+    </WindowChrome.WindowChrome>
+
     <Grid>
-        <Border Padding="12" CornerRadius="8"
+        <Grid.RowDefinitions>
+            <RowDefinition Height="32"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}">
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
+                    <TextBlock Text="☁ LibCloude"  Foreground="{DynamicResource TextPrimaryBrush}" 
+                           FontWeight="Bold" FontSize="14"/>
+                </StackPanel>
+
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button Content="—"  Style="{StaticResource CaptionButtonStyle}" Click="Minimize_Click"/>
+                    <Button Content="☐" Style="{StaticResource CaptionButtonStyle}" Click="Maximize_Click"/>
+                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}"   Command="{Binding CancelCommand}"  IsCancel="True"/>
+                </StackPanel>
+            </Grid>
+        </Border>
+        
+        <Border Grid.Row="1" Padding="12"
                 Background="{StaticResource SurfaceBrush}"
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center" Width="400">
@@ -58,8 +85,6 @@
                 <Button Content="Уже есть аккаунт" 
                         Command="{Binding NavigateLoginCommand}" 
                         Style="{StaticResource SecondaryButtonStyle}"/>
-
-                <Button Click="CancelButton_Click" Visibility="Collapsed" IsCancel="True"/>
             </StackPanel>
         </Border>
     </Grid>

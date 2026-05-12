@@ -28,6 +28,7 @@
             <conv:MultiObjectConverter x:Key="MultiObjectConverter"/>
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
             <conv:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
+            <conv:NullableDoubleToStringConverter x:Key="IntToVisibilityConverter" />
             <conv:NullableDoubleToStringConverter x:Key="NullableDoubleToStringConverter" />
             <conv:CheckBoxStateToNullableBoolConverter x:Key="CheckBoxStateToNullableBoolConverter" />
 

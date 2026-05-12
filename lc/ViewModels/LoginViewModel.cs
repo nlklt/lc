@@ -9,8 +9,9 @@ namespace lc.ViewModels
 {
     public class LoginViewModel : ViewModelBase
     {
-        private readonly IAuthService   _authService;
-        private readonly IDialogService _dialogService;
+        private readonly IAuthService   _auth;
+        private readonly IDialogService _dialog;
+        private readonly INavigationService _navigation;
 
         private readonly AppState _appState;
 
@@ -38,15 +39,20 @@ namespace lc.ViewModels
             set => SetProperty(ref _isBusy, value);
         }
 
+        public ICommand CancelCommand { get; }
         public ICommand LoginCommand { get; }
         public ICommand NavigateRegisterCommand { get; }
 
         public LoginViewModel()
         {
-            _appState      = ServiceLocator.AppState;
-            _authService   = ServiceLocator.AuthService;
-            _dialogService = ServiceLocator.DialogService;
 
+            _appState = ServiceLocator.AppState;
+
+            _auth       = ServiceLocator.AuthService;
+            _dialog     = ServiceLocator.DialogService;
+            _navigation = ServiceLocator.NavigationService;
+
+            CancelCommand           = new RelayCommand(GoBack);
             LoginCommand            = new AsyncRelayCommand(LoginAsync, CanLogin);
             NavigateRegisterCommand = new RelayCommand(OpenRegister);
         }
@@ -73,7 +79,7 @@ namespace lc.ViewModels
                     IsBusy = true;
                     ErrorMessage = string.Empty;
 
-                    var user = await _authService.LoginAsync(UserName, password);
+                    var user = await _auth.LoginAsync(UserName, password);
 
                     if (user == null)
                     {
@@ -95,10 +101,17 @@ namespace lc.ViewModels
             }
         }
 
+        private void GoBack(object? obj)
+        {
+            RequestClose?.Invoke();
+            _navigation.Navigate(_appState?.PrevViewModel ?? new CatalogViewModel());
+
+        }
+
         private void OpenRegister(object? obj)
         {
             RequestClose?.Invoke();
-            _dialogService.ShowRegisterDialog();
+            _dialog.ShowRegisterDialog();
         }
     }
 }

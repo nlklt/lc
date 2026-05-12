@@ -3,52 +3,40 @@
   "WorkspaceRootPath": "U:\\CourseProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\navigationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\navigationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\idialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\idialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\variants\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\variants\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\controls\\button.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\controls\\button.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\controls\\text.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\controls\\text.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\windows\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\windows\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\navigationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\navigationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\ithemeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\ithemeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\infrastructure\\appstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\infrastructure\\appstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\userrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\iuserrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\models\\user.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -58,32 +46,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1494,
-          "SelectedChildIndex": 7,
+          "SelectedChildIndex": 3,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "Button.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Controls\\Button.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Controls\\Button.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Controls\\Button.xaml",
-              "RelativeToolTip": "lc\\Resources\\Controls\\Button.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T09:00:47.111Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "Buttons.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Variants\\Buttons.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Variants\\Buttons.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Variants\\Buttons.xaml",
-              "RelativeToolTip": "lc\\Resources\\Variants\\Buttons.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T08:58:56.621Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -95,127 +59,123 @@
             {
               "$type": "Document",
               "DocumentIndex": 3,
-              "Title": "Text.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Controls\\Text.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Controls\\Text.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Controls\\Text.xaml",
-              "RelativeToolTip": "lc\\Resources\\Controls\\Text.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T08:56:57.095Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "LoginViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\LoginViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\LoginViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\LoginViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\LoginViewModel.cs",
-              "ViewState": "AgIAADAAAAAAAAAAAAAAADwAAAA1AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T08:44:39.01Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "RegisterViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\RegisterViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\RegisterViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\RegisterViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\RegisterViewModel.cs",
-              "ViewState": "AgIAAC4AAAAAAAAAAAAuwEAAAAA+AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T08:44:37.452Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "NavigationView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\NavigationView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Controls\\NavigationView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\NavigationView.xaml",
-              "RelativeToolTip": "lc\\Views\\Controls\\NavigationView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T08:41:09.59Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "AppState.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Infrastructure\\AppState.cs",
-              "RelativeDocumentMoniker": "lc\\Infrastructure\\AppState.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Infrastructure\\AppState.cs",
-              "RelativeToolTip": "lc\\Infrastructure\\AppState.cs",
-              "ViewState": "AgIAAAgAAAAAAAAAAAAQwCYAAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T08:48:07.393Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "NavigationViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\NavigationViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\NavigationViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\NavigationViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\NavigationViewModel.cs",
-              "ViewState": "AgIAABIAAAAAAAAAAAA5wDQAAAA7AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T08:50:09.683Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
               "Title": "MainViewModel.cs",
               "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\MainViewModel.cs",
               "RelativeDocumentMoniker": "lc\\ViewModels\\MainViewModel.cs",
               "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\MainViewModel.cs",
               "RelativeToolTip": "lc\\ViewModels\\MainViewModel.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAABUAAAAAAAAAA==",
+              "ViewState": "AgIAABYAAAAAAAAAAAAcwB8AAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T08:40:41.278Z",
+              "WhenOpened": "2026-05-12T15:53:57.444Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "AuthService.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\AuthService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\AuthService.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Services\\AuthService.cs",
-              "RelativeToolTip": "lc\\Services\\AuthService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAJAAAAAAAAAA==",
+              "DocumentIndex": 1,
+              "Title": "DialogService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\DialogService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\DialogService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\DialogService.cs",
+              "RelativeToolTip": "lc\\Services\\DialogService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABAAAAAAAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T08:39:29.098Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "RegisterWindow.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Windows\\RegisterWindow.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Windows\\RegisterWindow.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Windows\\RegisterWindow.xaml",
-              "RelativeToolTip": "lc\\Views\\Windows\\RegisterWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T08:37:14.468Z",
+              "WhenOpened": "2026-05-12T15:53:40.191Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "LoginWindow.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Windows\\LoginWindow.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Windows\\LoginWindow.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Windows\\LoginWindow.xaml",
-              "RelativeToolTip": "lc\\Views\\Windows\\LoginWindow.xaml",
+              "Title": "ProfileViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\ProfileViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\ProfileViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\ProfileViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\ProfileViewModel.cs",
+              "ViewState": "AgIAACcAAAAAAAAAAAA5wDEAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T15:39:07.106Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "UserRepository.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\UserRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\UserRepository.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\UserRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\UserRepository.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAAYwB8AAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T15:44:39.407Z",
+              "EditorCaption": ""
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1494,
+          "SelectedChildIndex": 0,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IDialogService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IDialogService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IDialogService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IDialogService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IDialogService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T15:55:59.878Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "IThemeService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IThemeService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IThemeService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IThemeService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IThemeService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T15:53:18.274Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ProfileView.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\ProfileView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Pages\\ProfileView.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\ProfileView.xaml",
+              "RelativeToolTip": "lc\\Views\\Pages\\ProfileView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T08:37:12.131Z",
+              "WhenOpened": "2026-05-12T15:50:33.713Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "IUserRepository.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IUserRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IUserRepository.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IUserRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IUserRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAqAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T15:43:19.576Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "User.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Models\\User.cs",
+              "RelativeDocumentMoniker": "lc\\Models\\User.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Models\\User.cs",
+              "RelativeToolTip": "lc\\Models\\User.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T15:39:41.509Z",
               "EditorCaption": ""
             }
           ]

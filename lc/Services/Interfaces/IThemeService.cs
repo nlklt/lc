@@ -4,12 +4,12 @@ namespace lc.Services
 {
     public interface IThemeService
     {
-        void ApplyTheme(string themeName);
+        void SetTheme(string themeName);
     }
 
     public class ThemeService : IThemeService
     {
-        public void ApplyTheme(string themeName)
+        public void SetTheme(string themeName)
         {
             var dictionaries = Application.Current.Resources.MergedDictionaries;
 

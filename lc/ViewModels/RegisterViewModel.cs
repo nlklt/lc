@@ -3,6 +3,7 @@ using lc.Infrastructure;
 using lc.Models;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 
@@ -10,10 +11,11 @@ namespace lc.ViewModels
 {
     public class RegisterViewModel : ViewModelBase
     {
-        private readonly IAuthService   _authService;
-        private readonly IDialogService _dialogService;
-
         private readonly AppState _appState;
+
+        private readonly IAuthService       _auth;
+        private readonly IDialogService     _dialog;
+        private readonly INavigationService _navigation;
 
         private string _userName     = string.Empty;
         private string _errorMessage = string.Empty;
@@ -40,15 +42,18 @@ namespace lc.ViewModels
         }
 
         public ICommand RegisterCommand { get; }
+        public ICommand CancelCommand { get; }
         public ICommand NavigateLoginCommand { get; }
 
         public RegisterViewModel()
         {
 
-            _appState      = ServiceLocator.AppState;
-            _authService   = ServiceLocator.AuthService;
-            _dialogService = ServiceLocator.DialogService;
+            _appState   = ServiceLocator.AppState;
+            _auth       = ServiceLocator.AuthService;
+            _dialog     = ServiceLocator.DialogService;
+            _navigation = ServiceLocator.NavigationService;
 
+            CancelCommand        = new RelayCommand(GoBack);
             RegisterCommand      = new AsyncRelayCommand(RegisterAsync, CanRegister);
             NavigateLoginCommand = new RelayCommand(OpenLogin);
         }
@@ -85,7 +90,7 @@ namespace lc.ViewModels
                     IsBusy = true;
                     ErrorMessage = string.Empty;
 
-                    await _authService.RegisterAsync(UserName, password);
+                    await _auth.RegisterAsync(UserName, password);
 
                     RequestClose?.Invoke();
                 }
@@ -100,10 +105,17 @@ namespace lc.ViewModels
             }
         }
 
+        private void GoBack(object? obj)
+        {
+            RequestClose?.Invoke();
+            _navigation.Navigate(_appState?.PrevViewModel ?? new CatalogViewModel());
+            
+        }
+
         private void OpenLogin(object? obj)
         {
             RequestClose?.Invoke();
-            _dialogService.ShowLoginDialog();
+            _dialog.ShowLoginDialog();
         }
     }
 }

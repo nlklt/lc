@@ -14,11 +14,11 @@ namespace lc.Data.Repositories
         public async Task<int> CreateAsync(User user)
         {
             const string sql = @"
-INSERT INTO Users
-(UserName, PasswordHash, AvatarPath, BlockedComments, CreatedAt, Role, PreferredLanguage, PreferredTheme)
-OUTPUT INSERTED.UserId
-VALUES
-(@UserName, @PasswordHash, @AvatarPath, @BlockedComments, @CreatedAt, @Role, @PreferredLanguage, @PreferredTheme);";
+            INSERT INTO Users
+            (UserName, PasswordHash, AvatarPath, BlockedComments, CreatedAt, Role, PreferredLanguage, PreferredTheme)
+            OUTPUT INSERTED.UserId
+            VALUES
+            (@UserName, @PasswordHash, @AvatarPath, @BlockedComments, @CreatedAt, @Role, @PreferredLanguage, @PreferredTheme);";
 
             await using var connection = SqlConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -30,18 +30,18 @@ VALUES
             return result is int ChapterId ? ChapterId : 0;
         }
 
-        public async Task UpdateAsync(User user)
+        public async Task<bool> UpdateAsync(User user)
         {
             const string sql = @"
-UPDATE Users
-SET UserName = @UserName,
-    PasswordHash = @PasswordHash,
-    AvatarPath = @AvatarPath,
-    BlockedComments = @BlockedComments,
-    Role = @Role,
-    PreferredLanguage = @PreferredLanguage,
-    PreferredTheme = @PreferredTheme
-WHERE UserId = @UserId;";
+            UPDATE Users
+            SET UserName = @UserName,
+                PasswordHash = @PasswordHash,
+                AvatarPath = @AvatarPath,
+                BlockedComments = @BlockedComments,
+                Role = @Role,
+                PreferredLanguage = @PreferredLanguage,
+                PreferredTheme = @PreferredTheme
+            WHERE UserId = @UserId;";
 
             await using var connection = SqlConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -51,6 +51,8 @@ WHERE UserId = @UserId;";
             AddUserParameters(command, user);
 
             await command.ExecuteNonQueryAsync();
+
+            return true;
         }
 
         public async Task DeleteAsync(int userId)
@@ -69,9 +71,9 @@ WHERE UserId = @UserId;";
         public async Task<User?> GetByIdAsync(int userId)
         {
             const string sql = @"
-SELECT UserId, UserName, PasswordHash, AvatarPath, BlockedComments, CreatedAt, Role, PreferredLanguage, PreferredTheme
-FROM Users
-WHERE UserId = @UserId;";
+            SELECT UserId, UserName, PasswordHash, AvatarPath, BlockedComments, CreatedAt, Role, PreferredLanguage, PreferredTheme
+            FROM Users
+            WHERE UserId = @UserId;";
 
             await using var connection = SqlConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -89,9 +91,9 @@ WHERE UserId = @UserId;";
         public async Task<User?> GetByUserNameAsync(string userName)
         {
             const string sql = @"
-SELECT UserId, UserName, PasswordHash, AvatarPath, BlockedComments, CreatedAt, Role, PreferredLanguage, PreferredTheme
-FROM Users
-WHERE UserName = @UserName;";
+            SELECT UserId, UserName, PasswordHash, AvatarPath, BlockedComments, CreatedAt, Role, PreferredLanguage, PreferredTheme
+            FROM Users
+            WHERE UserName = @UserName;";
 
             await using var connection = SqlConnectionFactory.CreateConnection();
             await connection.OpenAsync();
@@ -180,7 +182,5 @@ WHERE UserName = @UserName;";
 
             return user;
         }
-
-        public async Task UpdateSettingsAsync(User user) { }
     }
 }

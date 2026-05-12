@@ -5,45 +5,44 @@ using lc.Models.Enums;
 using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
-using System.Runtime.InteropServices;
 using System.Windows.Input;
-using System.Windows.Interop;
 
 namespace lc.ViewModels
 {
     public class MainViewModel : ViewModelBase
     {
-        private readonly AppState _appState;
+        private readonly AppState           _appState;
+        private readonly IAuthService       _auth;
         private readonly INavigationService _navigation;
-        private readonly IAuthService _authService;
 
-        public ViewModelBase CurrentViewModel => _appState.CurrentViewModel;
-        public bool IsAuthenticated => _appState.IsAuthenticated;
-        public bool IsAdmin => _appState.IsAdmin;
-        public bool IsWriter => _appState.IsWriter;
-        public bool IsReader => _appState.IsReader;
+        public ViewModelBase CurrentViewModel => _appState.CurrentViewModel ?? new CatalogViewModel();
         public bool IsGuest => _appState.IsGuest;
-        public string CurrentUserName => _appState.CurrentUserName;
-        public string CurrentRoleName => _appState.CurrentRoleName;
+        public bool IsReader => _appState.IsReader;
+        public bool IsWriter => _appState.IsWriter;
+        public bool IsAdmin => _appState.IsAdmin;
+        public bool IsAuthenticated => _appState.IsAuthenticated;
+        public string CurrentUserName => _appState.CurrentUser?.UserName ?? "Гость";
+        public UserRole CurrentUserRole => _appState.CurrentUser?.Role ?? UserRole.Guest;
 
         public ICommand LogoutCommand { get; }
 
         public MainViewModel()
         {
-            _appState = ServiceLocator.AppState;
-            User newUser = new User();
-            newUser.UserId = 12;
-            newUser.UserName = "admin2";
-            newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
-            newUser.AvatarPath = "";
-            newUser.BlockedComments = false;
-            newUser.CreatedAt = DateTime.Now;
-            newUser.Role = (UserRole)3;
-            newUser.PreferredLanguage = (Language)0;
-            newUser.PreferredTheme = "Dark";
-            _appState.CurrentUser = newUser;
+            //User newUser = new User();
+            //newUser.UserId = 12;
+            //newUser.UserName = "admin2";
+            //newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
+            //newUser.AvatarPath = "";
+            //newUser.BlockedComments = false;
+            //newUser.CreatedAt = DateTime.Now;
+            //newUser.Role = (UserRole)3;
+            //newUser.PreferredLanguage = (Language)0;
+            //newUser.PreferredTheme = "Dark";
+            //_appState.CurrentUser = newUser;
+
+            _appState   = ServiceLocator.AppState;
+            _auth       = ServiceLocator.AuthService;
             _navigation = ServiceLocator.NavigationService;
-            _authService = ServiceLocator.AuthService;
 
             LogoutCommand = new RelayCommand(_ => Logout(), _ => IsAuthenticated);
 
@@ -54,26 +53,28 @@ namespace lc.ViewModels
 
                 if (e.PropertyName == nameof(AppState.CurrentUser))
                 {
-                    OnPropertyChanged(nameof(IsAuthenticated));
-                    OnPropertyChanged(nameof(IsAdmin));
-                    OnPropertyChanged(nameof(IsWriter));
-                    OnPropertyChanged(nameof(IsReader));
                     OnPropertyChanged(nameof(IsGuest));
+                    OnPropertyChanged(nameof(IsReader));
+                    OnPropertyChanged(nameof(IsWriter));
+                    OnPropertyChanged(nameof(IsAdmin));
+                    OnPropertyChanged(nameof(IsAuthenticated));
                     OnPropertyChanged(nameof(CurrentUserName));
-                    OnPropertyChanged(nameof(CurrentRoleName));
+                    OnPropertyChanged(nameof(CurrentUserRole));
                 }
             };
 
             Initialize();
         }
+
         private void Initialize()
         {
-            _navigation.Navigate(new CatalogViewModel());
+            if (CurrentViewModel == null)
+                _navigation.Navigate(new CatalogViewModel());
         }
 
         private void Logout()
         {
-            _authService.Logout();
+            _auth.Logout();
             _navigation.Navigate(new CatalogViewModel());
         }
     }

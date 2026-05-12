@@ -9,22 +9,13 @@ namespace lc.Services
 {
     public class AuthService : IAuthService
     {
+        private readonly AppState        _appState;
         private readonly IUserRepository _userRepository;
-        private readonly AppState _appState;
-        //private readonly IThemeService _themeService;
-        //private readonly ILanguageService _languageService;
 
-        public AuthService(
-            IUserRepository userRepository,
-            AppState appState //,
-            //IThemeService themeService,
-            //ILanguageService languageService
-            )
+        public AuthService(AppState appState, IUserRepository userRepository)
         {
-            _userRepository = userRepository;
             _appState = appState;
-            //_themeService = themeService;
-            //_languageService = languageService;
+            _userRepository = userRepository;
         }
 
         public async Task<User?> LoginAsync(string userName, string password)
@@ -49,19 +40,10 @@ namespace lc.Services
 
         public async Task ApplyUserSettingsAsync(User user)
         {
-            _appState.CurrentCulture = user.PreferredLanguage switch
-            {
-                Language.Русский => new CultureInfo("ru-RU"),
-                Language.Английский => new CultureInfo("en-US"),
-                _ => new CultureInfo("ru-RU")
-            };
+            _appState.CurrentLanguage = user.PreferredLanguage;
 
-            CultureInfo.DefaultThreadCurrentCulture = _appState.CurrentCulture;
-            CultureInfo.DefaultThreadCurrentUICulture = _appState.CurrentCulture;
 
             _appState.CurrentTheme = user.PreferredTheme;
-            //_themeService.ApplyTheme(user.PreferredTheme);
-            //_languageService.ApplyLanguage(user.PreferredLanguage);
 
             await Task.CompletedTask;
         }
@@ -70,12 +52,9 @@ namespace lc.Services
         {
             _appState.CurrentUser = null;
             _appState.SelectedBook = null;
-            _appState.SelectedChapter = null;
 
-            _appState.CurrentCulture = new CultureInfo("ru-RU");
+            _appState.CurrentLanguage = Language.Русский;
             _appState.CurrentTheme = "Dark";
-            //_themeService.ApplyTheme("Dark");
-            //_languageService.ApplyLanguage(Language.Русский);
         }
     }
 }

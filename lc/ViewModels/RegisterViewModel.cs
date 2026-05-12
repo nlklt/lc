@@ -1,38 +1,30 @@
-﻿using System.Windows.Input;
-using lc.Commands;
+﻿using lc.Commands;
 using lc.Infrastructure;
+using lc.Models;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace lc.ViewModels
 {
     public class RegisterViewModel : ViewModelBase
     {
-        private readonly IAuthService _authService;
-        private readonly INavigationService _navigation;
+        private readonly IAuthService   _authService;
+        private readonly IDialogService _dialogService;
 
-        private string _userName = string.Empty;
-        private string _password = string.Empty;
-        private string _confirmPassword = string.Empty;
+        private readonly AppState _appState;
+
+        private string _userName     = string.Empty;
         private string _errorMessage = string.Empty;
         private bool _isBusy;
+
+        public Action? RequestClose { get; set; }
 
         public string UserName
         {
             get => _userName;
             set => SetProperty(ref _userName, value);
-        }
-
-        public string Password
-        {
-            get => _password;
-            set => SetProperty(ref _password, value);
-        }
-
-        public string ConfirmPassword
-        {
-            get => _confirmPassword;
-            set => SetProperty(ref _confirmPassword, value);
         }
 
         public string ErrorMessage
@@ -52,49 +44,66 @@ namespace lc.ViewModels
 
         public RegisterViewModel()
         {
-            _authService = ServiceLocator.AuthService;
-            _navigation = ServiceLocator.NavigationService;
 
-            RegisterCommand =
-                new AsyncRelayCommand(RegisterAsync, CanRegister);
+            _appState      = ServiceLocator.AppState;
+            _authService   = ServiceLocator.AuthService;
+            _dialogService = ServiceLocator.DialogService;
 
-            NavigateLoginCommand =
-                new RelayCommand(_ => _navigation.Navigate(new LoginViewModel()));
+            RegisterCommand      = new AsyncRelayCommand(RegisterAsync, CanRegister);
+            NavigateLoginCommand = new RelayCommand(OpenLogin);
         }
 
         private bool CanRegister(object? obj)
         {
-            return !IsBusy &&
-                   !string.IsNullOrWhiteSpace(UserName) &&
-                   !string.IsNullOrWhiteSpace(Password) &&
-                   !string.IsNullOrWhiteSpace(ConfirmPassword);
+            return !IsBusy && !string.IsNullOrWhiteSpace(UserName);
         }
 
-        private async Task RegisterAsync(object? obj)
+        private async Task RegisterAsync(object? parameter)
         {
-            try
+            if (parameter is object[] passwordBoxes && passwordBoxes.Length == 2)
             {
-                IsBusy = true;
-                ErrorMessage = string.Empty;
+                var passBox = passwordBoxes[0] as PasswordBox;
+                var confirmPassBox = passwordBoxes[1] as PasswordBox;
 
-                if (Password != ConfirmPassword)
+                var password = passBox?.Password;
+                var confirmPassword = confirmPassBox?.Password;
+
+                if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
+                {
+                    ErrorMessage = "Заполните оба поля пароля.";
+                    return;
+                }
+
+                if (password != confirmPassword)
                 {
                     ErrorMessage = "Пароли не совпадают.";
                     return;
                 }
 
-                await _authService.RegisterAsync(UserName, Password);
+                try
+                {
+                    IsBusy = true;
+                    ErrorMessage = string.Empty;
 
-                _navigation.Navigate(new CatalogViewModel());
+                    await _authService.RegisterAsync(UserName, password);
+
+                    RequestClose?.Invoke();
+                }
+                catch (Exception ex)
+                {
+                    ErrorMessage = ex.Message;
+                }
+                finally
+                {
+                    IsBusy = false;
+                }
             }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
+        }
+
+        private void OpenLogin(object? obj)
+        {
+            RequestClose?.Invoke();
+            _dialogService.ShowLoginDialog();
         }
     }
 }

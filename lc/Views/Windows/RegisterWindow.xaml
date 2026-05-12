@@ -1,0 +1,66 @@
+﻿<Window x:Class="lc.Views.Windows.RegisterWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:lc.ViewModels"
+        xmlns:conv="clr-namespace:lc.Converters"
+        mc:Ignorable="d"
+        Title="Регистрация" 
+        Width="400" SizeToContent="Height"
+        WindowStartupLocation="CenterScreen" 
+        WindowStyle="None" 
+        ResizeMode="NoResize"
+        Background="{StaticResource BackgroundBrush}"
+        FocusManager.FocusedElement="{Binding ElementName=UserNameTb}"
+        d:DataContext="{d:DesignInstance Type=vm:RegisterViewModel}">
+
+    <Grid>
+        <Border Padding="12" CornerRadius="8"
+                Background="{StaticResource SurfaceBrush}"
+                HorizontalAlignment="Center" 
+                VerticalAlignment="Center" Width="400">
+            <StackPanel>
+                <TextBlock Text="Регистрация" FontSize="20" 
+                           Foreground="{DynamicResource TextPrimaryBrush}"
+                           FontWeight="SemiBold" Margin="0,0,0,24"/>
+
+                <TextBlock Text="Имя пользователя" FontSize="14"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <TextBox x:Name="UserNameTb"  Style="{DynamicResource TextBoxPlaceholderStyle}"
+                         Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" 
+                         Tag="user" Margin="0,4,0,12"/>
+
+                <TextBlock Text="Пароль" FontSize="14"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <PasswordBox x:Name="PassBox" Style="{StaticResource PasswordBoxPlaceholderStyle}"
+                             Tag=".pth1234" Margin="0,4,0,8"/>
+
+                <TextBlock Text="Повторите пароль" FontSize="14"
+                           Foreground="{DynamicResource TextPrimaryBrush}"/>
+                <PasswordBox x:Name="ConfirmPassBox" Style="{StaticResource PasswordBoxPlaceholderStyle}"
+                             Tag=".pth1234" Margin="0,4,0,8"/>
+
+                <TextBlock Text="{Binding ErrorMessage}" Foreground="Tomato" 
+                           TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+                <Button Content="Создать аккаунт" Command="{Binding RegisterCommand}" 
+                        Style="{DynamicResource PrimaryButtonStyle}"
+                        Height="36" Margin="0,0,0,12" IsDefault="True">
+                    <Button.CommandParameter>
+                        <MultiBinding Converter="{StaticResource MultiObjectConverter}">
+                            <Binding ElementName="PassBox" />
+                            <Binding ElementName="ConfirmPassBox" />
+                        </MultiBinding>
+                    </Button.CommandParameter>
+                </Button>
+
+                <Button Content="Уже есть аккаунт" 
+                        Command="{Binding NavigateLoginCommand}" 
+                        Style="{StaticResource SecondaryButtonStyle}"/>
+
+                <Button Click="CancelButton_Click" Visibility="Collapsed" IsCancel="True"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

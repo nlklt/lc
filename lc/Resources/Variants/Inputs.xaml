@@ -48,53 +48,47 @@
         </Setter>
     </Style>
 
-    <Style x:Key="TextBoxLabeledPlaceholderStyle" TargetType="TextBox"
-           BasedOn="{StaticResource TextBoxPlaceholderStyle}">
-        <Setter Property="Margin" Value="0,0,0,4" />
+    <Style x:Key="PasswordBoxPlaceholderStyle" TargetType="PasswordBox">
+        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="Padding" Value="6,2" />
+        <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="PasswordChar" Value="●"/>
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="TextBox">
-                    <StackPanel>
-                        <TextBlock x:Name="HeaderBlock"
-                                   Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(automation:AutomationProperties.Name)}"
-                                   Foreground="{StaticResource TextPrimaryBrush}"
-                                   FontSize="14"
-                                   FontWeight="SemiBold"
-                                   Margin="0,0,0,4" />
+                <ControlTemplate TargetType="PasswordBox">
+                    <Border x:Name="Root"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="4">
+                        <Grid>
+                            <ScrollViewer x:Name="PART_ContentHost"
+                                      Margin="0"
+                                      Focusable="False"
+                                      VerticalAlignment="Center"/>
 
-                        <Border x:Name="Root"
-                                Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="4">
-                            <Grid>
-                                <ScrollViewer x:Name="PART_ContentHost"
-                                              Margin="0"
-                                              Focusable="False" />
-
-                                <TextBlock x:Name="Watermark"
-                                           Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
-                                           Foreground="{StaticResource TextMutedBrush}"
-                                           Margin="{TemplateBinding Padding}"
-                                           VerticalAlignment="Center"
-                                           IsHitTestVisible="False"
-                                           Visibility="Collapsed" />
-                            </Grid>
-                        </Border>
-                    </StackPanel>
+                            <TextBlock x:Name="Watermark"
+                                   Text="{TemplateBinding Tag}"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Margin="{TemplateBinding Padding}"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False"
+                                   Visibility="Collapsed" />
+                        </Grid>
+                    </Border>
 
                     <ControlTemplate.Triggers>
-                        <Trigger Property="Text" Value="">
+                        <MultiTrigger>
+                            <MultiTrigger.Conditions>
+                                <Condition Property="IsFocused" Value="False"/>
+                            </MultiTrigger.Conditions>
                             <Setter TargetName="Watermark" Property="Visibility" Value="Visible" />
-                        </Trigger>
-
-                        <Trigger Property="Text" Value="{x:Null}">
-                            <Setter TargetName="Watermark" Property="Visibility" Value="Visible" />
-                        </Trigger>
-
-                        <Trigger Property="Tag" Value="">
-                            <Setter TargetName="Watermark" Property="Visibility" Value="Collapsed" />
-                        </Trigger>
+                        </MultiTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

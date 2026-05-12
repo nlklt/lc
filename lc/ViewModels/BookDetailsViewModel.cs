@@ -129,7 +129,7 @@ namespace lc.ViewModels
             }
         }
 
-        public bool IsAuthenticated => _appState?.IsAuthenticated ?? false;
+        public bool IsAuthenticated => !_appState.IsGuest;
         public bool CanRead => Book is not null && IsAuthenticated;
         public bool CanFavorite => Book is not null && IsAuthenticated;
         public bool CanAddToLibrary => Book is not null && IsAuthenticated && !_isInLibrary;
@@ -148,9 +148,9 @@ namespace lc.ViewModels
         public string AgeRatingText => Book is null ? "—" : $"{Book.AgeRating}+";
         public string WritingStatusText => Book is null ? "—" : GetWritingStatusText(Book.WritingStatus);
         public string LanguageText => Book is null ? "—" : GetLanguageText(Book.Language);
-        public string CreatedAtText => Book is null ? "—" : Book.CreatedAt.ToString("dd.MM.yyyy", CultureInfo.CurrentCulture);
-        public string UpdatedAtText => Book is null ? "—" : Book.UpdatedAt.ToString("dd.MM.yyyy", CultureInfo.CurrentCulture);
-        public string ChaptersCountText => Book is null ? "—" : Chapters.Count.ToString(CultureInfo.CurrentCulture);
+        public string CreatedAtText => Book is null ? "—" : Book.CreatedAt.ToString("dd.MM.yyyy");
+        public string UpdatedAtText => Book is null ? "—" : Book.UpdatedAt.ToString("dd.MM.yyyy");
+        public string ChaptersCountText => Book is null ? "—" : Chapters.Count.ToString();
         public string SymbolsCountText => Book is null ? "—" : FormatNumber(Book.SymbolsCount);
 
         public ICommand BackCommand { get; }
@@ -419,7 +419,7 @@ namespace lc.ViewModels
             }
         }
 
-        private static string FormatNumber(long value) => value.ToString("N0", CultureInfo.CurrentCulture);
+        private static string FormatNumber(long value) => value.ToString("N0");
 
         private static string GetWritingStatusText(WritingStatus status) => status switch
         {

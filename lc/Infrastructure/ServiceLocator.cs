@@ -22,7 +22,7 @@ namespace lc.Infrastructure
         public static IWindowService        WindowService { get; set; } = new WindowService();
         public static IDialogService        DialogService { get; set; } = new DialogService();
         public static INavigationService    NavigationService { get; } = new NavigationService(AppState);
-        public static IAuthService          AuthService { get; } = new AuthService(UserRepository, AppState);
+        public static IAuthService          AuthService { get; } = new AuthService(AppState, UserRepository);
         public static IUserLibraryService   UserLibraryService { get; set; } = new UserLibraryService(UserLibraryRepository);
         public static IReaderService        ReaderService { get; set; } = new ReaderService(BookRepository, ChapterRepository, UserRepository);
         public static IBookService          BookService { get; } = new BookService(BookRepository, ChapterRepository, TagRepository, CategoryRepository);

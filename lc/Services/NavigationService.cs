@@ -44,10 +44,10 @@ namespace lc.Services
                 return _appState.CanManageBooks;
 
             if (viewModel.GetType().Name == "ReaderViewModel")
-                return _appState.IsAuthenticated;
+                return !_appState.IsGuest;
 
             if (viewModel.GetType().Name == "ProfileViewModel")
-                return _appState.IsAuthenticated;
+                return !_appState.IsGuest;
 
             return true;
         }

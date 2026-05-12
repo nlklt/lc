@@ -6,7 +6,7 @@
              xmlns:vp="clr-namespace:lc.Views.Pages"
              xmlns:conv="clr-namespace:lc.Converters"
              xmlns:vc="clr-namespace:lc.Views.Controls"
-             StartupUri="MainWindow.xaml">
+             StartupUri="Views/Windows/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
@@ -25,8 +25,9 @@
                 <ResourceDictionary Source="/Resources/Variants/CheckBoxes.xaml"/>
             </ResourceDictionary.MergedDictionaries>
 
-            <conv:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
+            <conv:MultiObjectConverter x:Key="MultiObjectConverter"/>
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+            <conv:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
             <conv:NullableDoubleToStringConverter x:Key="NullableDoubleToStringConverter" />
             <conv:CheckBoxStateToNullableBoolConverter x:Key="CheckBoxStateToNullableBoolConverter" />
 
@@ -36,14 +37,6 @@
 
             <DataTemplate DataType="{x:Type vm:EditBookViewModel}">
                 <vp:EditBookView />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type vm:LoginViewModel}">
-                <vp:LoginView />
-            </DataTemplate>
-
-            <DataTemplate DataType="{x:Type vm:RegisterViewModel}">
-                <vp:RegisterView />
             </DataTemplate>
 
             <DataTemplate DataType="{x:Type vm:BookDetailsViewModel}">

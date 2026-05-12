@@ -1,7 +1,56 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "U:\\CourseProject\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\navigationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\navigationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\variants\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\variants\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\controls\\button.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\controls\\button.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\controls\\text.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\controls\\text.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\windows\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\loginwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\windows\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\loginviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\navigationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\navigationviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\mainviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\infrastructure\\appstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\infrastructure\\appstate.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,8 +58,32 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1494,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 7,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "Button.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Controls\\Button.xaml",
+              "RelativeDocumentMoniker": "lc\\Resources\\Controls\\Button.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Controls\\Button.xaml",
+              "RelativeToolTip": "lc\\Resources\\Controls\\Button.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T09:00:47.111Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Buttons.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Variants\\Buttons.xaml",
+              "RelativeDocumentMoniker": "lc\\Resources\\Variants\\Buttons.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Variants\\Buttons.xaml",
+              "RelativeToolTip": "lc\\Resources\\Variants\\Buttons.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T08:58:56.621Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -18,11 +91,137 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Text.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Controls\\Text.xaml",
+              "RelativeDocumentMoniker": "lc\\Resources\\Controls\\Text.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Controls\\Text.xaml",
+              "RelativeToolTip": "lc\\Resources\\Controls\\Text.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T08:56:57.095Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "LoginViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\LoginViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\LoginViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\LoginViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\LoginViewModel.cs",
+              "ViewState": "AgIAADAAAAAAAAAAAAAAADwAAAA1AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T08:44:39.01Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "RegisterViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\RegisterViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\RegisterViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\RegisterViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\RegisterViewModel.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAuwEAAAAA+AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T08:44:37.452Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "NavigationView.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\NavigationView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\NavigationView.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\NavigationView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\NavigationView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T08:41:09.59Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "AppState.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Infrastructure\\AppState.cs",
+              "RelativeDocumentMoniker": "lc\\Infrastructure\\AppState.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Infrastructure\\AppState.cs",
+              "RelativeToolTip": "lc\\Infrastructure\\AppState.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAQwCYAAAA4AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T08:48:07.393Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "NavigationViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\NavigationViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\NavigationViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\NavigationViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\NavigationViewModel.cs",
+              "ViewState": "AgIAABIAAAAAAAAAAAA5wDQAAAA7AAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T08:50:09.683Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "MainViewModel.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\MainViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\MainViewModel.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\MainViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\MainViewModel.cs",
+              "ViewState": "AgIAAAYAAAAAAAAAAAAAABcAAABUAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T08:40:41.278Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\AuthService.cs",
+              "ToolTip": "U:\\CourseProject\\lc\\Services\\AuthService.cs",
+              "RelativeToolTip": "lc\\Services\\AuthService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAADMAAAAJAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-12T08:39:29.098Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "RegisterWindow.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Windows\\RegisterWindow.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Windows\\RegisterWindow.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Windows\\RegisterWindow.xaml",
+              "RelativeToolTip": "lc\\Views\\Windows\\RegisterWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T08:37:14.468Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "LoginWindow.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Windows\\LoginWindow.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Windows\\LoginWindow.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Windows\\LoginWindow.xaml",
+              "RelativeToolTip": "lc\\Views\\Windows\\LoginWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-12T08:37:12.131Z",
+              "EditorCaption": ""
             }
           ]
         },
         {
-          "DockedWidth": 1393,
+          "DockedWidth": 1799,
           "SelectedChildIndex": -1,
           "Children": [
             {

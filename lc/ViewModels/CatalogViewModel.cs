@@ -43,7 +43,6 @@ namespace lc.ViewModels
             set
             {
                 SetProperty(ref _selectedBook, value);
-                _appState.SelectedBook = SelectedBook;
                 OnPropertyChanged(nameof(CanEditSelectedBook));
                 OnPropertyChanged(nameof(CanDeleteSelectedBook));
             }
@@ -117,7 +116,7 @@ namespace lc.ViewModels
         }
 
         public bool IsAdmin => _appState.IsAdmin;
-        public bool IsAuthenticated => _appState.IsAuthenticated;
+        public bool IsAuthenticated => !_appState.IsGuest;
         public bool CanManageBooks => _appState.CanManageBooks;
         public bool CanEditSelectedBook => CanManageBooks && SelectedBook != null;
         public bool CanDeleteSelectedBook => CanManageBooks && SelectedBook != null;
@@ -416,7 +415,6 @@ namespace lc.ViewModels
             if (book == null)
                 return;
 
-            _appState.SelectedBook = book;
             _navigationService.Navigate(new ReaderViewModel(book.BookId));
         }
 

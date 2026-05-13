@@ -15,6 +15,9 @@ namespace lc.ViewModels
         private readonly IDialogService     _dialog;
         private readonly INavigationService _navigation;
 
+        private readonly IThemeService        _themeService;
+        private readonly ILocalizationService _localizationService;
+
         public bool IsGuest => _appState.IsGuest;
         public bool IsWriter => _appState.IsWriter;
         public bool IsAdmin => _appState.IsAdmin;
@@ -22,6 +25,7 @@ namespace lc.ViewModels
 
         public string CurrentUserName => _appState.CurrentUser?.UserName ?? "Гость";
         public UserRole CurrentUserRole => _appState.CurrentUser?.Role ?? UserRole.Guest;
+        public string AvatarPath => _appState.CurrentUser?.AvatarPath ?? "";
 
         public ICommand NavigateCatalogCommand { get; }
         public ICommand NavigateLoginCommand { get; }
@@ -38,6 +42,9 @@ namespace lc.ViewModels
             _dialog     = ServiceLocator.DialogService;
             _navigation = ServiceLocator.NavigationService;
 
+            _themeService = ServiceLocator.ThemeService;
+            _localizationService = ServiceLocator.LocalisationService;
+
             NavigateLoginCommand    = new RelayCommand(_ => _dialog.ShowLoginDialog());
             NavigateRegisterCommand = new RelayCommand(_ => _dialog.ShowRegisterDialog());
             NavigateCatalogCommand  = new RelayCommand(_ => _navigation.Navigate(new CatalogViewModel()));
@@ -53,6 +60,7 @@ namespace lc.ViewModels
                 OnPropertyChanged(nameof(IsAuthenticated));
                 OnPropertyChanged(nameof(CurrentUserName));
                 OnPropertyChanged(nameof(CurrentUserRole));
+                OnPropertyChanged(nameof(AvatarPath));
             };
         }
 

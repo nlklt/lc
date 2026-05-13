@@ -8,10 +8,8 @@
              d:DataContext="{d:DesignInstance Type=vm:CatalogViewModel}"
              mc:Ignorable="d">
 
-    <Border Background="{StaticResource SurfaceBrush}"
-            BorderThickness="0"
-            CornerRadius="6"
-            Padding="12" Margin="4,0,0,0">
+    <Border Background="{DynamicResource SurfaceBrush}"
+            BorderThickness="0" CornerRadius="6" Padding="12">
         <ScrollViewer VerticalScrollBarVisibility="Hidden"
                       HorizontalScrollBarVisibility="Disabled">
             <ContentControl Content="{Binding}" FontSize="16">
@@ -80,12 +78,12 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{StaticResource TextBoxPlaceholderStyle}" Tag="От"
+                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
                                                      Text="{Binding Rating.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                             <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
                                                        VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                                       Foreground="{StaticResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{StaticResource TextBoxPlaceholderStyle}" Tag="До"
+                                                       Foreground="{DynamicResource BorderBrush}"/>
+                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
                                                      Text="{Binding Rating.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                         </Grid>
  
@@ -97,12 +95,12 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{StaticResource TextBoxPlaceholderStyle}" Tag="От"
+                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
                                                      Text="{Binding Chapters.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                             <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
                                                        VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                                       Foreground="{StaticResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{StaticResource TextBoxPlaceholderStyle}" Tag="До"
+                                                       Foreground="{DynamicResource BorderBrush}"/>
+                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
                                                      Text="{Binding Chapters.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                         </Grid>
 
@@ -114,27 +112,27 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{StaticResource TextBoxPlaceholderStyle}" Tag="От"
+                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
                                                      Text="{Binding Symbols.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                             <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
                                                        VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                                       Foreground="{StaticResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{StaticResource TextBoxPlaceholderStyle}" Tag="До"
+                                                       Foreground="{DynamicResource BorderBrush}"/>
+                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
                                                      Text="{Binding Symbols.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                         </Grid>
 
-                                        <TextBlock Text="Дата публикации" Style="{StaticResource FilterLabelStyle}" />
+                                        <TextBlock Text="Дата публикации" Style="{DynamicResource FilterLabelStyle}" />
 
                                         <StackPanel Orientation="Horizontal" Margin="8,2">
                                             <DatePicker SelectedDate="{Binding CreatedAt.From, Mode=TwoWay}"
                                                         Tag="С даты"
-                                                        Style="{StaticResource DatePickerPlaceholderStyle}" />
+                                                        Style="{DynamicResource DatePickerPlaceholderStyle}" />
 
                                             <TextBlock Text=" — " VerticalAlignment="Center" />
 
                                             <DatePicker SelectedDate="{Binding CreatedAt.To, Mode=TwoWay}"
                                                         Tag="По дату"
-                                                        Style="{StaticResource DatePickerPlaceholderStyle}" />
+                                                        Style="{DynamicResource DatePickerPlaceholderStyle}" />
                                         </StackPanel>
 
                                         <TextBlock Text="Статус Тайтла" Margin="8,8,8,4"
@@ -149,7 +147,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <CheckBox Content="{Binding Name}"
-                                                              Style="{StaticResource CheckBoxThreeStateStyle}"
+                                                              Style="{DynamicResource CheckBoxThreeStateStyle}"
                                                               Foreground="{DynamicResource TextPrimaryBrush}"
                                                               IsThreeState="True"
                                                               IsChecked="{Binding State, Mode=TwoWay,
@@ -171,7 +169,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <CheckBox Content="{Binding Name}"
-                                                              Style="{StaticResource CheckBoxThreeStateStyle}"
+                                                              Style="{DynamicResource CheckBoxThreeStateStyle}"
                                                               Foreground="{DynamicResource TextPrimaryBrush}"
                                                               IsThreeState="True"
                                                               IsChecked="{Binding State, Mode=TwoWay,
@@ -194,7 +192,7 @@
                                             <ItemsControl.ItemTemplate>
                                                 <DataTemplate>
                                                     <CheckBox Content="{Binding Name}"
-                                                              Style="{StaticResource CheckBoxThreeStateStyle}"
+                                                              Style="{DynamicResource CheckBoxThreeStateStyle}"
                                                               Foreground="{DynamicResource TextPrimaryBrush}"
                                                               IsThreeState="True"
                                                               IsChecked="{Binding State, Mode=TwoWay,
@@ -208,10 +206,10 @@
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <Button Grid.Column="0" Style="{StaticResource PrimaryButtonStyle}"
+                                            <Button Grid.Column="0" Style="{DynamicResource PrimaryButtonStyle}"
                                                     Command="{Binding ApplyFiltersCommand}"
                                                     Content="Применить" Margin="0,0,12,0"/>
-                                            <Button Grid.Column="1" Style="{StaticResource SecondaryButtonStyle}"
+                                            <Button Grid.Column="1" Style="{DynamicResource SecondaryButtonStyle}"
                                                     Command="{Binding ResetFiltersCommand}"
                                                     Content="Сбросить всё" />
                                         </Grid>
@@ -254,7 +252,7 @@
                                                 </Border>
 
                                                 <CheckBox Content="Строгое соответствие"
-                                                          Style="{StaticResource CheckBoxTwoStateStyle}"
+                                                          Style="{DynamicResource CheckBoxTwoStateStyle}"
                                                           Foreground="{DynamicResource TextPrimaryBrush}"
                                                           IsChecked="{Binding IsStrictCategoryMatch, Mode=TwoWay}"
                                                           Margin="0,4"/>
@@ -263,7 +261,7 @@
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <CheckBox Content="{Binding Name}"
-                                                                      Style="{StaticResource CheckBoxThreeStateStyle}"
+                                                                      Style="{DynamicResource CheckBoxThreeStateStyle}"
                                                                       Foreground="{DynamicResource TextPrimaryBrush}"
                                                                       IsThreeState="True"
                                                                       IsChecked="{Binding State, Mode=TwoWay,
@@ -310,7 +308,7 @@
                                                 </Border>
 
                                                 <CheckBox Content="Строгое соответствие"
-                                                          Style="{StaticResource CheckBoxTwoStateStyle}"
+                                                          Style="{DynamicResource CheckBoxTwoStateStyle}"
                                                           Foreground="{DynamicResource TextPrimaryBrush}"
                                                           IsChecked="{Binding IsStrictTagMatch, Mode=TwoWay}"
                                                           Margin="0,4"/>
@@ -319,7 +317,7 @@
                                                     <ItemsControl.ItemTemplate>
                                                         <DataTemplate>
                                                             <CheckBox Content="{Binding Name}"
-                                                                      Style="{StaticResource CheckBoxThreeStateStyle}"
+                                                                      Style="{DynamicResource CheckBoxThreeStateStyle}"
                                                                       Foreground="{DynamicResource TextPrimaryBrush}"
                                                                       IsThreeState="True"
                                                                       IsChecked="{Binding State, Mode=TwoWay,

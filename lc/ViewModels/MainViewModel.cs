@@ -31,8 +31,8 @@ namespace lc.ViewModels
             _appState   = ServiceLocator.AppState;
 
             User newUser = new();
-                newUser.UserId = 12;
-                newUser.UserName = "admin2";
+                newUser.UserId = 999;
+                newUser.UserName = "test_admin";
                 newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
                 newUser.AvatarPath = "";
                 newUser.BlockedComments = false;

@@ -11,8 +11,8 @@
 
     <!-- Основной стиль DatePicker -->
     <Style x:Key="DatePickerPlaceholderStyle" TargetType="DatePicker">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontSize" Value="14" />
@@ -70,7 +70,7 @@
                             <TextBlock x:Name="Watermark"
                                    Grid.Column="0"
                                    Text="{TemplateBinding Tag}"
-                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Foreground="{DynamicResource TextMutedBrush}"
                                    VerticalAlignment="Center"
                                    Margin="4,0"
                                    IsHitTestVisible="False"
@@ -100,11 +100,11 @@
                     <ControlTemplate.Triggers>
                         <!-- Реакция на наведение всего контрола -->
                         <Trigger Property="IsMouseOver" Value="True">
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BorderFocusBrush}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource BorderFocusBrush}" />
                         </Trigger>
 
                         <Trigger Property="IsKeyboardFocusWithin" Value="True">
-                            <Setter TargetName="Root" Property="BorderBrush" Value="{StaticResource BorderFocusBrush}" />
+                            <Setter TargetName="Root" Property="BorderBrush" Value="{DynamicResource BorderFocusBrush}" />
                         </Trigger>
 
                         <Trigger Property="SelectedDate" Value="{x:Null}">

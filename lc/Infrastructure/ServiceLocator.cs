@@ -19,6 +19,7 @@ namespace lc.Infrastructure
         public static AppState AppState { get; } = new AppState();
 
         public static IThemeService         ThemeService { get; } = new ThemeService();
+        public static ILocalizationService  LocalisationService { get; } = new LocalizationService();
         public static IWindowService        WindowService { get; set; } = new WindowService();
         public static IDialogService        DialogService { get; set; } = new DialogService();
         public static INavigationService    NavigationService { get; } = new NavigationService(AppState);

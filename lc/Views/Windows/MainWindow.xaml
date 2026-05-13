@@ -6,8 +6,8 @@
         xmlns:vm="clr-namespace:lc.ViewModels"
         xmlns:vc="clr-namespace:lc.Views.Controls"
         mc:Ignorable="d"
-        Title="LibCloud" Height="700" Width="1200"
-        Background="{StaticResource BackgroundBrush}"
+        Title="LibCloud" Height="700" Width="1252"
+        Background="{DynamicResource BackgroundBrush}"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
 
     <WindowChrome.WindowChrome>
@@ -36,9 +36,9 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="—"  Style="{StaticResource CaptionButtonStyle}" Click="Minimize_Click"/>
-                    <Button Content="☐" Style="{StaticResource CaptionButtonStyle}" Click="Maximize_Click"/>
-                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}"   Click="Close_Click" IsCancel="True"/>
+                    <Button Content="—"  Style="{DynamicResource CaptionButtonStyle}" Click="Minimize_Click"/>
+                    <Button Content="☐" Style="{DynamicResource CaptionButtonStyle}" Click="Maximize_Click"/>
+                    <Button Content="✕" Style="{DynamicResource CloseButtonStyle}"   Click="Close_Click" IsCancel="True"/>
                 </StackPanel>
             </Grid>
         </Border>

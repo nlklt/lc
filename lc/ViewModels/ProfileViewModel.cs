@@ -5,6 +5,7 @@ using lc.Models;
 using lc.Models.Enums;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Input;
@@ -14,16 +15,18 @@ namespace lc.ViewModels
     public class ProfileViewModel : ViewModelBase
     {
         private readonly AppState _appState;
-        
+
         private readonly IUserRepository        _userRepository;
         private readonly INavigationService     _navigation;
+        private readonly IThemeService          _themeService;
+        private readonly ILocalizationService   _localizationService;
 
         private string      _userName = string.Empty;
         private string?     _avatarPath;
         private bool        _blockedComments;
         private DateTime    _createdAt;
         private UserRole    _role;
-        private Language    _preferredLanguage;
+        private Language    _preferredLanguage = 0;
         private string      _preferredTheme = "Dark";
 
         private bool    _isBusy;
@@ -31,7 +34,6 @@ namespace lc.ViewModels
 
         private string      _originalUserName = string.Empty;
         private string?     _originalAvatarPath;
-        //private bool        _originalBlockedComments;
         private Language    _originalPreferredLanguage;
         private string      _originalPreferredTheme = "Dark";
 
@@ -84,6 +86,11 @@ namespace lc.ViewModels
             get => _preferredLanguage;
             set
             {
+                _localizationService.SetLanguage(value switch
+                {
+                    Language.Русский => "ru",
+                    Language.Английский => "en"
+                });
                 SetProperty(ref _preferredLanguage, value);
                 OnPropertyChanged(nameof(CanSave));
             }
@@ -96,19 +103,26 @@ namespace lc.ViewModels
             {
                 if (SetProperty(ref _preferredTheme, value))
                 {
-                    ServiceLocator.ThemeService.SetTheme(value);
+                    _themeService.SetTheme(value);
+                    SetProperty(ref _preferredTheme, value);
                     OnPropertyChanged(nameof(CanSave));
                 }
             }
         }
 
+        private bool _isSettingsOpen;
+
+        public bool IsSettingsOpen
+        {
+            get => _isSettingsOpen;
+            set => SetProperty(ref _isSettingsOpen, value);
+        }
+
+
         public User? CurrentUser => _appState.CurrentUser;
 
-        // Список доступных языков
-        public IEnumerable<Language> AllLanguages => [Language.Русский, Language.Английский];
-
-        // Список доступных тем
         public List<string> AvailableThemes { get; } = new() { "Light", "Dark" };
+        public IEnumerable<Language> AllLanguages => [Language.Русский, Language.Английский];
 
         public ICommand SaveSettingsCommand { get; }
         public ICommand ResetSettingsCommand { get; }
@@ -119,10 +133,14 @@ namespace lc.ViewModels
         public ICommand LogoutCommand { get; }
         public ICommand DeleteAccountCommand { get; }
 
+        public ICommand ToggleSettingsCommand { get; }
+
         public ProfileViewModel()
         {
             _appState = ServiceLocator.AppState;
             _userRepository = ServiceLocator.UserRepository;
+            _themeService = ServiceLocator.ThemeService;
+            _localizationService = ServiceLocator.LocalisationService;
 
             _appState.PropertyChanged += AppStateOnPropertyChanged;
 
@@ -138,6 +156,18 @@ namespace lc.ViewModels
             
             LogoutCommand           = new RelayCommand(OnLogout);
             DeleteAccountCommand    = new AsyncRelayCommand(DeleteAccountAsync);
+
+            ToggleSettingsCommand = new RelayCommand(_ => IsSettingsOpen = !IsSettingsOpen);
+
+            _preferredTheme = _appState.CurrentUser.PreferredTheme;
+            _themeService.SetTheme(_preferredTheme);
+
+            _localizationService.SetLanguage(_preferredLanguage switch
+                {
+                    Language.Русский => "ru",
+                    Language.Английский => "en"
+                });
+            PreferredLanguage = _appState.CurrentUser.PreferredLanguage;
         }
 
         public bool IsBusy

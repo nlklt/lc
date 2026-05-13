@@ -11,8 +11,11 @@
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Themes/Dark.xaml"/>
+                
                 <ResourceDictionary Source="/Resources/Themes/Brushes.xaml"/>
                 <ResourceDictionary Source="/Resources/Themes/Metrics.xaml"/>
+                
+                <ResourceDictionary Source="/Resources/Localisation/Language.ru.xaml"/>
                 
                 <ResourceDictionary Source="/Resources/Controls/Text.xaml"/>
                 <ResourceDictionary Source="/Resources/Controls/Button.xaml"/>

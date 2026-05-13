@@ -12,7 +12,7 @@
         WindowStartupLocation="CenterScreen" 
         WindowStyle="None" 
         ResizeMode="NoResize"
-        Background="{StaticResource BackgroundBrush}"
+        Background="{DynamicResource BackgroundBrush}"
         FocusManager.FocusedElement="{Binding ElementName=UserNameTb}"
         d:DataContext="{d:DesignInstance Type=vm:RegisterViewModel}">
 
@@ -36,15 +36,15 @@
                 </StackPanel>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
-                    <Button Content="—"  Style="{StaticResource CaptionButtonStyle}" Click="Minimize_Click"/>
-                    <Button Content="☐" Style="{StaticResource CaptionButtonStyle}" Click="Maximize_Click"/>
-                    <Button Content="✕" Style="{StaticResource CloseButtonStyle}"   Command="{Binding CancelCommand}"  IsCancel="True"/>
+                    <Button Content="—"  Style="{DynamicResource CaptionButtonStyle}" Click="Minimize_Click"/>
+                    <Button Content="☐" Style="{DynamicResource CaptionButtonStyle}" Click="Maximize_Click"/>
+                    <Button Content="✕" Style="{DynamicResource CloseButtonStyle}"   Command="{Binding CancelCommand}"  IsCancel="True"/>
                 </StackPanel>
             </Grid>
         </Border>
         
         <Border Grid.Row="1" Padding="12"
-                Background="{StaticResource SurfaceBrush}"
+                Background="{DynamicResource SurfaceBrush}"
                 HorizontalAlignment="Center" 
                 VerticalAlignment="Center" Width="400">
             <StackPanel>
@@ -60,12 +60,12 @@
 
                 <TextBlock Text="Пароль" FontSize="14"
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
-                <PasswordBox x:Name="PassBox" Style="{StaticResource PasswordBoxPlaceholderStyle}"
+                <PasswordBox x:Name="PassBox" Style="{DynamicResource PasswordBoxPlaceholderStyle}"
                              Tag=".pth1234" Margin="0,4,0,8"/>
 
                 <TextBlock Text="Повторите пароль" FontSize="14"
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
-                <PasswordBox x:Name="ConfirmPassBox" Style="{StaticResource PasswordBoxPlaceholderStyle}"
+                <PasswordBox x:Name="ConfirmPassBox" Style="{DynamicResource PasswordBoxPlaceholderStyle}"
                              Tag=".pth1234" Margin="0,4,0,8"/>
 
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="Tomato" 
@@ -84,7 +84,7 @@
 
                 <Button Content="Уже есть аккаунт" 
                         Command="{Binding NavigateLoginCommand}" 
-                        Style="{StaticResource SecondaryButtonStyle}"/>
+                        Style="{DynamicResource SecondaryButtonStyle}"/>
             </StackPanel>
         </Border>
     </Grid>

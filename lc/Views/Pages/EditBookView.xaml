@@ -12,8 +12,8 @@
         </Style>
     </UserControl.Resources>
 
-    <Grid Background="{StaticResource BackgroundBrush}" Margin="12">
-        <Border Background="{StaticResource SurfaceBrush}"
+    <Grid Background="{DynamicResource BackgroundBrush}" Margin="12">
+        <Border Background="{DynamicResource SurfaceBrush}"
                 CornerRadius="12"
                 Padding="16">
 
@@ -62,23 +62,23 @@
                                    Margin="0,0,0,16"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-                        <TextBlock Text="Название" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Text="Название" Style="{DynamicResource FieldLabel}"/>
                         <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,10"/>
 
-                        <TextBlock Text="Автор" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Text="Автор" Style="{DynamicResource FieldLabel}"/>
                         <TextBox Text="{Binding AuthorName, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,10"/>
 
-                        <TextBlock Text="Издатель" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Text="Издатель" Style="{DynamicResource FieldLabel}"/>
                         <TextBox Text="{Binding PublisherId, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,10"/>
 
-                        <TextBlock Text="Обложка (путь к файлу)" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Text="Обложка (путь к файлу)" Style="{DynamicResource FieldLabel}"/>
                         <TextBox Text="{Binding CoverImagePath, UpdateSourceTrigger=PropertyChanged}"
                                  Margin="0,0,0,10"/>
 
-                        <TextBlock Text="Описание" Style="{StaticResource FieldLabel}"/>
+                        <TextBlock Text="Описание" Style="{DynamicResource FieldLabel}"/>
                         <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
                                  AcceptsReturn="True"
                                  TextWrapping="Wrap"
@@ -88,19 +88,19 @@
 
                         <StackPanel Orientation="Horizontal">
                             <StackPanel Width="160" Margin="0,0,12,0">
-                                <TextBlock Text="Статус книги" Style="{StaticResource FieldLabel}"/>
+                                <TextBlock Text="Статус книги" Style="{DynamicResource FieldLabel}"/>
                                 <ComboBox ItemsSource="{Binding BookStatuses}"
                                           SelectedItem="{Binding SelectedBookStatus, Mode=TwoWay}"/>
                             </StackPanel>
 
                             <StackPanel Width="180" Margin="0,0,12,0">
-                                <TextBlock Text="Статус написания" Style="{StaticResource FieldLabel}"/>
+                                <TextBlock Text="Статус написания" Style="{DynamicResource FieldLabel}"/>
                                 <ComboBox ItemsSource="{Binding WritingStatuses}"
                                           SelectedItem="{Binding SelectedWritingStatus, Mode=TwoWay}"/>
                             </StackPanel>
 
                             <StackPanel Width="140">
-                                <TextBlock Text="Язык" Style="{StaticResource FieldLabel}"/>
+                                <TextBlock Text="Язык" Style="{DynamicResource FieldLabel}"/>
                                 <ComboBox ItemsSource="{Binding Languages}"
                                           SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"/>
                             </StackPanel>
@@ -108,18 +108,18 @@
 
                         <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
                             <StackPanel Width="120" Margin="0,0,12,0">
-                                <TextBlock Text="Возраст" Style="{StaticResource FieldLabel}"/>
+                                <TextBlock Text="Возраст" Style="{DynamicResource FieldLabel}"/>
                                 <ComboBox ItemsSource="{Binding AgeRatings}"
                                           SelectedItem="{Binding SelectedAgeRating, Mode=TwoWay}"/>
                             </StackPanel>
 
                             <StackPanel Width="140" Margin="0,0,12,0">
-                                <TextBlock Text="Символы" Style="{StaticResource FieldLabel}"/>
+                                <TextBlock Text="Символы" Style="{DynamicResource FieldLabel}"/>
                                 <TextBox Text="{Binding SymbolsCount, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
 
                             <StackPanel Width="120">
-                                <TextBlock Text="Главы" Style="{StaticResource FieldLabel}"/>
+                                <TextBlock Text="Главы" Style="{DynamicResource FieldLabel}"/>
                                 <TextBox Text="{Binding ChaptersCount, UpdateSourceTrigger=PropertyChanged}"/>
                             </StackPanel>
                         </StackPanel>
@@ -149,7 +149,7 @@
                                    Margin="0,0,0,10"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 CornerRadius="8"
                                 Padding="10"
                                 Margin="0,0,0,12">
@@ -172,7 +172,7 @@
                                    Margin="0,0,0,10"
                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
 
-                        <Border Background="{StaticResource BackgroundBrush}"
+                        <Border Background="{DynamicResource BackgroundBrush}"
                                 CornerRadius="8"
                                 Padding="10">
                             <ScrollViewer Height="240">

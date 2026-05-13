@@ -5,13 +5,13 @@
                     xmlns:automation="http://schemas.microsoft.com/expression/blend/2008">
 
     <Style x:Key="TextBoxPlaceholderStyle" TargetType="TextBox">
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Padding" Value="6,2" />
-        <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Template">
             <Setter.Value>
@@ -28,7 +28,7 @@
 
                             <TextBlock x:Name="Watermark"
                                        Text="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=Tag}"
-                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Foreground="{DynamicResource TextMutedBrush}"
                                        Margin="{TemplateBinding Padding}"
                                        VerticalAlignment="Center"
                                        IsHitTestVisible="False"
@@ -52,13 +52,13 @@
 
     <Style x:Key="PasswordBoxPlaceholderStyle" TargetType="PasswordBox">
         <Setter Property="helpers:PasswordBoxHelper.Attach" Value="True" />
-        <Setter Property="Background" Value="{StaticResource SurfaceBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource SurfaceBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
         <Setter Property="BorderThickness" Value="1" />
         <Setter Property="FontSize" Value="14" />
         <Setter Property="Padding" Value="6,2" />
-        <Setter Property="CaretBrush" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="CaretBrush" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="PasswordChar" Value="●"/>
         <Setter Property="Template">
@@ -74,7 +74,7 @@
                             <!-- Плейсхолдер -->
                             <TextBlock x:Name="Watermark"
                                        Text="{TemplateBinding Tag}"
-                                       Foreground="{StaticResource TextMutedBrush}"
+                                       Foreground="{DynamicResource TextMutedBrush}"
                                        Margin="{TemplateBinding Padding}"
                                        VerticalAlignment="Center"
                                        IsHitTestVisible="False"

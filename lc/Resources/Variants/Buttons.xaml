@@ -4,21 +4,21 @@
     <Style x:Key="PrimaryButtonStyle"
            TargetType="Button"
            BasedOn="{StaticResource BaseButtonStyle}">
-        <Setter Property="Background" Value="{StaticResource PrimaryBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextInverseBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" /> 
+        <Setter Property="Background" Value="{DynamicResource PrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextInverseBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" /> 
     </Style>
 
     <Style x:Key="SecondaryButtonStyle"
            TargetType="Button"
            BasedOn="{StaticResource BaseButtonStyle}">
-        <Setter Property="Background" Value="{StaticResource TransparentBrush}" />
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
-        <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+        <Setter Property="Background" Value="{DynamicResource TransparentBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource BorderBrush}" />
     </Style>
 
     <Style x:Key="NavButtonStyle" TargetType="Button">
-        <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
         <Setter Property="Background" Value="Transparent" />
         <Setter Property="BorderThickness" Value="0" />
         <Setter Property="HorizontalContentAlignment" Value="Left" />
@@ -50,7 +50,7 @@
     </Style>
 
     <Style x:Key="SectionTextStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
         <Setter Property="FontSize" Value="11" />
         <Setter Property="FontWeight" Value="SemiBold" />
         <Setter Property="Margin" Value="0,12,0,8" />
@@ -58,7 +58,7 @@
     </Style>
 
     <Style x:Key="IconTextStyle" TargetType="TextBlock">
-        <Setter Property="Foreground" Value="{StaticResource TextSecondaryBrush}" />
+        <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}" />
         <Setter Property="FontSize" Value="18" />
         <Setter Property="Margin" Value="0,0,12,0" />
         <Setter Property="VerticalAlignment" Value="Center" />
@@ -80,7 +80,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#22FFFFFF"/>
+                <Setter Property="Background" Value="{DynamicResource TextInverseBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -88,7 +88,7 @@
     <Style x:Key="CloseButtonStyle" TargetType="Button" BasedOn="{StaticResource CaptionButtonStyle}">
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="#E81123"/>
+                <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
                 <Setter Property="Foreground" Value="White"/>
             </Trigger>
         </Style.Triggers>

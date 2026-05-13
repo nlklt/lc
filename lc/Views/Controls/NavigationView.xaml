@@ -12,7 +12,7 @@
         <vm:NavigationViewModel/>
     </UserControl.DataContext>
     
-    <Border Background="{StaticResource SurfaceBrush}"
+    <Border Background="{DynamicResource SurfaceBrush}"
             BorderThickness="0" CornerRadius="8"
             Margin="4,4,0,4" Padding="12">
 
@@ -22,13 +22,13 @@
                 <TextBlock Text="LibCloud"
                            FontSize="16"
                            FontWeight="SemiBold"
-                           Foreground="{StaticResource TextPrimaryBrush}" />
+                           Foreground="{DynamicResource TextPrimaryBrush}" />
 
                 <TextBlock Text="Электронная библиотека"
                            Margin="0,4,0,0"
                            FontSize="12"
-                           Foreground="{StaticResource TextSecondaryBrush}" />
-                <Separator Style="{StaticResource SeparatorStyle}"  Margin="0,12,0,0"/>
+                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                <Separator Style="{DynamicResource SeparatorStyle}"  Margin="0,12,0,0"/>
             </StackPanel>
             
             <Grid DockPanel.Dock="Top" Margin="0,0,0,8" Cursor="Hand"
@@ -59,7 +59,7 @@
                         <TextBlock Text="🔥" Foreground="{DynamicResource TextInverseBrush}"
                                    VerticalAlignment="Center" 
                                    HorizontalAlignment="Center" 
-                                   FontSize="20" Opacity="0.5"/>
+                                   FontSize="18" Opacity="1"/>
                         <Border CornerRadius="25">
                             <Border.Background>
                                 <ImageBrush ImageSource="{Binding AvatarPath}" Stretch="UniformToFill"/>
@@ -72,17 +72,17 @@
                 <StackPanel Grid.Column="1" Grid.Row="0" VerticalAlignment="Center">
                     <TextBlock Text="{Binding CurrentUserName}"
                                FontSize="16"  FontWeight="SemiBold"
-                               Foreground="{StaticResource TextPrimaryBrush}" 
+                               Foreground="{DynamicResource TextPrimaryBrush}" 
                                TextTrimming="CharacterEllipsis"/>
 
                     <TextBlock Text="{Binding CurrentUserRole}" 
                                FontSize="12"  Opacity="0.6" FontWeight="Medium"
-                               Foreground="{StaticResource TextSecondaryBrush}" />
+                               Foreground="{DynamicResource TextSecondaryBrush}" />
                 </StackPanel>
 
                 <!-- Разделитель -->
                 <Separator Grid.Row="1" Grid.ColumnSpan="2" Margin="0,12,0,0" 
-                           Style="{StaticResource SeparatorStyle}"/>
+                           Style="{DynamicResource SeparatorStyle}"/>
             </Grid>
 
 
@@ -90,73 +90,73 @@
                           HorizontalScrollBarVisibility="Disabled"
                           BorderThickness="0">
                 <StackPanel>
-                    <TextBlock Text="ОСНОВНОЕ" Style="{StaticResource SectionTextStyle}" />
+                    <TextBlock Text="ОСНОВНОЕ" Style="{DynamicResource SectionTextStyle}" />
 
                         <!-- Гость -->
-                        <Button Style="{StaticResource NavButtonStyle}"
+                        <Button Style="{DynamicResource NavButtonStyle}"
                                 Command="{Binding NavigateLoginCommand}"
                                 Visibility="{Binding IsGuest, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="👇" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="👇" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Войти" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource NavButtonStyle}"
+                        <Button Style="{DynamicResource NavButtonStyle}"
                                 Command="{Binding NavigateRegisterCommand}"
                                 Visibility="{Binding IsGuest, Converter={StaticResource BoolToVisibilityConverter}}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="🤘" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="🤘" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Зарегистрироваться" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                         <!-- Основное -->
                         <Button Command="{Binding NavigateCatalogCommand}"
-                            Style="{StaticResource NavButtonStyle}">
+                            Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📚" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="📚" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Каталог" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="❤" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="❤" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Избранное" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🎲" Style="{StaticResource IconTextStyle}" />
+                            <TextBlock Text="🎲" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Рандомная книга" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
                     <!-- Писатель -->
                     <StackPanel Visibility="{Binding IsWriter, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TextBlock Text="РАБОТА С КНИГАМИ" Style="{StaticResource SectionTextStyle}" />
+                        <TextBlock Text="РАБОТА С КНИГАМИ" Style="{DynamicResource SectionTextStyle}" />
 
                         <Button Command="{Binding NavigateEditBookCommand}"
                                 CommandParameter="{x:Null}"
-                                Style="{StaticResource NavButtonStyle}">
+                                Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="✍️" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="✍️" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Создать книгу" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📝" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="📝" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Черновики" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📊" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="📊" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Статистика по книгам" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
@@ -164,28 +164,28 @@
 
                     <!-- Админ -->
                     <StackPanel Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <TextBlock Text="АДМИНИСТРИРОВАНИЕ" Style="{StaticResource SectionTextStyle}" />
+                        <TextBlock Text="АДМИНИСТРИРОВАНИЕ" Style="{DynamicResource SectionTextStyle}" />
 
-                        <Button Style="{StaticResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="☷" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="☷" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Таблица пользователей" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{StaticResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📄" Style="{StaticResource IconTextStyle}" />
+                                <TextBlock Text="📄" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Запросы пользователей" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                     </StackPanel>
 
                     <!-- Выход -->
-                    <Button Style="{StaticResource NavButtonStyle}" Command="{Binding LogoutCommand}"
+                    <Button Style="{DynamicResource NavButtonStyle}" Command="{Binding LogoutCommand}"
                             Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
                         <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="👋" Style="{StaticResource IconTextStyle}" />
+                            <TextBlock Text="👋" Style="{DynamicResource IconTextStyle}" />
                             <TextBlock Text="Выйти из аккаунта" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>

@@ -4,6 +4,7 @@ using lc.Infrastructure.Repositories.Sql;
 using lc.Models;
 using lc.Models.Enums;
 using Microsoft.Data.SqlClient;
+using System.Data;
 using System.Net;
 using System.Text;
 
@@ -183,6 +184,25 @@ namespace lc.Data.Repositories
             command.Parameters.AddWithValue("@Rating", book.Rating);
             command.Parameters.AddWithValue("@CreatedAt", book.CreatedAt);
             command.Parameters.AddWithValue("@UpdatedAt", book.UpdatedAt);
+        }
+
+        public async Task UpdateStatusAsync(int bookId, BookStatus status)
+        {
+            const string sql = @"
+            UPDATE Books
+            SET BookStatus = @BookStatus,
+                UpdatedAt = SYSDATETIME()
+            WHERE BookId = @BookId";
+
+            await using var connection = SqlConnectionFactory.CreateConnection();
+            using var command = connection.CreateCommand();
+
+            command.CommandText = sql;
+            command.Parameters.Add(new SqlParameter("@BookId", SqlDbType.Int) { Value = bookId });
+            command.Parameters.Add(new SqlParameter("@BookStatus", SqlDbType.Int) { Value = (int)status });
+
+            await connection.OpenAsync();
+            await command.ExecuteNonQueryAsync();
         }
 
         public async Task<IReadOnlyList<BookListItem>> SearchAsync(BookFilterCriteria criteria)

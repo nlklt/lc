@@ -11,6 +11,8 @@ namespace lc.Data.Repositories.Interfaces
         Task UpdateAsync(Book book);
         Task DeleteAsync(int bookId);
 
+        Task UpdateStatusAsync(int bookId, BookStatus status);
+
         Task<IReadOnlyList<BookListItem>> SearchAsync(BookFilterCriteria criteria);
     }
 }

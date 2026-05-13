@@ -161,6 +161,12 @@ namespace lc.ViewModels
         public ICommand EditBookCommand { get; }
         public ICommand DeleteBookCommand { get; }
 
+        public ICommand UndoCommand { get; }
+        public ICommand RedoCommand { get; }
+
+        public bool CanUndo => ServiceLocator.UndoRedoService.CanUndo;
+        public bool CanRedo => ServiceLocator.UndoRedoService.CanRedo;
+
         public CatalogViewModel()
         {
             _appState = ServiceLocator.AppState;
@@ -168,6 +174,22 @@ namespace lc.ViewModels
             _userLibraryService = ServiceLocator.UserLibraryService;
             _navigationService = ServiceLocator.NavigationService;
             _dialogService = ServiceLocator.DialogService;
+
+            UndoCommand = new AsyncRelayCommand(async _ =>
+            {
+                await ServiceLocator.UndoRedoService.UndoAsync();
+                await ApplyFiltersAsync();
+                OnPropertyChanged(nameof(CanUndo));
+                OnPropertyChanged(nameof(CanRedo));
+            });
+
+            RedoCommand = new AsyncRelayCommand(async _ =>
+            {
+                await ServiceLocator.UndoRedoService.RedoAsync();
+                await ApplyFiltersAsync();
+                OnPropertyChanged(nameof(CanUndo));
+                OnPropertyChanged(nameof(CanRedo));
+            });
 
             InitializeCommand =       new AsyncRelayCommand(_ => InitializeAsync());
             ToggleCategoriesCommand = new RelayCommand(_ => ToggleCategories());
@@ -314,8 +336,8 @@ namespace lc.ViewModels
                 StrictTagMatch = this.IsStrictTagMatch,
                 StrictCategoryMatch = this.IsStrictCategoryMatch,
 
-                IncludeBookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
-                ExcludeBookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
+                IncludeBookStatuses = [BookStatus.Published],
+                ExcludeBookStatuses = [BookStatus.Draft, BookStatus.Archived],
 
                 IncludeWritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
                 ExcludeWritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],

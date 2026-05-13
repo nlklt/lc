@@ -222,7 +222,7 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
-                                        <Grid Margin="8,8,8,4">
+                                        <Grid Margin="0,8,0,8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
@@ -233,6 +233,19 @@
                                             <Button Grid.Column="1" Style="{DynamicResource SecondaryButtonStyle}"
                                                     Command="{Binding ResetFiltersCommand}"
                                                     Content="Сбросить всё" />
+                                        </Grid>
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <Button Grid.Column="0" Content="Undo" Margin="0,0,12,0"
+                                                    Style="{DynamicResource SecondaryButtonStyle}"
+                                                    Command="{Binding UndoCommand}" />
+                                            <Button Grid.Column="1" Content="Redo" 
+                                                    Style="{DynamicResource SecondaryButtonStyle}"
+                                                    Command="{Binding RedoCommand}" />
                                         </Grid>
                                     </StackPanel>
                                 </DataTemplate>

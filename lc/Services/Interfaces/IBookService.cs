@@ -10,6 +10,10 @@ namespace lc.Services
         Task<int> CreateBookAsync(Book book);
         Task UpdateBookAsync(Book book);
         Task DeleteBookAsync(int bookId);
+
+        Task ArchiveBookAsync(int bookId);
+        Task RestoreBookAsync(int bookId);
+
         Task PublishBookAsync(int bookId);
         Task SaveBookAsync(int bookId);
         Task AddRatingAsync(int bookId, int userId, int rating);

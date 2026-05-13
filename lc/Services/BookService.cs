@@ -1,10 +1,11 @@
-﻿using lc.Data;
+﻿using Dapper;
+using lc.Data;
 using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
-using Dapper;
 using Microsoft.Data.SqlClient;
+using static UndoRedoService;
 
 namespace lc.Services
 {
@@ -14,17 +15,20 @@ namespace lc.Services
         private readonly IChapterRepository _chapterRepository;
         private readonly ITagRepository _tagRepository;
         private readonly ICategoryRepository _categoryRepository;
+        private readonly IUndoRedoService _undoRedoService;
 
         public BookService(
             IBookRepository bookRepository,
             IChapterRepository chapterRepository,
             ITagRepository tagRepository,
-            ICategoryRepository categoryRepository)
+            ICategoryRepository categoryRepository,
+            IUndoRedoService undoRedoService)
         {
             _bookRepository = bookRepository;
             _chapterRepository = chapterRepository;
             _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
             _categoryRepository = categoryRepository;
+            _undoRedoService = undoRedoService;
         }
         public Task<Book?> GetBookByIdAsync(int bookId) 
             => _bookRepository.GetByIdAsync(bookId);
@@ -61,9 +65,36 @@ namespace lc.Services
             await _bookRepository.UpdateAsync(book);
         }
 
-        public Task DeleteBookAsync(int bookId)
+        public async Task DeleteBookAsync(int bookId)
         {
-            return _bookRepository.DeleteAsync(bookId);
+            await ArchiveBookAsync(bookId);
+        }
+
+        public async Task ArchiveBookAsync(int bookId)
+        {
+            var book = await _bookRepository.GetByIdAsync(bookId);
+            if (book == null)
+                return;
+
+            if (book.BookStatus == BookStatus.Archived)
+                return;
+
+            var previousStatus = book.BookStatus;
+
+            await _bookRepository.UpdateStatusAsync(bookId, BookStatus.Archived);
+            _undoRedoService.Push(new ArchiveBookAction(_bookRepository, bookId, previousStatus));
+        }
+
+        public async Task RestoreBookAsync(int bookId)
+        {
+            var book = await _bookRepository.GetByIdAsync(bookId);
+            if (book == null)
+                return;
+
+            if (book.BookStatus != BookStatus.Archived)
+                return;
+
+            await _bookRepository.UpdateStatusAsync(bookId, BookStatus.Published);
         }
 
         public async Task<int> SaveChapterAsync(int bookId, Chapter chapter)

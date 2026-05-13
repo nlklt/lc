@@ -135,12 +135,32 @@ namespace lc.ViewModels
 
         public ICommand ToggleSettingsCommand { get; }
 
+        public ICommand UndoCommand { get; }
+        public ICommand RedoCommand { get; }
+
+        public bool CanUndo => ServiceLocator.UndoRedoService.CanUndo;
+        public bool CanRedo => ServiceLocator.UndoRedoService.CanRedo;
+
         public ProfileViewModel()
         {
             _appState = ServiceLocator.AppState;
             _userRepository = ServiceLocator.UserRepository;
             _themeService = ServiceLocator.ThemeService;
             _localizationService = ServiceLocator.LocalisationService;
+
+            UndoCommand = new AsyncRelayCommand(async _ =>
+            {
+                await ServiceLocator.UndoRedoService.UndoAsync();
+                OnPropertyChanged(nameof(CanUndo));
+                OnPropertyChanged(nameof(CanRedo));
+            });
+
+            RedoCommand = new AsyncRelayCommand(async _ =>
+            {
+                await ServiceLocator.UndoRedoService.RedoAsync();
+                OnPropertyChanged(nameof(CanUndo));
+                OnPropertyChanged(nameof(CanRedo));
+            });
 
             _appState.PropertyChanged += AppStateOnPropertyChanged;
 

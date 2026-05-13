@@ -9,9 +9,11 @@ using lc.ViewModels.Base;
 using System.Collections.ObjectModel;
 using System.Globalization;
 using System.IO;
+using System.Net;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using static UndoRedoService;
 
 namespace lc.ViewModels
 {
@@ -20,14 +22,13 @@ namespace lc.ViewModels
         private readonly AppState _appState;
         private readonly IBookService _bookService;
         private readonly IChapterService _chapterService;
-        private readonly ICommentService _commentService;
         private readonly IDialogService _dialogService;
         private readonly INavigationService _navigationService;
         private readonly IUserLibraryService _userLibraryService;
-        private readonly IWindowService _windowService;
-
         private readonly IChapterRepository _chapterRepository;
         private readonly ICommentRepository _commentRepository;
+
+        private readonly IUndoRedoService _undoRedoService;
 
         private Book? _book;
         private ImageSource? _coverImage;
@@ -44,9 +45,10 @@ namespace lc.ViewModels
             _dialogService = ServiceLocator.DialogService;
             _navigationService = ServiceLocator.NavigationService;
             _userLibraryService = ServiceLocator.UserLibraryService;
-            _windowService = ServiceLocator.WindowService;
             _chapterRepository = ServiceLocator.ChapterRepository;
             _commentRepository = ServiceLocator.CommentRepository;
+
+            _undoRedoService = ServiceLocator.UndoRedoService;
 
             BackCommand = new RelayCommand(_ => _navigationService.GoBack());
             StartReadingCommand = new RelayCommand(_ => StartReading(), _ => CanRead);
@@ -164,6 +166,8 @@ namespace lc.ViewModels
         public ICommand RateBookCommand { get; }
         public ICommand EditBookCommand { get; }
         public ICommand DeleteBookCommand { get; }
+
+
 
         public async Task InitializeAsync(int bookId)
         {
@@ -402,20 +406,31 @@ namespace lc.ViewModels
 
         private async Task DeleteBookAsync()
         {
-            if (Book is null) return;
+            if (Book == null)
+                return;
 
-            bool confirm = await _dialogService.ShowConfirmAsync("Внимание", "Вы уверены, что хотите безвозвратно удалить эту книгу?");
-            if (confirm)
+            var confirmed = await _dialogService.ShowConfirmAsync(
+                "Удалить книгу",
+                "Книга будет скрыта из каталога. Действие можно отменить через Undo.");
+
+            if (!confirmed)
+                return;
+
+            try
             {
-                try
-                {
-                    await _bookService.DeleteBookAsync(BookId);
-                    _navigationService.GoBack();
-                }
-                catch (Exception ex)
-                {
-                    await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
-                }
+                await _bookService.ArchiveBookAsync(Book.BookId);
+
+                await _dialogService.ShowMessageAsync(
+                    "Успех",
+                    "Книга перемещена в архив.");
+
+                _navigationService.Navigate(new CatalogViewModel());
+            }
+            catch (Exception ex)
+            {
+                await _dialogService.ShowMessageAsync(
+                    "Ошибка",
+                    ex.Message);
             }
         }
 

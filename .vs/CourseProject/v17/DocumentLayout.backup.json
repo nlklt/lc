@@ -3,48 +3,20 @@
   "WorkspaceRootPath": "U:\\CourseProject\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\settingsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\settingsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\filtersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\filtersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\mainfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\mainfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\tagsfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\tagsfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\themes\\light.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\themes\\dark.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\themes\\dark.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\bookdetailsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\bookdetailsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\variants\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\variants\\buttons.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\themes\\brushes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\themes\\brushes.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\resources\\controls\\button.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\resources\\controls\\button.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\ithemeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\ithemeservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\categoriesfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\categoriesfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
@@ -58,7 +30,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1494,
-          "SelectedChildIndex": 12,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -70,148 +42,68 @@
             },
             {
               "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "CatalogView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\CatalogView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Pages\\CatalogView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\CatalogView.xaml",
-              "RelativeToolTip": "lc\\Views\\Pages\\CatalogView.xaml",
+              "DocumentIndex": 0,
+              "Title": "FiltersView.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\FiltersView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\FiltersView.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\FiltersView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\FiltersView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-13T00:05:11.132Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "Buttons.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Variants\\Buttons.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Variants\\Buttons.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Variants\\Buttons.xaml",
-              "RelativeToolTip": "lc\\Resources\\Variants\\Buttons.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:57:30.36Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "BookDetailsView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\BookDetailsView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Pages\\BookDetailsView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\BookDetailsView.xaml",
-              "RelativeToolTip": "lc\\Views\\Pages\\BookDetailsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:55:30.36Z",
+              "WhenOpened": "2026-05-13T01:12:13.964Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 4,
-              "Title": "Dark.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Themes\\Dark.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Themes\\Dark.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Themes\\Dark.xaml",
-              "RelativeToolTip": "lc\\Resources\\Themes\\Dark.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:48:04.983Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "Brushes.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Themes\\Brushes.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Themes\\Brushes.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Themes\\Brushes.xaml",
-              "RelativeToolTip": "lc\\Resources\\Themes\\Brushes.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:47:55.52Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "Button.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Controls\\Button.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Controls\\Button.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Controls\\Button.xaml",
-              "RelativeToolTip": "lc\\Resources\\Controls\\Button.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:47:45.577Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "Light.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Resources\\Themes\\Light.xaml",
-              "RelativeDocumentMoniker": "lc\\Resources\\Themes\\Light.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Resources\\Themes\\Light.xaml",
-              "RelativeToolTip": "lc\\Resources\\Themes\\Light.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:39:29.471Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
               "Title": "App.xaml",
               "DocumentMoniker": "U:\\CourseProject\\lc\\App.xaml",
               "RelativeDocumentMoniker": "lc\\App.xaml",
               "ToolTip": "U:\\CourseProject\\lc\\App.xaml",
               "RelativeToolTip": "lc\\App.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:31:53.357Z",
+              "WhenOpened": "2026-05-13T01:10:36.938Z",
               "EditorCaption": ""
-            },
+            }
+          ]
+        },
+        {
+          "DockedWidth": 1494,
+          "SelectedChildIndex": 0,
+          "Children": [
             {
               "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "IThemeService.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IThemeService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IThemeService.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IThemeService.cs",
-              "RelativeToolTip": "lc\\Services\\Interfaces\\IThemeService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAuAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T23:27:12.565Z",
+              "DocumentIndex": 1,
+              "Title": "MainFiltersView.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\MainFiltersView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\MainFiltersView.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\MainFiltersView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\MainFiltersView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-13T01:09:38.765Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 2,
-              "Title": "ProfileViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\ProfileViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\ProfileViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\ProfileViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\ProfileViewModel.cs",
-              "ViewState": "AgIAAEMAAAAAAAAAAAAAAGoAAAA8AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-12T23:26:58.799Z",
+              "Title": "TagsFiltersView.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\TagsFiltersView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\TagsFiltersView.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\TagsFiltersView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\TagsFiltersView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-13T01:09:41.229Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "SettingsView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\SettingsView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Controls\\SettingsView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\SettingsView.xaml",
-              "RelativeToolTip": "lc\\Views\\Controls\\SettingsView.xaml",
+              "DocumentIndex": 3,
+              "Title": "CategoriesFiltersView.xaml",
+              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\CategoriesFiltersView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\CategoriesFiltersView.xaml",
+              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\CategoriesFiltersView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\CategoriesFiltersView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:26:34.091Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "ProfileView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\ProfileView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Pages\\ProfileView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\ProfileView.xaml",
-              "RelativeToolTip": "lc\\Views\\Pages\\ProfileView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-12T23:26:29.706Z",
+              "WhenOpened": "2026-05-13T01:09:40.253Z",
               "EditorCaption": ""
             }
           ]

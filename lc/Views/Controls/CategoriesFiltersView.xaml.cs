@@ -16,11 +16,11 @@ using System.Windows.Shapes;
 namespace lc.Views.Controls
 {
     /// <summary>
-    /// Логика взаимодействия для FiltersView.xaml
+    /// Логика взаимодействия для CategoriesFiltersView.xaml
     /// </summary>
-    public partial class FiltersView : UserControl
+    public partial class CategoriesFiltersView : UserControl
     {
-        public FiltersView()
+        public CategoriesFiltersView()
         {
             InitializeComponent();
         }

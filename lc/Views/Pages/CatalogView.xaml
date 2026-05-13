@@ -13,7 +13,7 @@
     <Grid Background="{DynamicResource BackgroundBrush}" Margin="4">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*"/>
-            <ColumnDefinition Width="275"/>
+            <ColumnDefinition MinWidth="300"  Width="Auto"/>
         </Grid.ColumnDefinitions>
 
         <Grid.RowDefinitions>
@@ -122,19 +122,6 @@
                                                     RenderOptions.BitmapScalingMode="HighQuality"/>
                                     </Path.Fill>
                                 </Path>
-
-                                <!-- Рейтинг 
-                                <Border HorizontalAlignment="Left" 
-                                VerticalAlignment="Top" 
-                                Background="{DynamicResource SurfaceAltBrush}" 
-                                CornerRadius="4" 
-                                Margin="6,6,0,0"
-                                Padding="4,2">
-                                    <TextBlock Text="{Binding Rating, StringFormat={}{0:F1}}" 
-                                       Foreground="White" 
-                                       FontWeight="Bold" 
-                                       FontSize="12"/>
-                                </Border> -->
 
                                 <!-- Инфо -->
                                 <StackPanel Grid.Row="1" Margin="0,0,0,0">

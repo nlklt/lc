@@ -3,338 +3,47 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:lc.Views.Controls"
-             xmlns:vm="clr-namespace:lc.ViewModels"
-             d:DataContext="{d:DesignInstance Type=vm:CatalogViewModel}"
-             mc:Ignorable="d">
+             xmlns:local="clr-namespace:lc.Views.Controls" 
+             xmlns:viewmodels="clr-namespace:lc.ViewModels" 
+             mc:Ignorable="d" 
+             d:DataContext="{d:DesignInstance Type=viewmodels:NavigationViewModel}">
 
-    <Border Background="{DynamicResource SurfaceBrush}"
-            BorderThickness="0" CornerRadius="6" Padding="12">
-        <ScrollViewer VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Disabled">
-            <ContentControl Content="{Binding}" FontSize="16">
-                <ContentControl.Style>
-                    <Style TargetType="ContentControl">
-                        <Setter Property="ContentTemplate">
-                            <Setter.Value>
-                                <DataTemplate> 
-                                    <StackPanel> 
-                                        <Border Padding="6,4" Margin="4" CornerRadius="4">
-                                            <Border.InputBindings>
-                                                <MouseBinding Gesture="LeftClick"
-                                                              Command="{Binding ToggleCategoriesCommand}"/>
-                                            </Border.InputBindings>
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
+    <Border Background="{DynamicResource TransparentBrush}"
+            CornerRadius="8">
 
-                                            <Grid>
-                                                <TextBlock Text="Категории"
-                                                           Foreground="{DynamicResource TextPrimaryBrush}"
-                                                           HorizontalAlignment="Left"/>
-                                                <TextBlock Text="{Binding CategoriesSummaryText}"
-                                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                                           HorizontalAlignment="Right"/>
-                                            </Grid>
-                                        </Border> 
-                                        <Border Padding="6,4" Margin="4,4" CornerRadius="4">
-                                            <Border.InputBindings>
-                                                <MouseBinding Gesture="LeftClick"
-                                                              Command="{Binding ToggleTagsCommand}"/>
-                                            </Border.InputBindings>
-                                            <Border.Style>
-                                                <Style TargetType="Border">
-                                                    <Setter Property="Background" Value="Transparent"/>
-                                                    <Style.Triggers>
-                                                        <Trigger Property="IsMouseOver" Value="True">
-                                                            <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
-                                                        </Trigger>
-                                                    </Style.Triggers>
-                                                </Style>
-                                            </Border.Style>
+        <ContentControl>
+            <ContentControl.Style>
+                <Style TargetType="ContentControl">
 
-                                            <Grid>
-                                                <TextBlock Text="Теги"
-                                                           Foreground="{DynamicResource TextPrimaryBrush}"
-                                                           HorizontalAlignment="Left"/>
-                                                <TextBlock Text="{Binding TagsSummaryText}"
-                                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                                           HorizontalAlignment="Right"/>
-                                            </Grid>
-                                        </Border>
+                    <Setter Property="Content">
+                        <Setter.Value>
+                            <local:MainFiltersView/>
+                        </Setter.Value>
+                    </Setter>
 
-                                        <TextBlock Text="Рейтинг" Margin="8,8,8,4"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <Grid Margin="8,2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
-                                                     Text="{Binding Rating.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
-                                            <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
-                                                       VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                                       Foreground="{DynamicResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
-                                                     Text="{Binding Rating.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
-                                        </Grid>
- 
-                                        <TextBlock Text="Количество глав" Margin="8,8,8,4"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <Grid Margin="8,2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
-                                                     Text="{Binding Chapters.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
-                                            <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
-                                                       VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                                       Foreground="{DynamicResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
-                                                     Text="{Binding Chapters.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
-                                        </Grid>
+                    <Style.Triggers>
 
-                                        <TextBlock Text="Количество символов" Margin="8,8,8,4"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <Grid Margin="8,2">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="Auto"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
-                                                     Text="{Binding Symbols.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
-                                            <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
-                                                       VerticalAlignment="Center" HorizontalAlignment="Center" 
-                                                       Foreground="{DynamicResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
-                                                     Text="{Binding Symbols.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
-                                        </Grid>
+                        <DataTrigger Binding="{Binding IsCategoriesOpen}" Value="True">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <local:CategoriesFiltersView/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
 
-                                        <TextBlock Text="Дата публикации" Style="{DynamicResource FilterLabelStyle}" />
+                        <DataTrigger Binding="{Binding IsTagsOpen}" Value="True">
+                            <Setter Property="Content">
+                                <Setter.Value>
+                                    <local:TagsFiltersView/>
+                                </Setter.Value>
+                            </Setter>
+                        </DataTrigger>
 
-                                        <StackPanel Orientation="Horizontal" Margin="8,2">
-                                            <DatePicker SelectedDate="{Binding CreatedAt.From, Mode=TwoWay}"
-                                                        Tag="С даты"
-                                                        Style="{DynamicResource DatePickerPlaceholderStyle}" />
+                    </Style.Triggers>
 
-                                            <TextBlock Text=" — " VerticalAlignment="Center" />
+                </Style>
+            </ContentControl.Style>
+        </ContentControl>
 
-                                            <DatePicker SelectedDate="{Binding CreatedAt.To, Mode=TwoWay}"
-                                                        Tag="По дату"
-                                                        Style="{DynamicResource DatePickerPlaceholderStyle}" />
-                                        </StackPanel>
-
-                                        <TextBlock Text="Статус Тайтла" Margin="8,8,8,4"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <ItemsControl ItemsSource="{Binding WritingStatusOptions}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <UniformGrid Columns="2"/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox Content="{Binding Name}"
-                                                              Style="{DynamicResource CheckBoxThreeStateStyle}"
-                                                              Foreground="{DynamicResource TextPrimaryBrush}"
-                                                              IsThreeState="True"
-                                                              IsChecked="{Binding State, Mode=TwoWay,
-                                                              Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"
-                                                              Margin="8,2"/>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-
-                                        <TextBlock Text="Язык тайтла" Margin="8,8,8,4"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <ItemsControl ItemsSource="{Binding LanguageOptions}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <UniformGrid Columns="2"/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox Content="{Binding Name}"
-                                                              Style="{DynamicResource CheckBoxThreeStateStyle}"
-                                                              Foreground="{DynamicResource TextPrimaryBrush}"
-                                                              IsThreeState="True"
-                                                              IsChecked="{Binding State, Mode=TwoWay,
-                                                              Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"
-                                                              Margin="8,2"/>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        
-                                        
-                                        <TextBlock Text="Возрастной рейтинг" Margin="8,8,8,4"
-                                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                        <ItemsControl ItemsSource="{Binding AgeRatingOptions}">
-                                            <ItemsControl.ItemsPanel>
-                                                <ItemsPanelTemplate>
-                                                    <UniformGrid Columns="2"/>
-                                                </ItemsPanelTemplate>
-                                            </ItemsControl.ItemsPanel>
-
-                                            <ItemsControl.ItemTemplate>
-                                                <DataTemplate>
-                                                    <CheckBox Content="{Binding Name}"
-                                                              Style="{DynamicResource CheckBoxThreeStateStyle}"
-                                                              Foreground="{DynamicResource TextPrimaryBrush}"
-                                                              IsThreeState="True"
-                                                              IsChecked="{Binding State, Mode=TwoWay,
-                                                              Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"
-                                                              Margin="8,2"/>
-                                                </DataTemplate>
-                                            </ItemsControl.ItemTemplate>
-                                        </ItemsControl>
-                                        <Grid Margin="8,8,8,4">
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Button Grid.Column="0" Style="{DynamicResource PrimaryButtonStyle}"
-                                                    Command="{Binding ApplyFiltersCommand}"
-                                                    Content="Применить" Margin="0,0,12,0"/>
-                                            <Button Grid.Column="1" Style="{DynamicResource SecondaryButtonStyle}"
-                                                    Command="{Binding ResetFiltersCommand}"
-                                                    Content="Сбросить всё" />
-                                        </Grid>
-                                    </StackPanel>
-                                </DataTemplate>
-                            </Setter.Value>
-                        </Setter>
-
-                        <Style.Triggers>
-                            <DataTrigger Binding="{Binding IsCategoriesOpen}" Value="True">
-                                <Setter Property="ContentTemplate">
-                                    <Setter.Value>
-                                        <DataTemplate>
-                                            
-                                            <StackPanel>
-                                                <Border Padding="5,4" Margin="0,0,0,4" CornerRadius="5">
-                                                    <Border.InputBindings>
-                                                        <MouseBinding Gesture="LeftClick"
-                                                                      Command="{Binding ToggleCategoriesCommand}"/>
-                                                    </Border.InputBindings>
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="Transparent"/>
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-
-                                                    <Grid>
-                                                        <TextBlock Text="Назад"
-                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                                   HorizontalAlignment="Left"/>
-                                                        <TextBlock Text="{Binding CategoriesSummaryText}"
-                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                                                   HorizontalAlignment="Right"/>
-                                                    </Grid>
-                                                </Border>
-
-                                                <CheckBox Content="Строгое соответствие"
-                                                          Style="{DynamicResource CheckBoxTwoStateStyle}"
-                                                          Foreground="{DynamicResource TextPrimaryBrush}"
-                                                          IsChecked="{Binding IsStrictCategoryMatch, Mode=TwoWay}"
-                                                          Margin="0,4"/>
-
-                                                <ItemsControl ItemsSource="{Binding CategoryOptions}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <CheckBox Content="{Binding Name}"
-                                                                      Style="{DynamicResource CheckBoxThreeStateStyle}"
-                                                                      Foreground="{DynamicResource TextPrimaryBrush}"
-                                                                      IsThreeState="True"
-                                                                      IsChecked="{Binding State, Mode=TwoWay,
-                                                                      Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"
-                                                                      Margin="0,2"/>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                            <DataTrigger Binding="{Binding IsTagsOpen}" Value="True">
-                                <Setter Property="ContentTemplate">
-                                    <Setter.Value>
-                                        <DataTemplate>
-                                            
-                                            <StackPanel>
-                                                <Border Padding="5,4" Margin="0,0,0,4" CornerRadius="5">
-                                                    <Border.InputBindings>
-                                                        <MouseBinding Gesture="LeftClick"
-                                                                      Command="{Binding ToggleTagsCommand}"/>
-                                                    </Border.InputBindings>
-                                                    <Border.Style>
-                                                        <Style TargetType="Border">
-                                                            <Setter Property="Background" Value="Transparent"/>
-                                                            <Style.Triggers>
-                                                                <Trigger Property="IsMouseOver" Value="True">
-                                                                    <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
-                                                                </Trigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Border.Style>
-
-                                                    <Grid>
-                                                        <TextBlock Text="Назад"
-                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
-                                                                   HorizontalAlignment="Left"/>
-                                                        <TextBlock Text="{Binding TagsSummaryText}"
-                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                                                   HorizontalAlignment="Right"/>
-                                                    </Grid>
-                                                </Border>
-
-                                                <CheckBox Content="Строгое соответствие"
-                                                          Style="{DynamicResource CheckBoxTwoStateStyle}"
-                                                          Foreground="{DynamicResource TextPrimaryBrush}"
-                                                          IsChecked="{Binding IsStrictTagMatch, Mode=TwoWay}"
-                                                          Margin="0,4"/>
-
-                                                <ItemsControl ItemsSource="{Binding TagOptions}">
-                                                    <ItemsControl.ItemTemplate>
-                                                        <DataTemplate>
-                                                            <CheckBox Content="{Binding Name}"
-                                                                      Style="{DynamicResource CheckBoxThreeStateStyle}"
-                                                                      Foreground="{DynamicResource TextPrimaryBrush}"
-                                                                      IsThreeState="True"
-                                                                      IsChecked="{Binding State, Mode=TwoWay,
-                                                                      Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"
-                                                                      Margin="0,2"/>
-                                                        </DataTemplate>
-                                                    </ItemsControl.ItemTemplate>
-                                                </ItemsControl>
-                                            </StackPanel>
-                                        </DataTemplate>
-                                    </Setter.Value>
-                                </Setter>
-                            </DataTrigger>
-                        </Style.Triggers>
-                    </Style>
-                </ContentControl.Style>
-            </ContentControl>
-        </ScrollViewer>
     </Border>
 </UserControl>

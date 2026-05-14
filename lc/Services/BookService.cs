@@ -4,8 +4,6 @@ using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
-using Microsoft.Data.SqlClient;
-using static UndoRedoService;
 
 namespace lc.Services
 {
@@ -15,20 +13,17 @@ namespace lc.Services
         private readonly IChapterRepository _chapterRepository;
         private readonly ITagRepository _tagRepository;
         private readonly ICategoryRepository _categoryRepository;
-        private readonly IUndoRedoService _undoRedoService;
 
         public BookService(
             IBookRepository bookRepository,
             IChapterRepository chapterRepository,
             ITagRepository tagRepository,
-            ICategoryRepository categoryRepository,
-            IUndoRedoService undoRedoService)
+            ICategoryRepository categoryRepository)
         {
             _bookRepository = bookRepository;
             _chapterRepository = chapterRepository;
             _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
             _categoryRepository = categoryRepository;
-            _undoRedoService = undoRedoService;
         }
         public Task<Book?> GetBookByIdAsync(int bookId) 
             => _bookRepository.GetByIdAsync(bookId);
@@ -82,7 +77,6 @@ namespace lc.Services
             var previousStatus = book.BookStatus;
 
             await _bookRepository.UpdateStatusAsync(bookId, BookStatus.Archived);
-            _undoRedoService.Push(new ArchiveBookAction(_bookRepository, bookId, previousStatus));
         }
 
         public async Task RestoreBookAsync(int bookId)

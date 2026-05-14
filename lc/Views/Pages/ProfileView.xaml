@@ -39,18 +39,55 @@
                                 Width="60" Height="60" 
                                 CornerRadius="60" 
                                 Margin="0,0,16,0"
-                                Background="{DynamicResource SurfaceAltBrush}"
                                 VerticalAlignment="Center">
+                            <Border.Style>
+                                <Style TargetType="Border">
+
+                                    <Setter Property="Background">
+                                        <Setter.Value>
+                                            <ImageBrush ImageSource="{Binding AvatarPath}" 
+                            Stretch="UniformToFill"/>
+                                        </Setter.Value>
+                                    </Setter>
+
+                                    <Style.Triggers>
+
+                                        <DataTrigger Binding="{Binding AvatarPath}" 
+                         Value="{x:Null}">
+                                            <Setter Property="Background"
+                        Value="{DynamicResource SurfaceAltBrush}"/>
+                                        </DataTrigger>
+
+                                        <DataTrigger Binding="{Binding AvatarPath}"
+                         Value="">
+                                            <Setter Property="Background"
+                        Value="{DynamicResource SurfaceAltBrush}"/>
+                                        </DataTrigger>
+
+                                    </Style.Triggers>
+                                </Style>
+                            </Border.Style>
                             <Grid>
-                                <TextBlock Text="🔥" Foreground="{DynamicResource TextInverseBrush}"
-                                   VerticalAlignment="Center" 
-                                   HorizontalAlignment="Center" 
-                                   FontSize="20" Opacity="1"/>
-                                <Border CornerRadius="30">
-                                    <Border.Background>
-                                        <ImageBrush ImageSource="{Binding CurrentUser.AvatarPath}" Stretch="UniformToFill"/>
-                                    </Border.Background>
-                                </Border>
+                                <TextBlock Text="👀" 
+                                           Foreground="{DynamicResource TextInverseBrush}"
+                                           VerticalAlignment="Center" 
+                                           HorizontalAlignment="Center" 
+                                           FontSize="30">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding AvatarPath}" Value="{x:Null}">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding AvatarPath}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
                             </Grid>
                         </Border>
 

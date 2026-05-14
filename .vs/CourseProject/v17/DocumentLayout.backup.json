@@ -1,60 +1,7 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "U:\\CourseProject\\",
-  "Documents": [
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\catalogviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\catalogviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\controls\\mainfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\mainfiltersview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\bookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\bookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\models\\enums\\bookstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\models\\enums\\bookstatus.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\bookservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\bookservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\iundoredoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\iundoredoservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\iundoableaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\iundoableaction.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\services\\interfaces\\ibookservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\ibookservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\infrastructure\\servicelocator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\infrastructure\\servicelocator.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|u:\\courseproject\\lc\\data\\repositories\\interfaces\\ibookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\ibookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    }
-  ],
+  "Documents": [],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -62,110 +9,8 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1494,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": -1,
           "Children": [
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "BookStatus.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Models\\Enums\\BookStatus.cs",
-              "RelativeDocumentMoniker": "lc\\Models\\Enums\\BookStatus.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Models\\Enums\\BookStatus.cs",
-              "RelativeToolTip": "lc\\Models\\Enums\\BookStatus.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T07:30:04.02Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "BookDetailsViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\BookDetailsViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\BookDetailsViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\BookDetailsViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\BookDetailsViewModel.cs",
-              "ViewState": "AgIAAB4AAAAAAAAAAAAAAC4AAABEAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T07:11:22.725Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 10,
-              "Title": "ProfileViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\ProfileViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\ProfileViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\ProfileViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\ProfileViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACsBAAANAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T03:10:54.538Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "CatalogViewModel.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\ViewModels\\CatalogViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\CatalogViewModel.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\ViewModels\\CatalogViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\CatalogViewModel.cs",
-              "ViewState": "AgIAADgBAAAAAAAAAAAswEcBAABeAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T03:09:52.08Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "MainFiltersView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Controls\\MainFiltersView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Controls\\MainFiltersView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Controls\\MainFiltersView.xaml",
-              "RelativeToolTip": "lc\\Views\\Controls\\MainFiltersView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-13T03:08:12.544Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "IBookService.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IBookService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IBookService.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IBookService.cs",
-              "RelativeToolTip": "lc\\Services\\Interfaces\\IBookService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAqwA8AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T02:58:31.331Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "CatalogView.xaml",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Views\\Pages\\CatalogView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Pages\\CatalogView.xaml",
-              "ToolTip": "U:\\CourseProject\\lc\\Views\\Pages\\CatalogView.xaml",
-              "RelativeToolTip": "lc\\Views\\Pages\\CatalogView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-13T03:07:59.002Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 11,
-              "Title": "ServiceLocator.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Infrastructure\\ServiceLocator.cs",
-              "RelativeDocumentMoniker": "lc\\Infrastructure\\ServiceLocator.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Infrastructure\\ServiceLocator.cs",
-              "RelativeToolTip": "lc\\Infrastructure\\ServiceLocator.cs",
-              "ViewState": "AgIAAAoAAAAAAAAAAAA1wBQAAABXAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T03:02:39.712Z",
-              "EditorCaption": ""
-            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -173,76 +18,11 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "BookService.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\BookService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\BookService.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Services\\BookService.cs",
-              "RelativeToolTip": "lc\\Services\\BookService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T02:59:26.083Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "IUndoRedoService.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IUndoRedoService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IUndoRedoService.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IUndoRedoService.cs",
-              "RelativeToolTip": "lc\\Services\\Interfaces\\IUndoRedoService.cs",
-              "ViewState": "AgIAABMAAAAAAAAAAAAuwC4AAAAgAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T02:56:43.845Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "IUndoableAction.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Services\\Interfaces\\IUndoableAction.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IUndoableAction.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Services\\Interfaces\\IUndoableAction.cs",
-              "RelativeToolTip": "lc\\Services\\Interfaces\\IUndoableAction.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA4AAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T02:55:56.672Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "BookRepository.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\BookRepository.cs",
-              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\BookRepository.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\BookRepository.cs",
-              "RelativeToolTip": "lc\\Data\\Repositories\\BookRepository.cs",
-              "ViewState": "AgIAABEBAAAAAAAAAAAAABYAAAA9AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T02:53:38.455Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 12,
-              "Title": "IBookRepository.cs",
-              "DocumentMoniker": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IBookRepository.cs",
-              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IBookRepository.cs",
-              "ToolTip": "U:\\CourseProject\\lc\\Data\\Repositories\\Interfaces\\IBookRepository.cs",
-              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IBookRepository.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAA3AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-13T02:52:50.025Z",
-              "EditorCaption": ""
             }
           ]
         },
         {
-          "DockedWidth": 1799,
+          "DockedWidth": 1494,
           "SelectedChildIndex": -1,
           "Children": [
             {

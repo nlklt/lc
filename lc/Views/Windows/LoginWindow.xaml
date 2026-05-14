@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:lc.ViewModels"
+        xmlns:help="clr-namespace:lc.Helpers"
         xmlns:conv="clr-namespace:lc.Converters"
         mc:Ignorable="d"
         Title="Вход" 
@@ -57,11 +58,11 @@
                          Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" 
                          Tag="user" Margin="0,4,0,16"/>
 
-                <TextBlock Text="Пароль" FontSize="14"
+                <TextBlock  x:Name="Password" Text="Пароль" FontSize="14"
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <PasswordBox x:Name="PassBox"  Style="{DynamicResource PasswordBoxPlaceholderStyle}"
                              Tag=".pth1234" Margin="0,4,0,8"/>
-
+                
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="Tomato" 
                            TextWrapping="Wrap" Margin="0,0,0,8"/>
 
@@ -69,7 +70,6 @@
                         Style="{DynamicResource PrimaryButtonStyle}"
                         CommandParameter="{Binding ElementName=PassBox}"
                         Height="36" Margin="0,0,0,8" IsDefault="True"/>
-
 
                 <Button Content="Создать аккаунт" 
                         Command="{Binding NavigateRegisterCommand}" 

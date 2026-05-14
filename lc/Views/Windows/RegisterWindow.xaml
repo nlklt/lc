@@ -4,6 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:lc.ViewModels"
+        xmlns:help="clr-namespace:lc.Helpers"
         xmlns:conv="clr-namespace:lc.Converters"
         xmlns:helpers="clr-namespace:lc.Helpers"
         mc:Ignorable="d"
@@ -55,7 +56,7 @@
                 <TextBlock Text="Имя пользователя" FontSize="14"
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <TextBox x:Name="UserNameTb"  Style="{DynamicResource TextBoxPlaceholderStyle}"
-                         Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" 
+                         Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}"
                          Tag="user" Margin="0,4,0,12"/>
 
                 <TextBlock Text="Пароль" FontSize="14"

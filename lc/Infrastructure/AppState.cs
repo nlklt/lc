@@ -52,7 +52,7 @@ namespace lc.Infrastructure
         public bool IsReader => CurrentUser?.Role == UserRole.Reader || IsAdmin || IsWriter;
         public bool IsAuthenticated => !IsGuest;
 
-        public bool CanManageBooks => IsAdmin || (IsWriter && _currentUser != null && _selectedBook != null && _currentUser.UserId == _selectedBook.PublisherId);
+        public bool CanManageBooks => IsAdmin || (IsWriter && _selectedBook == null) || (IsWriter && _currentUser.UserId == _selectedBook.PublisherId);
         public bool CanComment => !IsGuest && !(CurrentUser?.BlockedComments ?? false);
 
         public Book? SelectedBook

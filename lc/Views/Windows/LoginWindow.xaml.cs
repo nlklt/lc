@@ -1,5 +1,5 @@
-﻿using System.Windows;
-using lc.ViewModels;
+﻿using lc.ViewModels;
+using System.Windows;
 
 namespace lc.Views.Windows
 {

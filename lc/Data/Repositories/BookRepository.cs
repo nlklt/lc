@@ -4,16 +4,19 @@ using lc.Infrastructure.Repositories.Sql;
 using lc.Models;
 using lc.Models.Enums;
 using Microsoft.Data.SqlClient;
+using System.Collections.Generic;
 using System.Data;
 using System.Net;
+using System.Security.Policy;
 using System.Text;
+using System.Windows.Media;
 
 namespace lc.Data.Repositories
 {
     public sealed class BookRepository(
-        IChapterRepository chapterRepository, 
+        IChapterRepository chapterRepository,
         ICommentRepository commentRepository,
-        ITagRepository tagRepository, 
+        ITagRepository tagRepository,
         ICategoryRepository categoryRepository
         ) : IBookRepository
     {
@@ -51,11 +54,6 @@ namespace lc.Data.Repositories
                 {
                     BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
                     PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
-                    Publisher = new User
-                    {
-                        UserId = reader.GetInt32(reader.GetOrdinal("PublisherUserId")),
-                        UserName = reader.IsDBNull(reader.GetOrdinal("PublisherUserName")) ? "Unknown" : reader.GetString(reader.GetOrdinal("PublisherUserName"))
-                    },
                     Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? "" : reader.GetString(reader.GetOrdinal("Title")),
                     AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? "" : reader.GetString(reader.GetOrdinal("AuthorName")),
                     Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? "" : reader.GetString(reader.GetOrdinal("Description")),
@@ -110,19 +108,35 @@ namespace lc.Data.Repositories
         {
             const string sql = @"
             INSERT INTO Books
-            (Title, Publisher, AuthorName, Description, CoverImagePath, BookStatus, Language, AgeRating, SymbolsCount, ChaptersCount, Views, Rating, CreatedAt, UpdatedAt)
+            (Title, PublisherId, AuthorName, Description, CoverImagePath, BookStatus, WritingStatus, Language, AgeRating, SymbolsCount, ChaptersCount, Views, Rating, CreatedAt, UpdatedAt)
             OUTPUT INSERTED.BookId
             VALUES
-            (@Title, @Publisher, @AuthorName, @Description, @CoverImagePath, @BookStatus, @Language, @AgeRating, @Views, @Rating, @CreatedAt, @UpdatedAt);";
+            (@Title, @PublisherId, @AuthorName, @Description, @CoverImagePath, @BookStatus, @WritingStatus, @Language, @AgeRating, @SymbolsCount, @ChaptersCount, @Views, @Rating, @CreatedAt, @UpdatedAt);";
 
             await using var connection = SqlConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            await using var command = new SqlCommand(sql, connection);
-            AddBookParameters(command, book);
+            await using var transaction = await connection.BeginTransactionAsync();
 
-            var result = await command.ExecuteScalarAsync();
-            return result is int ChapterId ? ChapterId : 0;
+            try
+            {
+                await using var command = new SqlCommand(sql, connection, (SqlTransaction)transaction);
+                AddBookParameters(command, book);
+
+                var result = await command.ExecuteScalarAsync();
+                var bookId = Convert.ToInt32(result);
+
+                await SyncBookTagsAsync(connection, (SqlTransaction)transaction, bookId, book.Tags);
+                await SyncBookCategoriesAsync(connection, (SqlTransaction)transaction, bookId, book.Categories);
+
+                await transaction.CommitAsync();
+                return bookId;
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task UpdateAsync(Book book)
@@ -131,16 +145,15 @@ namespace lc.Data.Repositories
             UPDATE Books
             SET
                 Title = @Title,
-                Publisher = @Publisher,
+                PublisherId = @PublisherId,
                 AuthorName = @AuthorName,
                 Description = @Description,
                 CoverImagePath = @CoverImagePath,
-                PublisherId INT NOT NULL,
-                BookStatus INT NOT NULL,
-                WritingStatus INT NOT NULL,
+                BookStatus = @BookStatus,
+                WritingStatus = @WritingStatus,
                 Language = @Language,
                 AgeRating = @AgeRating,
-                SymbolsCount = @SymbolsCount, 
+                SymbolsCount = @SymbolsCount,
                 ChaptersCount = @ChaptersCount,
                 Views = @Views,
                 Rating = @Rating,
@@ -150,11 +163,80 @@ namespace lc.Data.Repositories
             await using var connection = SqlConnectionFactory.CreateConnection();
             await connection.OpenAsync();
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", book.BookId);
-            AddBookParameters(command, book);
+            await using var transaction = await connection.BeginTransactionAsync();
 
-            await command.ExecuteNonQueryAsync();
+            try
+            {
+                await using var command = new SqlCommand(sql, connection, (SqlTransaction)transaction);
+                command.Parameters.AddWithValue("@BookId", book.BookId);
+                AddBookParameters(command, book);
+
+                await command.ExecuteNonQueryAsync();
+
+                await SyncBookTagsAsync(connection, (SqlTransaction)transaction, book.BookId, book.Tags);
+                await SyncBookCategoriesAsync(connection, (SqlTransaction)transaction, book.BookId, book.Categories);
+
+                await transaction.CommitAsync();
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
+        }
+
+        private static async Task SyncBookTagsAsync(
+            SqlConnection connection,
+            SqlTransaction transaction,
+            int bookId,
+            IEnumerable<Tag> tags)
+        {
+            await using (var delete = new SqlCommand("DELETE FROM BookTags WHERE BookId = @BookId;", connection, transaction))
+            {
+                delete.Parameters.AddWithValue("@BookId", bookId);
+                await delete.ExecuteNonQueryAsync();
+            }
+
+            var distinctTagIds = tags.Select(t => t.TagId).Distinct().ToList();
+
+            foreach (var tagId in distinctTagIds)
+            {
+                await using var insert = new SqlCommand(@"
+                    INSERT INTO BookTags (BookId, TagId)
+                    VALUES (@BookId, @TagId);", connection, transaction);
+
+                insert.Parameters.AddWithValue("@BookId", bookId);
+                insert.Parameters.AddWithValue("@TagId", tagId);
+
+                await insert.ExecuteNonQueryAsync();
+            }
+        }
+
+        private static async Task SyncBookCategoriesAsync(
+            SqlConnection connection,
+            SqlTransaction transaction,
+            int bookId,
+            IEnumerable<Category> categories)
+        {
+            await using (var delete = new SqlCommand("DELETE FROM BookCategories WHERE BookId = @BookId;", connection, transaction))
+            {
+                delete.Parameters.AddWithValue("@BookId", bookId);
+                await delete.ExecuteNonQueryAsync();
+            }
+
+            var distinctCategoryIds = categories.Select(c => c.CategoryId).Distinct().ToList();
+
+            foreach (var categoryId in distinctCategoryIds)
+            {
+                await using var insert = new SqlCommand(@"
+                    INSERT INTO BookCategories (BookId, CategoryId)
+                    VALUES (@BookId, @CategoryId);", connection, transaction);
+
+                insert.Parameters.AddWithValue("@BookId", bookId);
+                insert.Parameters.AddWithValue("@CategoryId", categoryId);
+
+                await insert.ExecuteNonQueryAsync();
+            }
         }
 
         public async Task DeleteAsync(int bookId)
@@ -169,17 +251,19 @@ namespace lc.Data.Repositories
 
             await command.ExecuteNonQueryAsync();
         }
-
         private static void AddBookParameters(SqlCommand command, Book book)
         {
             command.Parameters.AddWithValue("@Title", (object?)book.Title ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Publisher", (object?)book.Publisher ?? DBNull.Value);
+            command.Parameters.AddWithValue("@PublisherId", book.PublisherId);
             command.Parameters.AddWithValue("@AuthorName", (object?)book.AuthorName ?? DBNull.Value);
             command.Parameters.AddWithValue("@Description", (object?)book.Description ?? DBNull.Value);
             command.Parameters.AddWithValue("@CoverImagePath", (object?)book.CoverImagePath ?? DBNull.Value);
             command.Parameters.AddWithValue("@BookStatus", (int)book.BookStatus);
+            command.Parameters.AddWithValue("@WritingStatus", (int)book.WritingStatus);
             command.Parameters.AddWithValue("@Language", (int)book.Language);
             command.Parameters.AddWithValue("@AgeRating", book.AgeRating);
+            command.Parameters.AddWithValue("@SymbolsCount", book.SymbolsCount);
+            command.Parameters.AddWithValue("@ChaptersCount", book.ChaptersCount);
             command.Parameters.AddWithValue("@Views", book.Views);
             command.Parameters.AddWithValue("@Rating", book.Rating);
             command.Parameters.AddWithValue("@CreatedAt", book.CreatedAt);

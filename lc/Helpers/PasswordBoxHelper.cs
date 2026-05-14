@@ -21,8 +21,14 @@ namespace lc.Helpers
 
         // Свойство для хранения самого текста (для отображения пароля при наведении).
         public static readonly DependencyProperty BoundPasswordProperty =
-            DependencyProperty.RegisterAttached("BoundPassword", typeof(string), typeof(PasswordBoxHelper), 
-                new PropertyMetadata(string.Empty));
+           DependencyProperty.RegisterAttached(
+               "BoundPassword",
+               typeof(string),
+               typeof(PasswordBoxHelper),
+               new FrameworkPropertyMetadata(
+                   string.Empty,
+                   FrameworkPropertyMetadataOptions.BindsTwoWayByDefault));
+
         public static string GetBoundPassword(DependencyObject obj) => (string)obj.GetValue(BoundPasswordProperty);
         public static void SetBoundPassword(DependencyObject obj, string value) => obj.SetValue(BoundPasswordProperty, value);
 

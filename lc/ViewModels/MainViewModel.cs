@@ -31,13 +31,13 @@ namespace lc.ViewModels
             _appState   = ServiceLocator.AppState;
 
             User newUser = new();
-                newUser.UserId = 999;
+                newUser.UserId = 2;
                 newUser.UserName = "test_admin";
                 newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
                 newUser.AvatarPath = "";
                 newUser.BlockedComments = false;
                 newUser.CreatedAt = DateTime.Now;
-                newUser.Role = (UserRole)3;
+                newUser.Role = (UserRole)2;
                 newUser.PreferredLanguage = (Language)0;
                 newUser.PreferredTheme = "Dark";
 

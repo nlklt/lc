@@ -26,7 +26,6 @@ namespace lc.Infrastructure
         public static IAuthService          AuthService { get; } = new AuthService(AppState, UserRepository);
         public static IUserLibraryService   UserLibraryService { get; set; } = new UserLibraryService(UserLibraryRepository);
         public static IReaderService        ReaderService { get; set; } = new ReaderService(BookRepository, ChapterRepository, UserRepository);
-        public static IUndoRedoService      UndoRedoService { get; } = new UndoRedoService();
-        public static IBookService          BookService { get; } = new BookService(BookRepository, ChapterRepository, TagRepository, CategoryRepository, UndoRedoService);
+        public static IBookService          BookService { get; } = new BookService(BookRepository, ChapterRepository, TagRepository, CategoryRepository);
     }
 }

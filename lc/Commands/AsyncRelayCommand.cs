@@ -65,9 +65,9 @@ namespace lc.Commands
             }
         }
 
-        internal void RaiseCanExecuteChanged()
+        public void RaiseCanExecuteChanged()
         {
-            throw new NotImplementedException();
+            CommandManager.InvalidateRequerySuggested();
         }
     }
 }

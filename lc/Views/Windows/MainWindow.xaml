@@ -6,7 +6,7 @@
         xmlns:vm="clr-namespace:lc.ViewModels"
         xmlns:vc="clr-namespace:lc.Views.Controls"
         mc:Ignorable="d"
-        Title="LibCloud" Height="700" Width="1252"
+        Title="LibCloud" Height="700" Width="1264"
         Background="{DynamicResource BackgroundBrush}"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
 

@@ -3,7 +3,9 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:help="clr-namespace:lc.Helpers"
              xmlns:local="clr-namespace:lc.Views.Controls"
+             xmlns:command="clr-namespace:lc.Commands"
              xmlns:vm="clr-namespace:lc.ViewModels"
              d:DataContext="{d:DesignInstance Type=vm:CatalogViewModel}"
              mc:Ignorable="d">
@@ -133,13 +135,15 @@
                                                 <ColumnDefinition Width="Auto"/>
                                                 <ColumnDefinition Width="*"/>
                                             </Grid.ColumnDefinitions>
-                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="От"
-                                                     Text="{Binding Symbols.From, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
+                                            <TextBox Grid.Column="0"  Style="{DynamicResource TextBoxPlaceholderStyle}" 
+                                                     Tag="От" Text="{Binding Symbols.From,  Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                             <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
                                                        VerticalAlignment="Center" HorizontalAlignment="Center" 
                                                        Foreground="{DynamicResource BorderBrush}"/>
-                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" Tag="До"
-                                                     Text="{Binding Symbols.To, UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
+                                            <TextBox Grid.Column="2" Style="{DynamicResource TextBoxPlaceholderStyle}" 
+                                                     Tag="До" Text="{Binding Symbols.To, Mode=TwoWay,
+                                                     UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                         </Grid>
 
                                         <TextBlock Text="Дата публикации" Style="{DynamicResource FilterLabelStyle}" />
@@ -233,19 +237,6 @@
                                             <Button Grid.Column="1" Style="{DynamicResource SecondaryButtonStyle}"
                                                     Command="{Binding ResetFiltersCommand}"
                                                     Content="Сбросить всё" />
-                                        </Grid>
-
-                                        <Grid>
-                                            <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="*"/>
-                                                <ColumnDefinition Width="*"/>
-                                            </Grid.ColumnDefinitions>
-                                            <Button Grid.Column="0" Content="Undo" Margin="0,0,12,0"
-                                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                                    Command="{Binding UndoCommand}" />
-                                            <Button Grid.Column="1" Content="Redo" 
-                                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                                    Command="{Binding RedoCommand}" />
                                         </Grid>
                                     </StackPanel>
                                 </DataTemplate>

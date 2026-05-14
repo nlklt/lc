@@ -3,6 +3,7 @@ using lc.Infrastructure;
 using lc.Models.Enums;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using System;
 using System.Windows.Input;
 
 namespace lc.ViewModels
@@ -21,17 +22,28 @@ namespace lc.ViewModels
         public bool IsGuest => _appState.IsGuest;
         public bool IsWriter => _appState.IsWriter;
         public bool IsAdmin => _appState.IsAdmin;
+        public bool IsReader => _appState.IsReader;
         public bool IsAuthenticated => _appState.IsAuthenticated;
 
         public string CurrentUserName => _appState.CurrentUser?.UserName ?? "Гость";
         public UserRole CurrentUserRole => _appState.CurrentUser?.Role ?? UserRole.Guest;
         public string AvatarPath => _appState.CurrentUser?.AvatarPath ?? "";
 
-        public ICommand NavigateCatalogCommand { get; }
-        public ICommand NavigateLoginCommand { get; }
+        // Гость
         public ICommand NavigateRegisterCommand { get; }
-        public ICommand NavigateEditBookCommand { get; }
+        public ICommand NavigateLoginCommand { get; }
+
+        // Читатель
+        public ICommand NavigateCatalogCommand { get; }
+        public ICommand RandomBookCommand { get; }
+        public ICommand NavigateMarkBookCommand { get; }
+        public ICommand BecomeAuthorCommand { get; }
+
+
+        public ICommand NavigateCreateBookCommand { get; }
         public ICommand NavigateProfileCommand { get; }
+
+        public ICommand NavigateSettingsCommand { get; }
         public ICommand LogoutCommand { get; }
 
         public NavigationViewModel()
@@ -47,9 +59,32 @@ namespace lc.ViewModels
 
             NavigateLoginCommand    = new RelayCommand(_ => _dialog.ShowLoginDialog());
             NavigateRegisterCommand = new RelayCommand(_ => _dialog.ShowRegisterDialog());
-            NavigateCatalogCommand  = new RelayCommand(_ => _navigation.Navigate(new CatalogViewModel()));
+            
             NavigateProfileCommand  = new RelayCommand(_ => _navigation.Navigate(new ProfileViewModel()));
-            NavigateEditBookCommand = new RelayCommand(_ => _navigation.Navigate(new EditBookViewModel()));
+
+            NavigateCatalogCommand  = new RelayCommand(_ => _navigation.Navigate(new CatalogViewModel()));
+
+            RandomBookCommand = new RelayCommand(_ =>
+            {
+                Random random = new();
+                //var books = await ServiceLocator.BookService.GetRandomBookAsync();
+                int bookId = random.Next(21, 32);
+                _navigation.Navigate(new BookDetailsViewModel(bookId));
+            });
+
+            // NavigateMarkBookCommand = new RelayCommand(_ => _navigation.Navigate(new BookDetailsViewModel()));
+
+            // BecomeAuthorCommand = new RelayCommand(_ => _navigation.Navigate(new EditBookViewModel()));
+
+            NavigateCreateBookCommand = new RelayCommand(_ => _navigation.Navigate(new EditBookViewModel()));
+
+            NavigateSettingsCommand = new RelayCommand(_ =>
+            {
+                var vm = new ProfileViewModel();
+                vm.IsSettingsOpen = true;
+                _navigation.Navigate(vm);
+            });
+
             LogoutCommand           = new RelayCommand(_ => Logout());
 
             _appState.PropertyChanged += (_, __) =>

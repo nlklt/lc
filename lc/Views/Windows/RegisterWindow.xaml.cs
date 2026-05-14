@@ -1,6 +1,5 @@
 ﻿using lc.ViewModels;
 using System.Windows;
-using System.Windows.Controls;
 
 namespace lc.Views.Windows
 {

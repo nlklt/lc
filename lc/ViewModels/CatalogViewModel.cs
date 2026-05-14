@@ -164,9 +164,6 @@ namespace lc.ViewModels
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
 
-        public bool CanUndo => ServiceLocator.UndoRedoService.CanUndo;
-        public bool CanRedo => ServiceLocator.UndoRedoService.CanRedo;
-
         public CatalogViewModel()
         {
             _appState = ServiceLocator.AppState;
@@ -174,22 +171,6 @@ namespace lc.ViewModels
             _userLibraryService = ServiceLocator.UserLibraryService;
             _navigationService = ServiceLocator.NavigationService;
             _dialogService = ServiceLocator.DialogService;
-
-            UndoCommand = new AsyncRelayCommand(async _ =>
-            {
-                await ServiceLocator.UndoRedoService.UndoAsync();
-                await ApplyFiltersAsync();
-                OnPropertyChanged(nameof(CanUndo));
-                OnPropertyChanged(nameof(CanRedo));
-            });
-
-            RedoCommand = new AsyncRelayCommand(async _ =>
-            {
-                await ServiceLocator.UndoRedoService.RedoAsync();
-                await ApplyFiltersAsync();
-                OnPropertyChanged(nameof(CanUndo));
-                OnPropertyChanged(nameof(CanRedo));
-            });
 
             InitializeCommand =       new AsyncRelayCommand(_ => InitializeAsync());
             ToggleCategoriesCommand = new RelayCommand(_ => ToggleCategories());
@@ -487,14 +468,24 @@ namespace lc.ViewModels
         public T? From
         {
             get => _from;
-            set => SetProperty(ref _from, value);
+            set
+            {
+                SetProperty(ref _from, value);
+                if (_to.HasValue && _from.HasValue && _from.Value.CompareTo(_to.Value) > 0)
+                    To = _from;
+            }
         }
 
         private T? _to;
         public T? To
         {
             get => _to;
-            set => SetProperty(ref _to, value);
+            set
+            {
+                SetProperty(ref _to, value);
+                if (_from.HasValue && _to.HasValue && _to.Value.CompareTo(_from.Value) < 0)
+                    From = _to;
+            }
         }
     }
 

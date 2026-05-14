@@ -68,9 +68,9 @@ namespace lc.ViewModels
             {
                 var password = passwordBox.Password;
 
-                if (string.IsNullOrWhiteSpace(password))
+                if (!ValidateLoginData(UserName, password, out var error))
                 {
-                    ErrorMessage = "Введите пароль.";
+                    ErrorMessage = error;
                     return;
                 }
 
@@ -99,6 +99,38 @@ namespace lc.ViewModels
                     IsBusy = false;
                 }
             }
+        }
+
+        private const int MaxUserNameLength = 16;
+        private const int MaxPasswordLength = 24;
+        private bool ValidateLoginData(string userName, string password, out string error)
+        {
+            if (string.IsNullOrWhiteSpace(userName))
+            {
+                error = "Введите логин.";
+                return false;
+            }
+
+            if (userName.Length > MaxUserNameLength)
+            {
+                error = $"Логин не должен быть длиннее {MaxUserNameLength} символов.";
+                return false;
+            }
+
+            if (string.IsNullOrWhiteSpace(password))
+            {
+                error = "Введите пароль.";
+                return false;
+            }
+
+            if (password.Length > MaxPasswordLength)
+            {
+                error = $"Пароль не должен быть длиннее {MaxPasswordLength} символов.";
+                return false;
+            }
+
+            error = string.Empty;
+            return true;
         }
 
         private void GoBack(object? obj)

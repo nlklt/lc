@@ -7,13 +7,10 @@ using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
 using System.Collections.ObjectModel;
-using System.Globalization;
 using System.IO;
-using System.Net;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using static UndoRedoService;
 
 namespace lc.ViewModels
 {
@@ -27,8 +24,6 @@ namespace lc.ViewModels
         private readonly IUserLibraryService _userLibraryService;
         private readonly IChapterRepository _chapterRepository;
         private readonly ICommentRepository _commentRepository;
-
-        private readonly IUndoRedoService _undoRedoService;
 
         private Book? _book;
         private ImageSource? _coverImage;
@@ -47,8 +42,6 @@ namespace lc.ViewModels
             _userLibraryService = ServiceLocator.UserLibraryService;
             _chapterRepository = ServiceLocator.ChapterRepository;
             _commentRepository = ServiceLocator.CommentRepository;
-
-            _undoRedoService = ServiceLocator.UndoRedoService;
 
             BackCommand = new RelayCommand(_ => _navigationService.GoBack());
             StartReadingCommand = new RelayCommand(_ => StartReading(), _ => CanRead);
@@ -411,7 +404,7 @@ namespace lc.ViewModels
 
             var confirmed = await _dialogService.ShowConfirmAsync(
                 "Удалить книгу",
-                "Книга будет скрыта из каталога. Действие можно отменить через Undo.");
+                "Книга будет скрыта из каталога.");
 
             if (!confirmed)
                 return;

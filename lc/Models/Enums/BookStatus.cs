@@ -4,6 +4,7 @@
     {
         Draft = 0,
         Published = 1,
-        Archived = 2
+        Archived = 2,
+        Banned = 3,
     }
 }

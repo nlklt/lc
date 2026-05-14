@@ -134,50 +134,45 @@ namespace lc.ViewModels
         public ICommand DeleteAccountCommand { get; }
 
         public ICommand ToggleSettingsCommand { get; }
+        public ICommand GoBackCommand { get; }
 
         public ICommand UndoCommand { get; }
         public ICommand RedoCommand { get; }
-
-        public bool CanUndo => ServiceLocator.UndoRedoService.CanUndo;
-        public bool CanRedo => ServiceLocator.UndoRedoService.CanRedo;
 
         public ProfileViewModel()
         {
             _appState = ServiceLocator.AppState;
             _userRepository = ServiceLocator.UserRepository;
             _themeService = ServiceLocator.ThemeService;
+            _navigation = ServiceLocator.NavigationService;
             _localizationService = ServiceLocator.LocalisationService;
-
-            UndoCommand = new AsyncRelayCommand(async _ =>
-            {
-                await ServiceLocator.UndoRedoService.UndoAsync();
-                OnPropertyChanged(nameof(CanUndo));
-                OnPropertyChanged(nameof(CanRedo));
-            });
-
-            RedoCommand = new AsyncRelayCommand(async _ =>
-            {
-                await ServiceLocator.UndoRedoService.RedoAsync();
-                OnPropertyChanged(nameof(CanUndo));
-                OnPropertyChanged(nameof(CanRedo));
-            });
 
             _appState.PropertyChanged += AppStateOnPropertyChanged;
 
             LoadFromCurrentUser();
 
-            SaveSettingsCommand     = new AsyncRelayCommand(SaveSettingsAsync, CanSaveSettings);
-            ResetSettingsCommand    = new RelayCommand(_ => LoadFromCurrentUser(), _ 
-                =>  !IsBusy);
-            
-            ChangeAvatarCommand     = new RelayCommand(OnChangeAvatar);
-            ClearAvatarCommand      = new RelayCommand(_ => AvatarPath = null, _ 
-                =>  !IsBusy && !string.IsNullOrWhiteSpace(AvatarPath));
-            
-            LogoutCommand           = new RelayCommand(OnLogout);
-            DeleteAccountCommand    = new AsyncRelayCommand(DeleteAccountAsync);
+            SaveSettingsCommand = new AsyncRelayCommand(SaveSettingsAsync, CanSaveSettings);
+            ResetSettingsCommand = new RelayCommand(_ => LoadFromCurrentUser(), _
+                => !IsBusy);
 
-            ToggleSettingsCommand = new RelayCommand(_ => IsSettingsOpen = !IsSettingsOpen);
+            ChangeAvatarCommand = new RelayCommand(OnChangeAvatar);
+            ClearAvatarCommand = new RelayCommand(_ => AvatarPath = null, _
+                => !IsBusy && !string.IsNullOrWhiteSpace(AvatarPath));
+
+            LogoutCommand = new RelayCommand(OnLogout);
+            DeleteAccountCommand = new AsyncRelayCommand(DeleteAccountAsync);
+
+            ToggleSettingsCommand = new RelayCommand(_ =>
+            {
+                IsSettingsOpen = !IsSettingsOpen;
+                _appState.PrevViewModel = new ProfileViewModel();
+            });
+            
+            GoBackCommand = new RelayCommand(_ =>
+            {
+                IsSettingsOpen = !IsSettingsOpen;
+                _navigation.GoBack();
+            });
 
             _preferredTheme = _appState.CurrentUser.PreferredTheme;
             _themeService.SetTheme(_preferredTheme);

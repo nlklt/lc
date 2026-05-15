@@ -3,18 +3,22 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
         xmlns:vm="clr-namespace:lc.ViewModels"
         xmlns:vc="clr-namespace:lc.Views.Controls"
         mc:Ignorable="d"
-        Title="LibCloud" Height="700" Width="1264"
+        Title="LibCloud" 
+        Height="700" 
+        Width="1264"
         Background="{DynamicResource BackgroundBrush}"
         d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
 
-    <WindowChrome.WindowChrome>
-        <WindowChrome CaptionHeight="32" 
-                      CornerRadius="0" GlassFrameThickness="0" 
-                      UseAeroCaptionButtons="True" />
-    </WindowChrome.WindowChrome>
+    <shell:WindowChrome.WindowChrome>
+        <shell:WindowChrome CaptionHeight="32"
+                            CornerRadius="0"
+                            GlassFrameThickness="0"
+                            UseAeroCaptionButtons="True" />
+    </shell:WindowChrome.WindowChrome>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -28,12 +32,16 @@
         </Grid.ColumnDefinitions>
 
         <Border Grid.Row="0" Grid.ColumnSpan="2" 
-                Background="{DynamicResource SurfaceBrush}" CornerRadius="0,0,8,8">
+                CornerRadius="0,0,8,8"
+                Background="{DynamicResource SurfaceBrush}">
+            
             <Grid>
-                <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
-                    <TextBlock Text="☁ LibCloude"  Foreground="{DynamicResource TextPrimaryBrush}" 
-                               FontWeight="Bold" FontSize="14"/>
-                </StackPanel>
+                <TextBlock Text="☁ LibCloud"
+                           Margin="12,8,0,8"
+                           VerticalAlignment="Center"
+                           Foreground="{DynamicResource TextPrimaryBrush}" 
+                           FontWeight="Bold" 
+                           FontSize="14"/>
 
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                     <Button Content="—"  Style="{DynamicResource CaptionButtonStyle}" Click="Minimize_Click"/>
@@ -41,14 +49,20 @@
                     <Button Content="✕" Style="{DynamicResource CloseButtonStyle}"   Click="Close_Click" IsCancel="True"/>
                 </StackPanel>
             </Grid>
+            
         </Border>
 
         <!-- Навигационное меню -->
-        <vc:NavigationView Grid.Row="1" Grid.Column="0" Background="{DynamicResource TransparentBrush}"/>
+        <vc:NavigationView Grid.Row="1" Grid.Column="0" 
+                           DataContext="{Binding Navigation}"
+                           Background="{DynamicResource TransparentBrush}"/>
 
         <!-- Основной контент -->
-        <Border Grid.Row="1" Grid.Column="1" Background="{DynamicResource BackgroundBrush}">
+        <Border Grid.Row="1" Grid.Column="1" 
+                Background="{DynamicResource BackgroundBrush}">
+            
             <ContentControl Content="{Binding CurrentViewModel}" />
+            
         </Border>
     </Grid>
 </Window>

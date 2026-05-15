@@ -4,17 +4,12 @@
              xmlns:local="clr-namespace:lc"
              xmlns:vm="clr-namespace:lc.ViewModels"
              xmlns:vp="clr-namespace:lc.Views.Pages"
-             xmlns:conv="clr-namespace:lc.Converters"
-             xmlns:vc="clr-namespace:lc.Views.Controls"
-             StartupUri="Views/Windows/MainWindow.xaml">
+             xmlns:conv="clr-namespace:lc.Converters">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="/Resources/Themes/Dark.xaml"/>
-                
-                <ResourceDictionary Source="/Resources/Themes/Brushes.xaml"/>
-                <ResourceDictionary Source="/Resources/Themes/Metrics.xaml"/>
-                
+                                
                 <ResourceDictionary Source="/Resources/Localisation/Language.ru.xaml"/>
                 
                 <ResourceDictionary Source="/Resources/Controls/Text.xaml"/>
@@ -29,10 +24,8 @@
             </ResourceDictionary.MergedDictionaries>
 
             <conv:MultiObjectConverter x:Key="MultiObjectConverter"/>
+            <conv:InverseBoolConverter x:Key="InverseBoolConverter"/>
             <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-            <conv:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
-            <conv:NullableDoubleToStringConverter x:Key="IntToVisibilityConverter" />
-            <conv:NullableDoubleToStringConverter x:Key="NullableDoubleToStringConverter" />
             <conv:CheckBoxStateToNullableBoolConverter x:Key="CheckBoxStateToNullableBoolConverter" />
 
             <DataTemplate DataType="{x:Type vm:CatalogViewModel}">

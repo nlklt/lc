@@ -5,9 +5,9 @@ namespace lc.Views.Windows
 {
     public partial class ReaderWindow : Window
     {
-        public ReaderWindow(int bookId, int? chapterId = null)
+        public ReaderWindow(ReaderViewModel vm)
         {
-            DataContext = new ReaderViewModel(bookId, chapterId);
+            DataContext = vm;
             InitializeComponent();
         }
     }

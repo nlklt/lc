@@ -1,73 +1,77 @@
-﻿using System.Windows.Input;
+﻿using System.Diagnostics;
+using System.Windows.Input;
 
-namespace lc.Commands
+namespace lc.Commands;
+
+public sealed class AsyncRelayCommand : ICommand
 {
-    public class AsyncRelayCommand : ICommand
+    private readonly Func<object?, Task> _execute;
+    private readonly Predicate<object?>? _canExecute;
+    private readonly Action<Exception>? _onException;
+
+    private int _isExecuting;
+
+    public AsyncRelayCommand(
+        Func<object?, Task> execute,
+        Predicate<object?>? canExecute = null,
+        Action<Exception>? onException = null)
     {
-        private readonly Func<object?, Task> _execute;
-        private readonly Func<object?, bool>? _canExecute;
-        private bool _isExecuting;
-        private Func<Task> saveSettingsAsync;
-        private Func<object?, bool> canSaveSettings;
+        ArgumentNullException.ThrowIfNull(execute);
 
-        public AsyncRelayCommand(Func<Task> execute, Func<bool>? canExecute = null)
-        {
-            _execute = _ => execute();
-            _canExecute = canExecute == null ? null : _ => canExecute();
-        }
+        _execute = execute;
+        _canExecute = canExecute;
+        _onException = onException;
+    }
 
-        public AsyncRelayCommand(Func<object?, Task> execute, Func<object?, bool>? canExecute = null)
-        {
-            _execute = execute;
-            _canExecute = canExecute;
-        }
+    public AsyncRelayCommand(
+        Func<Task> execute,
+        Func<bool>? canExecute = null,
+        Action<Exception>? onException = null) : this(
+            _ => execute(),
+            canExecute is null ? null : _ => canExecute(),
+            onException)  { }
 
-        public AsyncRelayCommand(Func<Task> saveSettingsAsync, Func<object?, bool> canSaveSettings)
-        {
-            this.saveSettingsAsync = saveSettingsAsync;
-            this.canSaveSettings = canSaveSettings;
-        }
+    public bool CanExecute(object? parameter)
+        => Volatile.Read(ref _isExecuting) == 0 &&
+           (_canExecute?.Invoke(parameter) ?? true);
 
-        public bool IsExecuting
-        {
-            get => _isExecuting;
-            set
-            {
-                _isExecuting = value;
-                CommandManager.InvalidateRequerySuggested();
-            }
-        }
+    public async void Execute(object? parameter)
+    {
+        if (!TryBeginExecute())
+            return;
 
-        public event EventHandler? CanExecuteChanged
+        try
         {
-            add => CommandManager.RequerySuggested += value;
-            remove => CommandManager.RequerySuggested -= value;
+            await _execute(parameter);
         }
+        catch (Exception ex)
+        {
+            _onException?.Invoke(ex);
+            Debug.WriteLine(ex);
+        }
+        finally
+        {
+            EndExecute();
+        }
+    }
 
-        public bool CanExecute(object? parameter)
-        {
-            return !_isExecuting && (_canExecute?.Invoke(parameter) ?? true);
-        }
+    public event EventHandler? CanExecuteChanged;
 
-        public async void Execute(object? parameter)
-        {
-            if (CanExecute(parameter))
-            {
-                try
-                {
-                    IsExecuting = true;
-                    await _execute(parameter);
-                }
-                finally
-                {
-                    IsExecuting = false;
-                }
-            }
-        }
+    public void RaiseCanExecuteChanged()
+        => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 
-        public void RaiseCanExecuteChanged()
-        {
-            CommandManager.InvalidateRequerySuggested();
-        }
+    private bool TryBeginExecute()
+    {
+        if (Interlocked.CompareExchange(ref _isExecuting, 1, 0) != 0)
+            return false;
+
+        RaiseCanExecuteChanged();
+        return true;
+    }
+
+    private void EndExecute()
+    {
+        Interlocked.Exchange(ref _isExecuting, 0);
+        RaiseCanExecuteChanged();
     }
 }

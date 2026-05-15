@@ -94,7 +94,7 @@
                         <!-- Имя и Роль -->
                         <StackPanel Grid.Column="1" VerticalAlignment="Center" >
                             <TextBlock Text="{Binding UserName}" FontSize="20" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" Margin="0,0,0,4"/>
-                            <TextBlock Text="{Binding CurrentUser.Role}" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"/>
+                            <TextBlock Text="{Binding Role}" FontSize="14" Foreground="{DynamicResource TextSecondaryBrush}"/>
                         </StackPanel>
 
                         <!-- Кнопка перехода в настройки -->

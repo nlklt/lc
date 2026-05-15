@@ -1,139 +1,76 @@
-﻿using lc.Data;
-using lc.Infrastructure.Data;
+﻿using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-namespace lc.Infrastructure.Repositories.Sql
+namespace lc.Infrastructure.Repositories.Sql;
+
+public sealed class ChapterRepository : IChapterRepository
 {
-    public sealed class ChapterRepository : IChapterRepository
+    private readonly AppDbContext _db;
+
+    public ChapterRepository(AppDbContext db)
     {
-        public async Task<Chapter?> GetByIdAsync(int chapterId)
-        {
-            const string sql = @"
-            SELECT ChapterId, BookId, ChapterNumber, Title, Text, CreatedAt, UpdatedAt
-            FROM Chapters
-            WHERE ChapterId = @ChapterId;";
+        _db = db;
+    }
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+    public async Task<Chapter?> GetByIdAsync(int chapterId)
+    {
+        return await _db.Chapters
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.ChapterId == chapterId);
+    }
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@ChapterId", chapterId);
+    public async Task<IReadOnlyList<Chapter>> GetByBookIdAsync(int bookId)
+    {
+        return await _db.Chapters
+            .AsNoTracking()
+            .Where(x => x.BookId == bookId)
+            .OrderBy(x => x.ChapterNumber)
+            .ToListAsync();
+    }
 
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return null;
+    public async Task<int> CreateAsync(Chapter chapter)
+    {
+        ArgumentNullException.ThrowIfNull(chapter);
 
-            return Map(reader);
-        }
+        if (chapter.CreatedAt == default)
+            chapter.CreatedAt = DateTime.Now;
 
-        public async Task<List<Chapter>> GetByBookIdAsync(int bookId)
-        {
-            const string sql = @"
-            SELECT ChapterId, BookId, ChapterNumber, Title, Text, CreatedAt, UpdatedAt
-            FROM Chapters
-            WHERE BookId = @BookId
-            ORDER BY ChapterNumber;";
+        chapter.UpdatedAt = DateTime.Now;
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+        _db.Chapters.Add(chapter);
+        await _db.SaveChangesAsync();
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", bookId);
+        return chapter.ChapterId;
+    }
 
-            var result = new List<Chapter>();
-            await using var reader = await command.ExecuteReaderAsync();
+    public async Task UpdateAsync(Chapter chapter)
+    {
+        ArgumentNullException.ThrowIfNull(chapter);
 
-            while (await reader.ReadAsync())
-                result.Add(Map(reader));
+        var existing = await _db.Chapters
+            .FirstOrDefaultAsync(x => x.ChapterId == chapter.ChapterId)
+            ?? throw new InvalidOperationException($"Глава с ChapterId={chapter.ChapterId} не найдена.");
 
-            return result;
-        }
+        var createdAt = existing.CreatedAt;
 
-        public async Task<int> CreateAsync(Chapter chapter)
-        {
-            const string sql = @"
-            INSERT INTO Chapters
-            (
-                BookId, ChapterNumber, Title, Text,
-                CreatedAt, UpdatedAt
-            )
-            OUTPUT INSERTED.ChapterId
-            VALUES
-            (
-                @BookId, @ChapterNumber, @Title, @Text,
-                @CreatedAt, @UpdatedAt
-            );";
+        _db.Entry(existing).CurrentValues.SetValues(chapter);
+        existing.CreatedAt = createdAt;
+        existing.UpdatedAt = DateTime.Now;
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+        await _db.SaveChangesAsync();
+    }
 
-            await using var command = new SqlCommand(sql, connection);
-            AddParameters(command, chapter);
+    public async Task DeleteAsync(int chapterId)
+    {
+        var chapter = await _db.Chapters
+            .FirstOrDefaultAsync(x => x.ChapterId == chapterId);
 
-            var result = await command.ExecuteScalarAsync();
-            return result is int ChapterId ? ChapterId : 0;
-        }
+        if (chapter is null)
+            return;
 
-        public async Task UpdateAsync(Chapter chapter)
-        {
-            const string sql = @"
-            UPDATE Chapters
-            SET
-                BookId = @BookId,
-                ChapterNumber = @ChapterNumber,
-                Title = @Title,
-                Text = @Text,
-                UpdatedAt = @UpdatedAt
-            WHERE ChapterId = @ChapterId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@ChapterId", chapter.ChapterId);
-            AddParameters(command, chapter);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        public async Task DeleteAsync(int chapterId)
-        {
-            const string sql = @"DELETE FROM Chapters WHERE ChapterId = @ChapterId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@ChapterId", chapterId);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        private static void AddParameters(SqlCommand command, Chapter chapter)
-        {
-            command.Parameters.AddWithValue("@ChapterId", chapter.ChapterId);
-            command.Parameters.AddWithValue("@BookId", chapter.BookId);
-            command.Parameters.AddWithValue("@ChapterNumber", chapter.ChapterNumber);
-            command.Parameters.AddWithValue("@Title", (object?)chapter.Title ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Text", chapter.Text);
-            command.Parameters.AddWithValue("@CreatedAt", chapter.CreatedAt);
-            command.Parameters.AddWithValue("@UpdatedAt", chapter.UpdatedAt);
-        }
-
-        private static Chapter Map(SqlDataReader reader)
-        {
-            return new Chapter
-            {
-                ChapterId = reader.GetInt32(reader.GetOrdinal("ChapterId")),
-                BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
-                ChapterNumber = reader.GetInt32(reader.GetOrdinal("ChapterNumber")),
-                Title = reader.GetNullableString("Title"),
-                Text = reader.GetString(reader.GetOrdinal("Text")),
-                CreatedAt = reader.GetDateTimeSafe("CreatedAt"),
-                UpdatedAt = reader.GetDateTimeSafe("UpdatedAt")
-            };
-        }
+        _db.Chapters.Remove(chapter);
+        await _db.SaveChangesAsync();
     }
 }

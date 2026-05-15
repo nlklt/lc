@@ -1,6 +1,6 @@
 ﻿using lc.Models;
 
-namespace lc.Services
+namespace lc.Services.Interfaces
 {
     public interface IReaderService
     {

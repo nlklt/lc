@@ -1,12 +1,33 @@
 ﻿using lc.Services.Interfaces;
 using lc.Views.Windows;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
+using System;
 using System.Windows;
 
 namespace lc.Services
 {
     public class DialogService : IDialogService
     {
+        private readonly IServiceProvider _provider;
+
+        public DialogService(IServiceProvider provider)
+        {
+            _provider = provider;
+        }
+
+        public Task ShowMessageAsync(string title, string message)
+        {
+            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
+            return Task.CompletedTask;
+        }
+
+        public Task<bool> ShowConfirmAsync(string title, string message)
+        {
+            var result = MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Question);
+            return Task.FromResult(result == MessageBoxResult.OK);
+        }
+        
         public string? OpenFile(string title, string filter)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog
@@ -22,33 +43,15 @@ namespace lc.Services
             return null;
         }
 
-        public Task ShowMessageAsync(string title, string message)
-        {
-            MessageBox.Show(message, title, MessageBoxButton.OK, MessageBoxImage.Information);
-            return Task.CompletedTask;
-        }
-
-        public Task<bool> ShowConfirmAsync(string title, string message)
-        {
-            var result = MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Question);
-            return Task.FromResult(result == MessageBoxResult.OK);
-        }
-
-        public Task<string?> ChooseListAsync(string title, string message, IReadOnlyList<string> options)
-        {
-            throw new NotImplementedException();
-        }
-
-
         public bool? ShowLoginDialog()
         {
-            var loginWindow = new LoginWindow();
+            var loginWindow = _provider.GetRequiredService<LoginWindow>();
             return loginWindow.ShowDialog();
         }
 
         public bool? ShowRegisterDialog()
         {
-            var registerWindow = new RegisterWindow();
+            var registerWindow = _provider.GetRequiredService<RegisterWindow>();
             return registerWindow.ShowDialog();
         }
     }

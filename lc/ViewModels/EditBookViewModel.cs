@@ -1,481 +1,541 @@
-﻿// EditBookViewModel.cs
-using lc.Commands;
-using lc.Data.Repositories;
-using lc.Data.Repositories.Interfaces;
+﻿using lc.Commands;
+using lc.Helpers;
 using lc.Infrastructure;
-using lc.Infrastructure.Repositories.Abstractions;
-using lc.Infrastructure.Repositories.Sql;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
 using Microsoft.Win32;
-using System;
 using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
-namespace lc.ViewModels
+namespace lc.ViewModels;
+
+public sealed class EditBookViewModel : ViewModelBase
 {
-    public class EditBookViewModel : ViewModelBase
+    private const int MaxTitleLength = 100;
+    private const int MaxAuthorLength = 64;
+    private const int MaxDescriptionLength = 1_000;
+
+    private readonly IBookService _bookService;
+    private readonly INavigationService _navigation;
+    private readonly AppState _appState;
+
+    private readonly SemaphoreSlim _initGate = new(1, 1);
+
+    private Book? _originalBook;
+    private int? _bookId;
+    private bool _isInitialized;
+    private bool _isInitializing;
+    private bool _isBusy;
+    private string _errorMessage = string.Empty;
+
+    private string _title = string.Empty;
+    private string _authorName = string.Empty;
+    private string _description = string.Empty;
+    private string _coverImagePath = string.Empty;
+
+    private WritingStatus _selectedWritingStatus;
+    private Language _selectedLanguage;
+    private int _selectedAgeRating = 12;
+
+    private long _symbolsCount;
+    private int _chaptersCount;
+    private DateTime _createdAt;
+    private DateTime _updatedAt;
+
+    private ObservableCollection<SelectableItem<Category>> _categoryItems = [];
+    private ObservableCollection<SelectableItem<Tag>> _tagItems = [];
+
+    private HashSet<int> _originalCategoryIds = [];
+    private HashSet<int> _originalTagIds = [];
+
+    public EditBookViewModel(
+        IBookService bookService,
+        INavigationService navigation,
+        AppState appState,
+        int? bookId = null)
     {
-        private static IChapterRepository ChapterRepository { get; } = new ChapterRepository();
-        private static ICommentRepository CommentRepository { get; } = new CommentRepository();
-        private static ITagRepository TagRepository { get; } = new TagRepository();
-        private static ICategoryRepository CategoryRepository { get; } = new CategoryRepository();
+        _bookService = bookService ?? throw new ArgumentNullException(nameof(bookService));
+        _navigation = navigation ?? throw new ArgumentNullException(nameof(navigation));
+        _appState = appState ?? throw new ArgumentNullException(nameof(appState));
 
-        private static IBookRepository BookRepository { get; } =
-            new BookRepository(ChapterRepository, CommentRepository, TagRepository, CategoryRepository);
+        BookId = bookId;
 
-        private readonly IBookService _bookService;
-        private readonly INavigationService _navigation;
-        private readonly AppState _appState;
+        InitializeCommand = new AsyncRelayCommand(_ => InitializeAsync(), _ => !IsBusy && !_isInitialized);
+        SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
+        CancelCommand = new RelayCommand(_ => Cancel(), _ => !IsBusy);
+        ChooseCoverCommand = new RelayCommand(_ => ChooseCover(), _ => !IsBusy);
+        ClearCoverCommand = new RelayCommand(_ => ClearCover(), _ => !IsBusy && HasCover);
+    }
 
-        private Book? _originalBook;
+    public bool IsEditMode => BookId.HasValue;
 
-        private int? _bookId;
-        private bool _isInitialized;
-        private bool _isBusy;
-        private string _errorMessage = string.Empty;
-
-        private string _title = string.Empty;
-        private string _authorName = string.Empty;
-        private string _description = string.Empty;
-        private string _coverImagePath = string.Empty;
-
-        private BookStatus _selectedBookStatus;
-        private WritingStatus _selectedWritingStatus;
-        private Language _selectedLanguage;
-        private int _selectedAgeRating = 12;
-
-        private int _symbolsCount;
-        private int _chaptersCount;
-
-        private DateTime _createdAt;
-        private DateTime _updatedAt;
-
-        private ObservableCollection<SelectableItem<Category>> _categoryItems = new();
-        private ObservableCollection<SelectableItem<Tag>> _tagItems = new();
-
-        public bool IsEditMode => BookId.HasValue;
-
-        public int? BookId
+    public int? BookId
+    {
+        get => _bookId;
+        private set
         {
-            get => _bookId;
-            private set
+            if (SetProperty(ref _bookId, value))
             {
-                if (SetProperty(ref _bookId, value))
-                {
-                    OnPropertyChanged(nameof(IsEditMode));
-                    OnPropertyChanged(nameof(HeaderText));
-                }
+                OnPropertyChanged(nameof(IsEditMode));
+                OnPropertyChanged(nameof(HeaderText));
             }
         }
+    }
 
-        public string HeaderText => IsEditMode ? "Редактирование книги..." : "Создание книги...";
+    public string HeaderText => IsEditMode ? "Редактирование книги..." : "Создание книги...";
 
-        public bool IsBusy
+    public bool IsBusy
+    {
+        get => _isBusy;
+        private set
         {
-            get => _isBusy;
-            set
+            if (SetProperty(ref _isBusy, value))
+                RefreshCommands();
+        }
+    }
+
+    public bool IsInitialized => _isInitialized;
+
+    public string ErrorMessage
+    {
+        get => _errorMessage;
+        set => SetProperty(ref _errorMessage, value);
+    }
+
+    public string Title
+    {
+        get => _title;
+        set
+        {
+            var normalized = value ?? string.Empty;
+            if (SetProperty(ref _title, normalized))
             {
-                if (SetProperty(ref _isBusy, value))
-                {
-                    (SaveCommand as AsyncRelayCommand)?.RaiseCanExecuteChanged();
-                }
+                OnBookChanged();
             }
         }
+    }
 
-        public string ErrorMessage
+    public string AuthorName
+    {
+        get => _authorName;
+        set
         {
-            get => _errorMessage;
-            set => SetProperty(ref _errorMessage, value);
+            var normalized = value ?? string.Empty;
+            if (SetProperty(ref _authorName, normalized))
+                OnBookChanged();
         }
+    }
 
-        public string Title
+    public string Description
+    {
+        get => _description;
+        set
         {
-            get => _title;
-            set
+            var normalized = value ?? string.Empty;
+            if (SetProperty(ref _description, normalized))
+                OnBookChanged();
+        }
+    }
+
+    public string CoverImagePath
+    {
+        get => _coverImagePath;
+        set
+        {
+            var normalized = value ?? string.Empty;
+            if (SetProperty(ref _coverImagePath, normalized))
             {
-                if (SetProperty(ref _title, value))
-                {
-                    (SaveCommand as AsyncRelayCommand)?.RaiseCanExecuteChanged();
-                }
+                OnPropertyChanged(nameof(HasCover));
+                OnPropertyChanged(nameof(CoverPath));
+                OnBookChanged();
             }
         }
+    }
 
-        public string AuthorName
+    public bool HasCover => !string.IsNullOrWhiteSpace(CoverImagePath);
+    public ImageSource? CoverPath => BuildCoverPath(CoverImagePath);
+
+    public WritingStatus SelectedWritingStatus
+    {
+        get => _selectedWritingStatus;
+        set
         {
-            get => _authorName;
-            set => SetProperty(ref _authorName, value);
+            if (SetProperty(ref _selectedWritingStatus, value))
+                OnBookChanged();
         }
+    }
 
-        public string Description
+    public Language SelectedLanguage
+    {
+        get => _selectedLanguage;
+        set
         {
-            get => _description;
-            set => SetProperty(ref _description, value);
+            if (SetProperty(ref _selectedLanguage, value))
+                OnBookChanged();
         }
+    }
 
-        public string CoverImagePath
+    public int SelectedAgeRating
+    {
+        get => _selectedAgeRating;
+        set
         {
-            get => _coverImagePath;
-            set
-            {
-                if (SetProperty(ref _coverImagePath, value))
-                {
-                    OnPropertyChanged(nameof(HasCover));
-                    OnPropertyChanged(nameof(CoverPath));
-                }
-            }
+            if (SetProperty(ref _selectedAgeRating, value))
+                OnBookChanged();
         }
+    }
 
-        public bool HasCover => !string.IsNullOrWhiteSpace(CoverImagePath);
+    public long SymbolsCount
+    {
+        get => _symbolsCount;
+        private set => SetProperty(ref _symbolsCount, value);
+    }
 
-        public ImageSource? CoverPath => BuildCoverPath(CoverImagePath);
+    public int ChaptersCount
+    {
+        get => _chaptersCount;
+        private set => SetProperty(ref _chaptersCount, value);
+    }
 
-        public BookStatus SelectedBookStatus
-        {
-            get => _selectedBookStatus;
-            set => SetProperty(ref _selectedBookStatus, value);
-        }
+    public DateTime CreatedAt
+    {
+        get => _createdAt;
+        private set => SetProperty(ref _createdAt, value);
+    }
 
-        public WritingStatus SelectedWritingStatus
-        {
-            get => _selectedWritingStatus;
-            set => SetProperty(ref _selectedWritingStatus, value);
-        }
+    public DateTime UpdatedAt
+    {
+        get => _updatedAt;
+        private set => SetProperty(ref _updatedAt, value);
+    }
 
-        public Language SelectedLanguage
-        {
-            get => _selectedLanguage;
-            set => SetProperty(ref _selectedLanguage, value);
-        }
+    public ObservableCollection<SelectableItem<Category>> CategoryItems
+    {
+        get => _categoryItems;
+        private set => SetProperty(ref _categoryItems, value);
+    }
 
-        public int SelectedAgeRating
-        {
-            get => _selectedAgeRating;
-            set => SetProperty(ref _selectedAgeRating, value);
-        }
+    public ObservableCollection<SelectableItem<Tag>> TagItems
+    {
+        get => _tagItems;
+        private set => SetProperty(ref _tagItems, value);
+    }
 
-        public int SymbolsCount
-        {
-            get => _symbolsCount;
-            set => SetProperty(ref _symbolsCount, value);
-        }
+    public ObservableCollection<WritingStatus> WritingStatuses { get; } = new(Enum.GetValues<WritingStatus>());
+    public ObservableCollection<Language> Languages { get; } = new(Enum.GetValues<Language>());
+    public ObservableCollection<int> AgeRatings { get; } = [3, 6, 12, 16, 18];
 
-        public int ChaptersCount
-        {
-            get => _chaptersCount;
-            set => SetProperty(ref _chaptersCount, value);
-        }
+    public ICommand InitializeCommand { get; }
+    public ICommand SaveCommand { get; }
+    public ICommand CancelCommand { get; }
+    public ICommand ChooseCoverCommand { get; }
+    public ICommand ClearCoverCommand { get; }
 
-        public DateTime CreatedAt
-        {
-            get => _createdAt;
-            set
-            {
-                if (SetProperty(ref _createdAt, value))
-                {
-                    OnPropertyChanged(nameof(CreatedAtText));
-                }
-            }
-        }
+    public bool CanSave =>
+        !IsBusy &&
+        _isInitialized &&
+        IsValid();
 
-        public DateTime UpdatedAt
-        {
-            get => _updatedAt;
-            set
-            {
-                if (SetProperty(ref _updatedAt, value))
-                {
-                    OnPropertyChanged(nameof(UpdatedAtText));
-                }
-            }
-        }
+    public async Task InitializeAsync()
+    {
+        if (_isInitialized || _isInitializing)
+            return;
 
-        public string CreatedAtText => CreatedAt == default
-            ? "—"
-            : CreatedAt.ToString("dd.MM.yyyy HH:mm");
-
-        public string UpdatedAtText => UpdatedAt == default
-            ? "—"
-            : UpdatedAt.ToString("dd.MM.yyyy HH:mm");
-
-        public ObservableCollection<SelectableItem<Category>> CategoryItems
-        {
-            get => _categoryItems;
-            private set => SetProperty(ref _categoryItems, value);
-        }
-
-        public ObservableCollection<SelectableItem<Tag>> TagItems
-        {
-            get => _tagItems;
-            private set => SetProperty(ref _tagItems, value);
-        }
-
-        public ObservableCollection<BookStatus> BookStatuses { get; } =
-            new(Enum.GetValues<BookStatus>());
-
-        public ObservableCollection<WritingStatus> WritingStatuses { get; } =
-            new(Enum.GetValues<WritingStatus>());
-
-        public ObservableCollection<Language> Languages { get; } =
-            new(Enum.GetValues<Language>());
-
-        public ObservableCollection<int> AgeRatings { get; } =
-            new() { 3, 6, 12, 16, 18 };
-
-        public ICommand InitializeCommand { get; }
-        public ICommand SaveCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand ChooseCoverCommand { get; }
-        public ICommand ClearCoverCommand { get; }
-
-        public EditBookViewModel(int? bookId = null)
-        {
-            _bookService = ServiceLocator.BookService;
-            _navigation = ServiceLocator.NavigationService;
-            _appState = ServiceLocator.AppState;
-
-            BookId = bookId;
-
-            InitializeCommand = new AsyncRelayCommand(_ => InitializeAsync());
-            SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave());
-            CancelCommand = new RelayCommand(_ => Cancel());
-            ChooseCoverCommand = new RelayCommand(_ => ChooseCover());
-            ClearCoverCommand = new RelayCommand(_ => ClearCover());
-        }
-
-        public async Task InitializeAsync()
+        await _initGate.WaitAsync();
+        try
         {
             if (_isInitialized)
                 return;
 
+            _isInitializing = true;
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            try
+            await LoadLookupsAsync();
+
+            if (BookId.HasValue)
             {
-                await LoadLookupsAsync();
-
-                if (BookId.HasValue)
-                    await LoadBookAsync(BookId.Value);
-                else
-                    LoadDefaultsForCreate();
-
-                _isInitialized = true;
+                await LoadBookAsync(BookId.Value);
             }
-            catch (Exception ex)
+            else
             {
-                ErrorMessage = ex.Message;
+                LoadDefaultsForCreate();
             }
-            finally
-            {
-                IsBusy = false;
-            }
+
+            _isInitialized = true;
+            RefreshCommands();
+            OnPropertyChanged(nameof(CanSave));
+        }
+        catch
+        {
+            ErrorMessage = "Ошибка инициализации формы книги.";
+        }
+        finally
+        {
+            IsBusy = false;
+            _isInitializing = false;
+            _initGate.Release();
+        }
+    }
+
+    private async Task LoadLookupsAsync()
+    {
+        var categories = await _bookService.GetAllCategoriesAsync();
+        var tags = await _bookService.GetAllTagsAsync();
+
+        CategoryItems = new ObservableCollection<SelectableItem<Category>>(
+            categories.Select(x => new SelectableItem<Category>(x, x.Name)));
+
+        TagItems = new ObservableCollection<SelectableItem<Tag>>(
+            tags.Select(x => new SelectableItem<Tag>(x, x.Name)));
+    }
+
+    private async Task LoadBookAsync(int bookId)
+    {
+        var book = await _bookService.GetBookByIdAsync(bookId);
+        if (book is null)
+        {
+            ErrorMessage = "Книга не найдена.";
+            return;
         }
 
-        private void LoadDefaultsForCreate()
+        if (!CanCurrentUserEdit(book))
         {
-            SelectedWritingStatus = WritingStatus.Анонс;
-            SelectedLanguage = Language.Русский;
-            SelectedAgeRating = 12;
-            CreatedAt = DateTime.Now;
-            UpdatedAt = DateTime.Now;
-            SymbolsCount = 0;
-            ChaptersCount = 0;
+            ErrorMessage = "Недостаточно прав для редактирования книги.";
+            return;
         }
 
-        private async Task LoadLookupsAsync()
+        _originalBook = book.Clone();
+
+        Title = book.Title;
+        AuthorName = book.AuthorName ?? string.Empty;
+        Description = book.Description ?? string.Empty;
+        CoverImagePath = book.CoverImagePath ?? string.Empty;
+
+        SelectedWritingStatus = book.WritingStatus;
+        SelectedLanguage = book.Language;
+        SelectedAgeRating = book.AgeRating;
+
+        SymbolsCount = book.SymbolsCount;
+        ChaptersCount = book.ChaptersCount;
+        CreatedAt = book.CreatedAt;
+        UpdatedAt = book.UpdatedAt;
+
+        _originalCategoryIds = book.Categories.Select(x => x.CategoryId).ToHashSet();
+        _originalTagIds = book.Tags.Select(x => x.TagId).ToHashSet();
+
+        foreach (var item in CategoryItems)
+            item.IsSelected = _originalCategoryIds.Contains(item.Value.CategoryId);
+
+        foreach (var item in TagItems)
+            item.IsSelected = _originalTagIds.Contains(item.Value.TagId);
+    }
+
+    private void LoadDefaultsForCreate()
+    {
+        SelectedWritingStatus = WritingStatus.Анонс;
+        SelectedLanguage = Language.Русский;
+        SelectedAgeRating = 18;
+        CreatedAt = DateTime.Now;
+        UpdatedAt = DateTime.Now;
+    }
+
+    private bool CanCurrentUserEdit(Book book)
+    {
+        var user = _appState.CurrentUser;
+        if (user is null)
+            return false;
+
+        return _appState.IsAdmin || user.UserId == book.PublisherId || _appState.IsWriter;
+    }
+
+    private bool IsValid()
+    {
+        if (string.IsNullOrWhiteSpace(Title) || Title.Length > MaxTitleLength)
+            return false;
+
+        if (AuthorName.Length > MaxAuthorLength)
+            return false;
+
+        if (Description.Length > MaxDescriptionLength)
+            return false;
+
+        if (SelectedAgeRating is not (3 or 6 or 12 or 16 or 18))
+            return false;
+
+        if (!Enum.IsDefined(typeof(WritingStatus), SelectedWritingStatus))
+            return false;
+
+        if (!Enum.IsDefined(typeof(Language), SelectedLanguage))
+            return false;
+
+        if (!string.IsNullOrWhiteSpace(CoverImagePath) && !File.Exists(CoverImagePath))
+            return false;
+
+        return HasChanges();
+    }
+
+    private bool HasChanges()
+    {
+        if (!_isInitialized)
+            return true;
+
+        var currentCategoryIds = CategoryItems.Where(x => x.IsSelected).Select(x => x.Value.CategoryId).ToHashSet();
+        var currentTagIds = TagItems.Where(x => x.IsSelected).Select(x => x.Value.TagId).ToHashSet();
+
+        return !string.Equals(Title.Trim(), _originalBook?.Title?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
+               !string.Equals(AuthorName.Trim(), _originalBook?.AuthorName?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
+               !string.Equals(Description.Trim(), _originalBook?.Description?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
+               !string.Equals(CoverImagePath.Trim(), _originalBook?.CoverImagePath?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
+               SelectedWritingStatus != (_originalBook?.WritingStatus ?? SelectedWritingStatus) ||
+               SelectedLanguage != (_originalBook?.Language ?? SelectedLanguage) ||
+               SelectedAgeRating != (_originalBook?.AgeRating ?? SelectedAgeRating) ||
+               !currentCategoryIds.SetEquals(_originalCategoryIds) ||
+               !currentTagIds.SetEquals(_originalTagIds);
+    }
+
+    private void OnBookChanged()
+    {
+        RefreshCommands();
+        OnPropertyChanged(nameof(CanSave));
+    }
+
+    private async Task SaveAsync()
+    {
+        if (!CanSave)
+            return;
+
+        if (_appState.CurrentUser is null)
         {
-            var categories = await _bookService.GetAllCategoriesAsync();
-            var tags = await _bookService.GetAllTagsAsync();
-
-            CategoryItems = new ObservableCollection<SelectableItem<Category>>(
-                categories.Select(x => new SelectableItem<Category>(x, x.Name)));
-
-            TagItems = new ObservableCollection<SelectableItem<Tag>>(
-                tags.Select(x => new SelectableItem<Tag>(x, x.Name)));
+            ErrorMessage = "Пользователь не авторизован.";
+            return;
         }
 
-        private async Task LoadBookAsync(int bookId)
+        try
         {
-            var book = await BookRepository.GetByIdAsync(bookId);
-            if (book == null)
-                return;
-
-            _originalBook = book.Clone();
-
-            Title = book.Title ?? string.Empty;
-            AuthorName = book.AuthorName ?? string.Empty;
-            Description = book.Description ?? string.Empty;
-            CoverImagePath = book.CoverImagePath ?? string.Empty;
-
-            SelectedBookStatus = book.BookStatus;
-            SelectedWritingStatus = book.WritingStatus;
-            SelectedLanguage = book.Language;
-            SelectedAgeRating = book.AgeRating;
-
-            SymbolsCount = book.SymbolsCount;
-            ChaptersCount = book.ChaptersCount;
-
-            CreatedAt = book.CreatedAt;
-            UpdatedAt = book.UpdatedAt;
-
-            var categoryIds = book.Categories.Select(x => x.CategoryId).ToHashSet();
-            var tagIds = book.Tags.Select(x => x.TagId).ToHashSet();
-
-            foreach (var item in CategoryItems)
-                item.IsSelected = categoryIds.Contains(item.Value.CategoryId);
-
-            foreach (var item in TagItems)
-                item.IsSelected = tagIds.Contains(item.Value.TagId);
-        }
-
-        private bool CanSave()
-        {
-            return !IsBusy &&
-                   !string.IsNullOrWhiteSpace(Title);
-        }
-
-        private async Task SaveAsync()
-        {
-            if (!CanSave())
-                return;
-
             IsBusy = true;
             ErrorMessage = string.Empty;
 
-            try
+            var book = new Book
             {
-                var selectedCategories = CategoryItems
-                    .Where(x => x.IsSelected)
-                    .Select(x => x.Value)
-                    .ToList();
-
-                var selectedTags = TagItems
-                    .Where(x => x.IsSelected)
-                    .Select(x => x.Value)
-                    .ToList();
-
-                var now = DateTime.Now;
-
-                var book = new Book
-                {
-                    BookId = BookId ?? 0,
-                    Title = Title.Trim(),
-                    PublisherId = _originalBook?.PublisherId ?? _appState.CurrentUser?.UserId ?? 0,
-                    AuthorName = string.IsNullOrWhiteSpace(AuthorName) ? null : AuthorName.Trim(),
-                    Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
-                    CoverImagePath = string.IsNullOrWhiteSpace(CoverImagePath) ? null : CoverImagePath.Trim(),
-
-                    Categories = selectedCategories,
-                    Tags = selectedTags,
-
-                    BookStatus = BookStatus.Published,  // !!!
-                    WritingStatus = SelectedWritingStatus,
-                    Language = SelectedLanguage,
-                    AgeRating = SelectedAgeRating,
-
-                    SymbolsCount = SymbolsCount,
-                    ChaptersCount = ChaptersCount,
-
-                    Views = _originalBook?.Views ?? 0,
-                    Rating = _originalBook?.Rating ?? 0,
-
-                    CreatedAt = _originalBook?.CreatedAt ?? now,
-                    UpdatedAt = now,
-
-                    Chapters = _originalBook?.Chapters?.ToList() ?? new(),
-                    Comments = _originalBook?.Comments?.ToList() ?? new()
-                };
-
-                if (IsEditMode)
-                    await BookRepository.UpdateAsync(book);
-                else
-                    await BookRepository.CreateAsync(book);
-
-                _navigation.Navigate(new CatalogViewModel());
-            }
-            catch (Exception ex)
-            {
-                ErrorMessage = ex.Message;
-            }
-            finally
-            {
-                IsBusy = false;
-            }
-        }
-
-        private void ChooseCover()
-        {
-            var dialog = new OpenFileDialog
-            {
-                Title = "Выбор обложки",
-                Filter = "Images|*.png;*.jpg;*.jpeg;*.bmp;*.webp|All files|*.*",
-                CheckFileExists = true,
-                CheckPathExists = true
+                BookId = BookId ?? 0,
+                Title = Title.Trim(),
+                PublisherId = _originalBook?.PublisherId ?? _appState.CurrentUser.UserId,
+                AuthorName = string.IsNullOrWhiteSpace(AuthorName) ? null : AuthorName.Trim(),
+                Description = string.IsNullOrWhiteSpace(Description) ? null : Description.Trim(),
+                CoverImagePath = string.IsNullOrWhiteSpace(CoverImagePath) ? null : CoverImagePath.Trim(),
+                Tags = TagItems.Where(x => x.IsSelected).Select(x => x.Value).ToList(),
+                Categories = CategoryItems.Where(x => x.IsSelected).Select(x => x.Value).ToList(),
+                WritingStatus = SelectedWritingStatus,
+                Language = SelectedLanguage,
+                AgeRating = SelectedAgeRating,
+                SymbolsCount = _originalBook?.SymbolsCount ?? 0,
+                ChaptersCount = _originalBook?.ChaptersCount ?? 0,
+                Views = _originalBook?.Views ?? 0,
+                Rating = _originalBook?.Rating ?? 0,
+                CreatedAt = _originalBook?.CreatedAt ?? DateTime.Now,
+                UpdatedAt = DateTime.Now,
+                BookStatus = _originalBook?.BookStatus ?? BookStatus.Draft
             };
 
-            if (dialog.ShowDialog() == true)
-            {
-                CoverImagePath = dialog.FileName;
-            }
+            if (IsEditMode)
+                await _bookService.UpdateBookAsync(book);
+            else
+                await _bookService.CreateBookAsync(book);
+
+            _navigation.NavigateTo<CatalogViewModel>();
+        }
+        catch
+        {
+            ErrorMessage = "Не удалось сохранить книгу.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private void ChooseCover()
+    {
+        var dialog = new OpenFileDialog
+        {
+            Title = "Выбор обложки",
+            Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.webp|Все файлы|*.*"
+        };
+
+        if (dialog.ShowDialog() == true)
+            CoverImagePath = dialog.FileName;
+    }
+
+    private void ClearCover()
+    {
+        CoverImagePath = string.Empty;
+    }
+
+    private void Cancel()
+    {
+        _navigation.NavigateBack();
+    }
+
+    private void RefreshCommands()
+    {
+        if (SaveCommand is AsyncRelayCommand save)
+            save.RaiseCanExecuteChanged();
+
+        if (CancelCommand is RelayCommand cancel)
+            cancel.RaiseCanExecuteChanged();
+
+        if (ChooseCoverCommand is RelayCommand choose)
+            choose.RaiseCanExecuteChanged();
+
+        if (ClearCoverCommand is RelayCommand clear)
+            clear.RaiseCanExecuteChanged();
+    }
+
+    private static ImageSource? BuildCoverPath(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+            return null;
+
+        try
+        {
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.UriSource = new Uri(path, UriKind.Absolute);
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+        }
+        catch
+        {
+            return null;
+        }
+    }
+
+    public sealed class SelectableItem<T> : ViewModelBase
+    {
+        public SelectableItem(T value, string name)
+        {
+            Value = value;
+            Name = name;
         }
 
-        private void ClearCover()
+        public T Value { get; }
+        public string Name { get; }
+
+        private bool _isSelected;
+        public bool IsSelected
         {
-            CoverImagePath = string.Empty;
-        }
-
-        private void Cancel()
-        {
-            _navigation.Navigate(new CatalogViewModel());
-        }
-
-        private static ImageSource? BuildCoverPath(string? path)
-        {
-            if (string.IsNullOrWhiteSpace(path))
-                return null;
-
-            try
-            {
-                var bitmap = new BitmapImage();
-                bitmap.BeginInit();
-                bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                bitmap.UriSource = new Uri(path, UriKind.RelativeOrAbsolute);
-                bitmap.EndInit();
-                bitmap.Freeze();
-                return bitmap;
-            }
-            catch
-            {
-                return null;
-            }
-        }
-
-        public class SelectableItem<T> : ViewModelBase
-        {
-            public T Value { get; }
-            public string Name { get; }
-
-            private bool _isSelected;
-            public bool IsSelected
-            {
-                get => _isSelected;
-                set => SetProperty(ref _isSelected, value);
-            }
-
-            public SelectableItem(T value, string name)
-            {
-                Value = value;
-                Name = name;
-            }
+            get => _isSelected;
+            set => SetProperty(ref _isSelected, value);
         }
     }
 }

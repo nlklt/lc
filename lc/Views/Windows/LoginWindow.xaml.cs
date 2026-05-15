@@ -5,31 +5,19 @@ namespace lc.Views.Windows
 {
     public partial class LoginWindow : Window
     {
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
+        private void Minimize_Click(object sender, RoutedEventArgs e) { WindowState = WindowState.Minimized; }
         private void Maximize_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowState == WindowState.Maximized)
-                WindowState = WindowState.Normal;
-            else
-                WindowState = WindowState.Maximized;
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else WindowState = WindowState.Maximized;
         }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
-
-        public LoginWindow()
+        public LoginWindow(LoginViewModel vm)
         {
             InitializeComponent();
 
-            var vm = new LoginViewModel();
-            vm.RequestClose = this.Close;
             DataContext = vm;
+            vm.RequestClose = Close;
         }
     }
 }

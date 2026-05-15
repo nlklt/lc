@@ -54,19 +54,25 @@
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                             </Grid.ColumnDefinitions>
-                            <Button Grid.Column="0" Content="Добавить в список"
+                            
+                            <Button Grid.Column="0"
+                                    Content="{Binding LibraryButtonText}"
                                     Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding ToggleLibraryCommand}" Margin="0,0,4,4"
+                                    Command="{Binding ToggleLibraryCommand}"
+                                    Margin="0,0,4,4"
                                     Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                            <Button Grid.Column="1" Content="❤"
+                            <Button Grid.Column="1"
+                                    Content="{Binding FavoriteButtonText}"
                                     Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding ToggleFavoriteCommand}" Margin="0,0,0,4"
+                                    Command="{Binding ToggleFavoriteCommand}"
+                                    Margin="0,0,0,4"
                                     Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}"/>
                         </Grid>
 
-                        <Button Content="Читать" Style="{DynamicResource PrimaryButtonStyle}"
-                                Command="{Binding StartReadingCommand}" 
+                        <Button Content="{Binding ReadButtonText}"
+                                Style="{DynamicResource PrimaryButtonStyle}"
+                                Command="{Binding StartReadingCommand}"
                                 IsEnabled="{Binding CanRead}"/>
                     </StackPanel>
 
@@ -136,19 +142,39 @@
                                 </StackPanel>
                             </UniformGrid>
                             <Grid>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="*"/>
+                                </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="*"/>
                                 </Grid.ColumnDefinitions>
-                                <Button Grid.Column="0" Content="Редактировать"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding EditBookCommand}" Margin="0,0,4,4"
-                                    Visibility="{Binding CanEditOrDelete, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                                <Button Grid.Column="1" Content="В архив" Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding DeleteBookCommand}" Margin="4,0,0,4"
-                                    BorderBrush="{DynamicResource WarningFrontBrush}" Background="{DynamicResource WarningBackBrush}"
-                                    Visibility="{Binding CanEditOrDelete, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                <Button Grid.Row="0" Grid.Column="0"
+                                        Content="Редактировать"
+                                        Style="{DynamicResource SecondaryButtonStyle}"
+                                        Command="{Binding EditBookCommand}"
+                                        Margin="0,0,4,4"
+                                        Visibility="{Binding CanEditBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                <Button Grid.Row="0" Grid.Column="1"
+                                        Content="В архив"
+                                        Style="{DynamicResource SecondaryButtonStyle}"
+                                        Command="{Binding ArchiveBookCommand}"
+                                        Margin="4,0,0,4"
+                                        BorderBrush="{DynamicResource WarningFrontBrush}"
+                                        Background="{DynamicResource WarningBackBrush}"
+                                        Visibility="{Binding CanArchiveBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                        Content="Удалить"
+                                        Style="{DynamicResource SecondaryButtonStyle}"
+                                        Command="{Binding DeleteBookCommand}"
+                                        Margin="4,40,0,0"
+                                        BorderBrush="{DynamicResource WarningFrontBrush}"
+                                        Background="{DynamicResource WarningBackBrush}"
+                                        Visibility="{Binding CanDeleteBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
                             </Grid>
                         </StackPanel>
                     </Border>

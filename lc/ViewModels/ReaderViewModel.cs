@@ -20,10 +20,15 @@ namespace lc.ViewModels
         private string _bookTitle = string.Empty;
         private bool _isLoading;
 
-        public ReaderViewModel(int bookId, int? chapterId = null)
+        public ReaderViewModel(
+            IChapterService chapterService,
+            IBookService bookService,
+            IDialogService dialogService,
+            int bookId, int? chapterId = null)
         {
-            _bookService = ServiceLocator.BookService;
-            _dialogService = ServiceLocator.DialogService;
+            _bookService = bookService ?? throw new ArgumentNullException(nameof(bookService));
+            _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+            _chapterService = chapterService ?? throw new ArgumentNullException(nameof(chapterService));
 
             _ = InitializeAsync(bookId, chapterId);
         }
@@ -60,7 +65,7 @@ namespace lc.ViewModels
             set => SetProperty(ref _isLoading, value);
         }
 
-        private async Task InitializeAsync(int bookId, int? chapterId)
+        public async Task InitializeAsync(int bookId, int? chapterId)
         {
             try
             {

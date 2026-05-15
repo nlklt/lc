@@ -31,7 +31,7 @@
         <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
-                    <TextBlock Text="☁ LibCloude"  Foreground="{DynamicResource TextPrimaryBrush}" 
+                    <TextBlock Text="☁ LibCloud"  Foreground="{DynamicResource TextPrimaryBrush}" 
                            FontWeight="Bold" FontSize="14"/>
                 </StackPanel>
 
@@ -56,12 +56,12 @@
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <TextBox x:Name="UserNameTb" Style="{DynamicResource TextBoxPlaceholderStyle}"
                          Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" 
-                         Tag="user" Margin="0,4,0,16"/>
+                         Tag="user" Margin="0,4,0,16" MaxLength="16"/>
 
                 <TextBlock  x:Name="Password" Text="Пароль" FontSize="14"
                            Foreground="{DynamicResource TextPrimaryBrush}"/>
                 <PasswordBox x:Name="PassBox"  Style="{DynamicResource PasswordBoxPlaceholderStyle}"
-                             Tag=".pth1234" Margin="0,4,0,8"/>
+                             Tag=".pth1234" Margin="0,4,0,8" MaxLength="64"/>
                 
                 <TextBlock Text="{Binding ErrorMessage}" Foreground="Tomato" 
                            TextWrapping="Wrap" Margin="0,0,0,8"/>
@@ -69,11 +69,13 @@
                 <Button Content="Войти" Command="{Binding LoginCommand}"
                         Style="{DynamicResource PrimaryButtonStyle}"
                         CommandParameter="{Binding ElementName=PassBox}"
-                        Height="36" Margin="0,0,0,8" IsDefault="True"/>
+                        Height="36" Margin="0,0,0,8" IsDefault="True"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
 
                 <Button Content="Создать аккаунт" 
                         Command="{Binding NavigateRegisterCommand}" 
-                        Style="{DynamicResource SecondaryButtonStyle}"/>
+                        Style="{DynamicResource SecondaryButtonStyle}"
+                        IsEnabled="{Binding IsBusy, Converter={StaticResource InverseBoolConverter}}"/>
             </StackPanel>
         </Border>
     </Grid>

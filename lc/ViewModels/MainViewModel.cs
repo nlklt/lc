@@ -1,10 +1,11 @@
 ﻿using lc.Commands;
+using lc.Helpers;
 using lc.Infrastructure;
 using lc.Models;
 using lc.Models.Enums;
-using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace lc.ViewModels
@@ -15,71 +16,65 @@ namespace lc.ViewModels
         private readonly IAuthService       _auth;
         private readonly INavigationService _navigation;
 
-        public ViewModelBase CurrentViewModel => _appState.CurrentViewModel ?? new CatalogViewModel();
-        public bool IsGuest => _appState.IsGuest;
+        public NavigationViewModel Navigation { get; }
+
+        public ViewModelBase?   CurrentViewModel => _appState.CurrentViewModel;
+        public bool IsGuest =>  _appState.IsGuest;
         public bool IsReader => _appState.IsReader;
         public bool IsWriter => _appState.IsWriter;
-        public bool IsAdmin => _appState.IsAdmin;
-        public bool IsAuthenticated => _appState.IsAuthenticated;
-        public string CurrentUserName => _appState.CurrentUser?.UserName ?? "Гость";
-        public UserRole CurrentUserRole => _appState.CurrentUser?.Role ?? UserRole.Guest;
+        public bool IsAdmin =>  _appState.IsAdmin;
+        public bool IsAuthenticated =>      _appState.IsAuthenticated;
+        public string CurrentUserName =>    _appState.CurrentUser?.UserName ?? "Гость";
+        public UserRole CurrentUserRole =>  _appState.CurrentUser?.Role ?? UserRole.Guest;
 
         public ICommand LogoutCommand { get; }
 
-        public MainViewModel()
+        public MainViewModel(
+            AppState appState,
+            IAuthService auth,
+            INavigationService navigation,
+            NavigationViewModel navigationViewModel)
         {
-            _appState   = ServiceLocator.AppState;
+            _appState   = appState      ?? throw new ArgumentNullException(nameof(appState));
+            _auth       = auth          ?? throw new ArgumentNullException(nameof(auth));
+            _navigation = navigation    ?? throw new ArgumentNullException(nameof(navigation));
 
-            User newUser = new();
-                newUser.UserId = 2;
-                newUser.UserName = "test_admin";
-                newUser.PasswordHash = PasswordHasher.Hash("flvby1234");
-                newUser.AvatarPath = "";
-                newUser.BlockedComments = false;
-                newUser.CreatedAt = DateTime.Now;
-                newUser.Role = (UserRole)2;
-                newUser.PreferredLanguage = (Language)0;
-                newUser.PreferredTheme = "Dark";
-
-            _appState.CurrentUser = newUser;
-
-            _auth       = ServiceLocator.AuthService;
-            _navigation = ServiceLocator.NavigationService;
+            Navigation = navigationViewModel ?? throw new ArgumentNullException(nameof(navigationViewModel));
 
             LogoutCommand = new RelayCommand(_ => Logout(), _ => IsAuthenticated);
 
-            _appState.PropertyChanged += (_, e) =>
-            {
-                if (e.PropertyName == nameof(AppState.CurrentViewModel))
-                    OnPropertyChanged(nameof(CurrentViewModel));
-
-                if (e.PropertyName == nameof(AppState.CurrentUser))
-                {
-                    OnPropertyChanged(nameof(IsGuest));
-                    OnPropertyChanged(nameof(IsReader));
-                    OnPropertyChanged(nameof(IsWriter));
-                    OnPropertyChanged(nameof(IsAdmin));
-                    OnPropertyChanged(nameof(IsAuthenticated));
-                    OnPropertyChanged(nameof(CurrentUserName));
-                    OnPropertyChanged(nameof(CurrentUserRole));
-                }
-            };
+            _appState.PropertyChanged += AppStateOnPropertyChanged;
 
             Initialize();
         }
 
         private void Initialize()
         {
-            if (_appState.CurrentUser == null)
-                _navigation.Navigate(new CatalogViewModel());
-            else
-                _navigation.Navigate(new ProfileViewModel());
+            if (IsAuthenticated) _navigation.NavigateTo<ProfileViewModel>();
+            else _navigation.NavigateTo<CatalogViewModel>();
         }
 
         private void Logout()
         {
             _auth.Logout();
-            _navigation.Navigate(new CatalogViewModel());
+            _navigation.NavigateTo<CatalogViewModel>();
+        }
+
+        private void AppStateOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(AppState.CurrentViewModel))
+                OnPropertyChanged(nameof(CurrentViewModel));
+
+            if (e.PropertyName == nameof(AppState.CurrentUser))
+            {
+                OnPropertyChanged(nameof(IsGuest));
+                OnPropertyChanged(nameof(IsReader));
+                OnPropertyChanged(nameof(IsWriter));
+                OnPropertyChanged(nameof(IsAdmin));
+                OnPropertyChanged(nameof(IsAuthenticated));
+                OnPropertyChanged(nameof(CurrentUserName));
+                OnPropertyChanged(nameof(CurrentUserRole));
+            }
         }
     }
 }

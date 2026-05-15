@@ -31,11 +31,6 @@
                 <ResourceDictionary Source="/Resources/Variants/Inputs.xaml"/>
                 <ResourceDictionary Source="/Resources/Variants/CheckBoxes.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
-            <conv:RoleToVisibilityConverter x:Key="RoleToVisibilityConverter" />
-            <conv:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
-            <conv:NullableDoubleToStringConverter x:Key="NullableDoubleToStringConverter" />
-            <conv:CheckBoxStateToNullableBoolConverter x:Key="CheckBoxStateToNullableBoolConverter" />
         </ResourceDictionary>
     </Window.Resources>
 

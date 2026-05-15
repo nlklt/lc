@@ -2,74 +2,90 @@
 using lc.Models.Enums;
 using lc.ViewModels.Base;
 
-namespace lc.Infrastructure
+namespace lc.Infrastructure;
+
+public class AppState : ObservableObject
 {
-    public class AppState : ObservableObject
+    private User?    _currentUser;
+    private string   _currentTheme = "Dark";
+    private Language _currentLanguage = Language.Русский;
+
+    private Book?          _selectedBook;
+    private ViewModelBase? _prevViewModel;
+    private ViewModelBase? _currentViewModel;
+
+    public ViewModelBase? PrevViewModel
     {
-        private User? _currentUser;
-        private string _currentTheme = "Dark";
-        private Language _currentLanguage = Language.Русский;
-        
-        private Book? _selectedBook;
-        private ViewModelBase? _prevViewModel;
-        private ViewModelBase? _currentViewModel;
+        get => _prevViewModel;
+        set => SetProperty(ref _prevViewModel, value);
+    }
 
-        public ViewModelBase? PrevViewModel
+    public ViewModelBase? CurrentViewModel
+    {
+        get => _currentViewModel;
+        set
         {
-            get => _prevViewModel;
-            set =>  SetProperty(ref _prevViewModel, value);
-        }
-        public ViewModelBase? CurrentViewModel
-        {
-            get => _currentViewModel;
-            set
+            var old = _currentViewModel;
+
+            if (SetProperty(ref _currentViewModel, value))
             {
-                _prevViewModel = _currentViewModel;
-                SetProperty(ref _currentViewModel, value);
+                _prevViewModel = old;
+                OnPropertyChanged(nameof(PrevViewModel));
             }
         }
-        public User? CurrentUser
+    }
+
+    public User? CurrentUser
+    {
+        get => _currentUser;
+        set
         {
-            get => _currentUser;
-            set
+            if (SetProperty(ref _currentUser, value))
             {
-                if (SetProperty(ref _currentUser, value))
-                {
-                    OnPropertyChanged(nameof(IsGuest));
-                    OnPropertyChanged(nameof(IsReader));
-                    OnPropertyChanged(nameof(IsAdmin));
-                    OnPropertyChanged(nameof(IsWriter));
-                    OnPropertyChanged(nameof(IsAuthenticated));
-                    OnPropertyChanged(nameof(CanManageBooks));
-                    OnPropertyChanged(nameof(CanComment));
-                }
+                OnPropertyChanged(nameof(IsGuest));
+                OnPropertyChanged(nameof(IsReader));
+                OnPropertyChanged(nameof(IsAdmin));
+                OnPropertyChanged(nameof(IsWriter));
+                OnPropertyChanged(nameof(IsAuthenticated));
+                OnPropertyChanged(nameof(CanManageBooks));
+                OnPropertyChanged(nameof(CanComment));
             }
         }
+    }
 
-        public bool IsGuest => CurrentUser == null;
-        public bool IsAdmin => CurrentUser?.Role == UserRole.Admin;
-        public bool IsWriter => CurrentUser?.Role == UserRole.Writer || IsAdmin;
-        public bool IsReader => CurrentUser?.Role == UserRole.Reader || IsAdmin || IsWriter;
-        public bool IsAuthenticated => !IsGuest;
+    public bool IsGuest => CurrentUser is null;
+    public bool IsAdmin => CurrentUser?.Role is UserRole.Admin;
+    public bool IsWriter => CurrentUser?.Role is UserRole.Writer or UserRole.Admin;
+    public bool IsReader => CurrentUser?.Role is UserRole.Reader or UserRole.Writer or UserRole.Admin;
+    public bool IsAuthenticated => !IsGuest;
 
-        public bool CanManageBooks => IsAdmin || (IsWriter && _selectedBook == null) || (IsWriter && _currentUser.UserId == _selectedBook.PublisherId);
-        public bool CanComment => !IsGuest && !(CurrentUser?.BlockedComments ?? false);
+    public bool CanManageBooks =>
+        IsAdmin ||
+        (IsWriter && (SelectedBook is null || CurrentUser?.UserId == SelectedBook.PublisherId));
 
-        public Book? SelectedBook
+    public bool CanComment => !IsGuest && !(CurrentUser?.BlockedComments ?? false);
+
+    public Book? SelectedBook
+    {
+        get => _selectedBook;
+        set
         {
-            get => _selectedBook;
-            set => SetProperty(ref _selectedBook, value);
+            if (SetProperty(ref _selectedBook, value))
+            {
+                OnPropertyChanged(nameof(CanManageBooks));
+            }
         }
-        public Language CurrentLanguage
-        {
-            get => _currentLanguage;
-            set => SetProperty(ref _currentLanguage, value);
-        }
+    }
 
-        public string CurrentTheme
-        {
-            get => _currentTheme;
-            set => SetProperty(ref _currentTheme, value);
-        }
+    public Language CurrentLanguage
+    {
+        get => _currentLanguage;
+        set => SetProperty(ref _currentLanguage, value);
+    }
+
+    public string CurrentTheme
+    {
+        get => _currentTheme;
+        set => SetProperty(ref _currentTheme, value);
     }
 }

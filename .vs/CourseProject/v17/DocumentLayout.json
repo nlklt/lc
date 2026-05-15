@@ -1,7 +1,60 @@
 {
   "Version": 1,
-  "WorkspaceRootPath": "U:\\CourseProject\\",
-  "Documents": [],
+  "WorkspaceRootPath": "D:\\eLibCloud\\lc\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\controls\\navigationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\navigationview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\models\\chapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\models\\chapter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\registerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\authservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\windows\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\registerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\base\\authviewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\base\\authviewmodelbase.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\converters\\multiobjectconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\converters\\multiobjectconverter.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\windowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\windowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\readerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\readerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\windows\\readerwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\readerwindow.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +62,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1494,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 9,
           "Children": [
             {
               "$type": "Bookmark",
@@ -18,6 +71,172 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Chapter.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Models\\Chapter.cs",
+              "RelativeDocumentMoniker": "lc\\Models\\Chapter.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Models\\Chapter.cs",
+              "RelativeToolTip": "lc\\Models\\Chapter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAYAAAAXAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T04:19:28.74Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "AuthService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\AuthService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\AuthService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\AuthService.cs",
+              "RelativeToolTip": "lc\\Services\\AuthService.cs",
+              "ViewState": "AgIAAAIAAAAAAAAAAAAEwBAAAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:50:30.946Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "RegisterViewModel.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\RegisterViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\RegisterViewModel.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\RegisterViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\RegisterViewModel.cs",
+              "ViewState": "AgIAABkAAAAAAAAAAAAcwBoAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:49:04.452Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 5,
+              "Title": "AuthViewModelBase.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\Base\\AuthViewModelBase.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\Base\\AuthViewModelBase.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\Base\\AuthViewModelBase.cs",
+              "RelativeToolTip": "lc\\ViewModels\\Base\\AuthViewModelBase.cs",
+              "ViewState": "AgIAAE4AAAAAAAAAAAAcwGoAAAAxAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:44:34.382Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "MultiObjectConverter.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Converters\\MultiObjectConverter.cs",
+              "RelativeDocumentMoniker": "lc\\Converters\\MultiObjectConverter.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Converters\\MultiObjectConverter.cs",
+              "RelativeToolTip": "lc\\Converters\\MultiObjectConverter.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:41:36.345Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "RegisterWindow.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\RegisterWindow.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Windows\\RegisterWindow.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\RegisterWindow.xaml",
+              "RelativeToolTip": "lc\\Views\\Windows\\RegisterWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-15T03:40:30.392Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
+              "Title": "CatalogView.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\CatalogView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Pages\\CatalogView.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\CatalogView.xaml",
+              "RelativeToolTip": "lc\\Views\\Pages\\CatalogView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-15T03:34:33.939Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "NavigationView.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Controls\\NavigationView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\NavigationView.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Controls\\NavigationView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\NavigationView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-15T03:32:32.578Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 8,
+              "Title": "WindowService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\WindowService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\WindowService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\WindowService.cs",
+              "RelativeToolTip": "lc\\Services\\WindowService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAsAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:26:33.533Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ReaderWindow.xaml.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\ReaderWindow.xaml.cs",
+              "RelativeDocumentMoniker": "lc\\Views\\Windows\\ReaderWindow.xaml.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\ReaderWindow.xaml.cs",
+              "RelativeToolTip": "lc\\Views\\Windows\\ReaderWindow.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAAuAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:25:42.439Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "App.xaml.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\App.xaml.cs",
+              "RelativeDocumentMoniker": "lc\\App.xaml.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\App.xaml.cs",
+              "RelativeToolTip": "lc\\App.xaml.cs",
+              "ViewState": "AgIAAC4AAAAAAAAAAAAAADMAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:23:08.08Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "ReaderViewModel.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ReaderViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\ReaderViewModel.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ReaderViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\ReaderViewModel.cs",
+              "ViewState": "AgIAADcAAAAAAAAAAAAcwEYAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:14:26.809Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 10,
+              "Title": "DialogService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\DialogService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\DialogService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\DialogService.cs",
+              "RelativeToolTip": "lc\\Services\\DialogService.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwC0AAAAmAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-15T03:12:53.383Z",
+              "EditorCaption": ""
             }
           ]
         },

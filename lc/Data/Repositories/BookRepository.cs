@@ -1,621 +1,363 @@
 ﻿using lc.Data.Repositories.Interfaces;
+using lc.Helpers;
+using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
-using lc.Infrastructure.Repositories.Sql;
 using lc.Models;
 using lc.Models.Enums;
-using Microsoft.Data.SqlClient;
-using System.Collections.Generic;
-using System.Data;
-using System.Net;
-using System.Security.Policy;
-using System.Text;
-using System.Windows.Media;
+using Microsoft.EntityFrameworkCore;
 
-namespace lc.Data.Repositories
+namespace lc.Infrastructure.Repositories.Sql;
+
+public sealed class BookRepository : IBookRepository
 {
-    public sealed class BookRepository(
-        IChapterRepository chapterRepository,
-        ICommentRepository commentRepository,
-        ITagRepository tagRepository,
-        ICategoryRepository categoryRepository
-        ) : IBookRepository
+    private readonly AppDbContext _db;
+
+    public BookRepository(AppDbContext db)
     {
-        private readonly IChapterRepository _chapterRepository = chapterRepository;
-        private readonly ICommentRepository _commentRepository = commentRepository;
+        _db = db;
+    }
 
-        public async Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false)
+    public async Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false)
+    {
+        IQueryable<Book> query = _db.Books
+            .AsNoTracking()
+            .Include(b => b.Publisher)
+            .Include(b => b.Tags)
+            .Include(b => b.Categories);
+
+        if (includeChapters)
+            query = query.Include(b => b.Chapters);
+
+        if (includeComments)
+            query = query.Include(b => b.Comments);
+
+        return await query
+            .AsSplitQuery()
+            .FirstOrDefaultAsync(b => b.BookId == bookId);
+    }
+
+    public async Task<int> CreateAsync(Book book)
+    {
+        ArgumentNullException.ThrowIfNull(book);
+
+        var tagIds = book.Tags.Select(t => t.TagId).Distinct().ToArray();
+        var categoryIds = book.Categories.Select(c => c.CategoryId).Distinct().ToArray();
+
+        var entity = new Book
         {
-            const string sql = @"
-            SELECT 
-                b.BookId, b.PublisherId, b.Title, b.AuthorName, b.Description, b.CoverImagePath,
-                b.BookStatus, b.WritingStatus, b.Language, b.AgeRating, b.SymbolsCount, 
-                b.ChaptersCount, b.Views, b.Rating, b.CreatedAt, b.UpdatedAt,
-                u.UserId AS PublisherUserId, u.UserName AS PublisherUserName, u.AvatarPath AS PublisherAvatarPath
-            FROM Books b
-            JOIN Users u ON u.UserId = b.PublisherId
-            WHERE b.BookId = @BookId;
+            Title = string.IsNullOrWhiteSpace(book.Title) ? "Без названия" : book.Title,
+            PublisherId = book.PublisherId,
+            AuthorName = book.AuthorName,
+            Description = book.Description,
+            CoverImagePath = book.CoverImagePath,
+            BookStatus = book.BookStatus,
+            WritingStatus = book.WritingStatus,
+            Language = book.Language,
+            AgeRating = book.AgeRating,
+            SymbolsCount = book.SymbolsCount,
+            ChaptersCount = book.ChaptersCount,
+            Views = book.Views,
+            Rating = book.Rating,
+            CreatedAt = book.CreatedAt == default ? DateTime.Now : book.CreatedAt,
+            UpdatedAt = book.UpdatedAt == default ? DateTime.Now : book.UpdatedAt
+        };
 
-            SELECT t.TagId, t.Name FROM BookTags bt JOIN Tags t ON t.TagId = bt.TagId WHERE bt.BookId = @BookId ORDER BY t.Name;
-            SELECT c.CategoryId, c.Name FROM BookCategories bc JOIN Categories c ON c.CategoryId = bc.CategoryId WHERE bc.BookId = @BookId ORDER BY c.Name;";
+        if (tagIds.Length > 0)
+        {
+            entity.Tags = await _db.Tags
+                .Where(t => tagIds.Contains(t.TagId))
+                .ToListAsync();
+        }
 
-            try
-            {
-                await using var connection = SqlConnectionFactory.CreateConnection();
-                await connection.OpenAsync();
+        if (categoryIds.Length > 0)
+        {
+            entity.Categories = await _db.Categories
+                .Where(c => categoryIds.Contains(c.CategoryId))
+                .ToListAsync();
+        }
 
-                await using var command = new SqlCommand(sql, connection);
-                command.Parameters.AddWithValue("@BookId", bookId);
+        _db.Books.Add(entity);
+        await _db.SaveChangesAsync();
 
-                await using var reader = await command.ExecuteReaderAsync();
+        return entity.BookId;
+    }
 
-                if (!await reader.ReadAsync()) return null;
+    public async Task UpdateAsync(Book book)
+    {
+        ArgumentNullException.ThrowIfNull(book);
 
-                var book = new Book
+        var existing = await _db.Books
+            .Include(b => b.Tags)
+            .Include(b => b.Categories)
+            .FirstOrDefaultAsync(b => b.BookId == book.BookId)
+            ?? throw new InvalidOperationException($"Книга с BookId={book.BookId} не найдена.");
+
+        var createdAt = existing.CreatedAt;
+
+        _db.Entry(existing).CurrentValues.SetValues(book);
+        existing.CreatedAt = createdAt;
+        existing.UpdatedAt = DateTime.Now;
+        existing.Title = string.IsNullOrWhiteSpace(book.Title) ? "Без названия" : book.Title;
+
+        var tagIds = book.Tags.Select(t => t.TagId).Distinct().ToArray();
+        var categoryIds = book.Categories.Select(c => c.CategoryId).Distinct().ToArray();
+
+        existing.Tags.Clear();
+        if (tagIds.Length > 0)
+        {
+            var tags = await _db.Tags
+                .Where(t => tagIds.Contains(t.TagId))
+                .ToListAsync();
+
+            foreach (var tag in tags)
+                existing.Tags.Add(tag);
+        }
+
+        existing.Categories.Clear();
+        if (categoryIds.Length > 0)
+        {
+            var categories = await _db.Categories
+                .Where(c => categoryIds.Contains(c.CategoryId))
+                .ToListAsync();
+
+            foreach (var category in categories)
+                existing.Categories.Add(category);
+        }
+
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task DeleteAsync(int bookId)
+    {
+        var book = await _db.Books
+            .FirstOrDefaultAsync(b => b.BookId == bookId);
+
+        if (book is null)
+            return;
+
+        _db.Books.Remove(book);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task UpdateStatusAsync(int bookId, BookStatus status)
+    {
+        var book = await _db.Books
+            .FirstOrDefaultAsync(b => b.BookId == bookId);
+
+        if (book is null)
+            return;
+
+        book.BookStatus = status;
+        book.UpdatedAt = DateTime.Now;
+
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task<IReadOnlyList<BookListItemDto>> SearchAsync(BookFilterCriteria criteria)
+    {
+        IQueryable<Book> query = _db.Books.AsNoTracking();
+
+        query = ApplyFilters(query, criteria);
+
+        IQueryable<BookListItemDto> projected = query.Select(b => new BookListItemDto
+        {
+            BookId = b.BookId,
+            PublisherId = b.PublisherId,
+            Title = b.Title,
+            AuthorName = b.AuthorName,
+            CoverImagePath = b.CoverImagePath,
+            BookStatus = b.BookStatus,
+            WritingStatus = b.WritingStatus,
+            Language = b.Language,
+            AgeRating = b.AgeRating,
+            Views = b.Views,
+            Rating = b.Rating,
+            ChaptersCount = b.Chapters.Count(),
+            SymbolsCount = b.Chapters.Sum(c => (long?)c.Text.Length) ?? 0,
+            CreatedAt = b.CreatedAt,
+            UpdatedAt = b.UpdatedAt
+        });
+
+        projected = ApplyOrdering(projected, criteria);
+
+        var items = await projected.ToListAsync();
+
+        if (items.Count == 0)
+            return items;
+
+        var bookIds = items.Select(x => x.BookId).ToArray();
+
+        var tagsByBook = await _db.BookTags
+            .AsNoTracking()
+            .Where(bt => bookIds.Contains(bt.BookId))
+            .Join(_db.Tags.AsNoTracking(),
+                bt => bt.TagId,
+                t => t.TagId,
+                (bt, t) => new
                 {
-                    BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
-                    PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
-                    Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? "" : reader.GetString(reader.GetOrdinal("Title")),
-                    AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? "" : reader.GetString(reader.GetOrdinal("AuthorName")),
-                    Description = reader.IsDBNull(reader.GetOrdinal("Description")) ? "" : reader.GetString(reader.GetOrdinal("Description")),
-                    CoverImagePath = reader.IsDBNull(reader.GetOrdinal("CoverImagePath")) ? null : reader.GetString(reader.GetOrdinal("CoverImagePath")),
-                    BookStatus = (BookStatus)reader.GetInt32(reader.GetOrdinal("BookStatus")),
-                    WritingStatus = (WritingStatus)reader.GetInt32(reader.GetOrdinal("WritingStatus")),
-                    Language = (Language)reader.GetInt32(reader.GetOrdinal("Language")),
-                    AgeRating = reader.GetInt32(reader.GetOrdinal("AgeRating")),
-                    SymbolsCount = (int)reader.GetInt64(reader.GetOrdinal("SymbolsCount")),
-                    ChaptersCount = reader.GetInt32(reader.GetOrdinal("ChaptersCount")),
-                    Views = reader.GetInt32(reader.GetOrdinal("Views")),
-                    Rating = (double)reader.GetDecimal(reader.GetOrdinal("Rating")),
-                    CreatedAt = reader.GetDateTime(reader.GetOrdinal("CreatedAt")),
-                    UpdatedAt = reader.GetDateTime(reader.GetOrdinal("UpdatedAt")),
-                    Tags = new List<Tag>(),
-                    Categories = new List<Category>(),
-                };
+                    bt.BookId,
+                    Tag = new Tag { TagId = t.TagId, Name = t.Name }
+                })
+            .GroupBy(x => x.BookId)
+            .ToDictionaryAsync(
+                g => g.Key,
+                g => (IReadOnlyList<Tag>)g
+                    .Select(x => x.Tag)
+                    .OrderBy(t => t.Name)
+                    .ToList());
 
-                if (await reader.NextResultAsync())
+        var categoriesByBook = await _db.BookCategories
+            .AsNoTracking()
+            .Where(bc => bookIds.Contains(bc.BookId))
+            .Join(_db.Categories.AsNoTracking(),
+                bc => bc.CategoryId,
+                c => c.CategoryId,
+                (bc, c) => new
                 {
-                    while (await reader.ReadAsync())
-                    {
-                        book.Tags.Add(new Tag
-                        {
-                            TagId = reader.GetInt32(0),
-                            Name = reader.GetString(1)
-                        });
-                    }
-                }
+                    bc.BookId,
+                    Category = new Category { CategoryId = c.CategoryId, Name = c.Name }
+                })
+            .GroupBy(x => x.BookId)
+            .ToDictionaryAsync(
+                g => g.Key,
+                g => (IReadOnlyList<Category>)g
+                    .Select(x => x.Category)
+                    .OrderBy(c => c.Name)
+                    .ToList());
 
-                if (await reader.NextResultAsync())
-                {
-                    while (await reader.ReadAsync())
-                    {
-                        book.Categories.Add(new Category
-                        {
-                            CategoryId = reader.GetInt32(0),
-                            Name = reader.GetString(1)
-                        });
-                    }
-                }
-
-                if (includeChapters) book.Chapters = [.. await _chapterRepository.GetByBookIdAsync(book.BookId)];
-                if (includeComments) book.Comments = [.. await _commentRepository.GetByBookIdAsync(book.BookId)];
-
-                return book;
-            }
-            catch (Exception) { throw; }
-        }
-
-        public async Task<int> CreateAsync(Book book)
+        foreach (var item in items)
         {
-            const string sql = @"
-            INSERT INTO Books
-            (Title, PublisherId, AuthorName, Description, CoverImagePath, BookStatus, WritingStatus, Language, AgeRating, SymbolsCount, ChaptersCount, Views, Rating, CreatedAt, UpdatedAt)
-            OUTPUT INSERTED.BookId
-            VALUES
-            (@Title, @PublisherId, @AuthorName, @Description, @CoverImagePath, @BookStatus, @WritingStatus, @Language, @AgeRating, @SymbolsCount, @ChaptersCount, @Views, @Rating, @CreatedAt, @UpdatedAt);";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var transaction = await connection.BeginTransactionAsync();
-
-            try
-            {
-                await using var command = new SqlCommand(sql, connection, (SqlTransaction)transaction);
-                AddBookParameters(command, book);
-
-                var result = await command.ExecuteScalarAsync();
-                var bookId = Convert.ToInt32(result);
-
-                await SyncBookTagsAsync(connection, (SqlTransaction)transaction, bookId, book.Tags);
-                await SyncBookCategoriesAsync(connection, (SqlTransaction)transaction, bookId, book.Categories);
-
-                await transaction.CommitAsync();
-                return bookId;
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+            item.Tags = tagsByBook.TryGetValue(item.BookId, out var tags) ? tags.ToList() : [];
+            item.Categories = categoriesByBook.TryGetValue(item.BookId, out var categories) ? categories.ToList() : [];
         }
 
-        public async Task UpdateAsync(Book book)
+        return items;
+    }
+
+    private static IQueryable<Book> ApplyFilters(IQueryable<Book> query, BookFilterCriteria criteria)
+    {
+        if (!string.IsNullOrWhiteSpace(criteria.SearchText))
         {
-            const string sql = @"
-            UPDATE Books
-            SET
-                Title = @Title,
-                PublisherId = @PublisherId,
-                AuthorName = @AuthorName,
-                Description = @Description,
-                CoverImagePath = @CoverImagePath,
-                BookStatus = @BookStatus,
-                WritingStatus = @WritingStatus,
-                Language = @Language,
-                AgeRating = @AgeRating,
-                SymbolsCount = @SymbolsCount,
-                ChaptersCount = @ChaptersCount,
-                Views = @Views,
-                Rating = @Rating,
-                UpdatedAt = @UpdatedAt
-            WHERE BookId = @BookId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var transaction = await connection.BeginTransactionAsync();
-
-            try
-            {
-                await using var command = new SqlCommand(sql, connection, (SqlTransaction)transaction);
-                command.Parameters.AddWithValue("@BookId", book.BookId);
-                AddBookParameters(command, book);
-
-                await command.ExecuteNonQueryAsync();
-
-                await SyncBookTagsAsync(connection, (SqlTransaction)transaction, book.BookId, book.Tags);
-                await SyncBookCategoriesAsync(connection, (SqlTransaction)transaction, book.BookId, book.Categories);
-
-                await transaction.CommitAsync();
-            }
-            catch
-            {
-                await transaction.RollbackAsync();
-                throw;
-            }
+            var text = criteria.SearchText.Trim();
+            query = query.Where(b =>
+                b.Title.Contains(text) ||
+                (b.AuthorName != null && b.AuthorName.Contains(text)));
         }
 
-        private static async Task SyncBookTagsAsync(
-            SqlConnection connection,
-            SqlTransaction transaction,
-            int bookId,
-            IEnumerable<Tag> tags)
+        if (criteria.IncludeBookStatuses.Count > 0)
+            query = query.Where(b => criteria.IncludeBookStatuses.Contains(b.BookStatus));
+
+        if (criteria.ExcludeBookStatuses.Count > 0)
+            query = query.Where(b => !criteria.ExcludeBookStatuses.Contains(b.BookStatus));
+
+        if (criteria.IncludeWritingStatuses.Count > 0)
+            query = query.Where(b => criteria.IncludeWritingStatuses.Contains(b.WritingStatus));
+
+        if (criteria.ExcludeWritingStatuses.Count > 0)
+            query = query.Where(b => !criteria.ExcludeWritingStatuses.Contains(b.WritingStatus));
+
+        if (criteria.IncludeLanguages.Count > 0)
+            query = query.Where(b => criteria.IncludeLanguages.Contains(b.Language));
+
+        if (criteria.ExcludeLanguages.Count > 0)
+            query = query.Where(b => !criteria.ExcludeLanguages.Contains(b.Language));
+
+        if (criteria.IncludeAgeRatings.Count > 0)
+            query = query.Where(b => criteria.IncludeAgeRatings.Contains(b.AgeRating));
+
+        if (criteria.ExcludeAgeRatings.Count > 0)
+            query = query.Where(b => !criteria.ExcludeAgeRatings.Contains(b.AgeRating));
+
+        if (criteria.RatingFrom.HasValue)
+            query = query.Where(b => b.Rating >= criteria.RatingFrom.Value);
+
+        if (criteria.RatingTo.HasValue)
+            query = query.Where(b => b.Rating <= criteria.RatingTo.Value);
+
+        if (criteria.CreatedFrom.HasValue)
+            query = query.Where(b => b.CreatedAt >= criteria.CreatedFrom.Value);
+
+        if (criteria.CreatedTo.HasValue)
+            query = query.Where(b => b.CreatedAt <= criteria.CreatedTo.Value);
+
+        if (criteria.ChaptersFrom.HasValue)
+            query = query.Where(b => b.ChaptersCount >= criteria.ChaptersFrom.Value);
+
+        if (criteria.ChaptersTo.HasValue)
+            query = query.Where(b => b.ChaptersCount <= criteria.ChaptersTo.Value);
+
+        if (criteria.SymbolsFrom.HasValue)
+            query = query.Where(b => b.SymbolsCount >= criteria.SymbolsFrom.Value);
+
+        if (criteria.SymbolsTo.HasValue)
+            query = query.Where(b => b.SymbolsCount <= criteria.SymbolsTo.Value);
+
+        if (criteria.ExcludeTagIds.Count > 0)
+            query = query.Where(b => !b.Tags.Any(t => criteria.ExcludeTagIds.Contains(t.TagId)));
+
+        if (criteria.IncludeTagIds.Count > 0)
         {
-            await using (var delete = new SqlCommand("DELETE FROM BookTags WHERE BookId = @BookId;", connection, transaction))
-            {
-                delete.Parameters.AddWithValue("@BookId", bookId);
-                await delete.ExecuteNonQueryAsync();
-            }
-
-            var distinctTagIds = tags.Select(t => t.TagId).Distinct().ToList();
-
-            foreach (var tagId in distinctTagIds)
-            {
-                await using var insert = new SqlCommand(@"
-                    INSERT INTO BookTags (BookId, TagId)
-                    VALUES (@BookId, @TagId);", connection, transaction);
-
-                insert.Parameters.AddWithValue("@BookId", bookId);
-                insert.Parameters.AddWithValue("@TagId", tagId);
-
-                await insert.ExecuteNonQueryAsync();
-            }
+            query = criteria.StrictTagMatch
+                ? query.Where(b => criteria.IncludeTagIds.All(tagId => b.Tags.Any(t => t.TagId == tagId)))
+                : query.Where(b => b.Tags.Any(t => criteria.IncludeTagIds.Contains(t.TagId)));
         }
 
-        private static async Task SyncBookCategoriesAsync(
-            SqlConnection connection,
-            SqlTransaction transaction,
-            int bookId,
-            IEnumerable<Category> categories)
+        if (criteria.ExcludeCategoryIds.Count > 0)
+            query = query.Where(b => !b.Categories.Any(c => criteria.ExcludeCategoryIds.Contains(c.CategoryId)));
+
+        if (criteria.IncludeCategoryIds.Count > 0)
         {
-            await using (var delete = new SqlCommand("DELETE FROM BookCategories WHERE BookId = @BookId;", connection, transaction))
-            {
-                delete.Parameters.AddWithValue("@BookId", bookId);
-                await delete.ExecuteNonQueryAsync();
-            }
-
-            var distinctCategoryIds = categories.Select(c => c.CategoryId).Distinct().ToList();
-
-            foreach (var categoryId in distinctCategoryIds)
-            {
-                await using var insert = new SqlCommand(@"
-                    INSERT INTO BookCategories (BookId, CategoryId)
-                    VALUES (@BookId, @CategoryId);", connection, transaction);
-
-                insert.Parameters.AddWithValue("@BookId", bookId);
-                insert.Parameters.AddWithValue("@CategoryId", categoryId);
-
-                await insert.ExecuteNonQueryAsync();
-            }
+            query = criteria.StrictCategoryMatch
+                ? query.Where(b => criteria.IncludeCategoryIds.All(categoryId => b.Categories.Any(c => c.CategoryId == categoryId)))
+                : query.Where(b => b.Categories.Any(c => criteria.IncludeCategoryIds.Contains(c.CategoryId)));
         }
 
-        public async Task DeleteAsync(int bookId)
+        return query;
+    }
+
+    private static IQueryable<BookListItemDto> ApplyOrdering(IQueryable<BookListItemDto> query, BookFilterCriteria criteria)
+    {
+        return criteria.SortField switch
         {
-            const string sql = @"DELETE FROM Books WHERE BookId = @BookId;";
+            nameof(BookListItemDto.Title) => criteria.SortAscending
+                ? query.OrderBy(x => x.Title)
+                : query.OrderByDescending(x => x.Title),
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+            nameof(BookListItemDto.AuthorName) => criteria.SortAscending
+                ? query.OrderBy(x => x.AuthorName)
+                : query.OrderByDescending(x => x.AuthorName),
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", bookId);
+            nameof(BookListItemDto.Rating) => criteria.SortAscending
+                ? query.OrderBy(x => x.Rating)
+                : query.OrderByDescending(x => x.Rating),
 
-            await command.ExecuteNonQueryAsync();
-        }
-        private static void AddBookParameters(SqlCommand command, Book book)
-        {
-            command.Parameters.AddWithValue("@Title", (object?)book.Title ?? DBNull.Value);
-            command.Parameters.AddWithValue("@PublisherId", book.PublisherId);
-            command.Parameters.AddWithValue("@AuthorName", (object?)book.AuthorName ?? DBNull.Value);
-            command.Parameters.AddWithValue("@Description", (object?)book.Description ?? DBNull.Value);
-            command.Parameters.AddWithValue("@CoverImagePath", (object?)book.CoverImagePath ?? DBNull.Value);
-            command.Parameters.AddWithValue("@BookStatus", (int)book.BookStatus);
-            command.Parameters.AddWithValue("@WritingStatus", (int)book.WritingStatus);
-            command.Parameters.AddWithValue("@Language", (int)book.Language);
-            command.Parameters.AddWithValue("@AgeRating", book.AgeRating);
-            command.Parameters.AddWithValue("@SymbolsCount", book.SymbolsCount);
-            command.Parameters.AddWithValue("@ChaptersCount", book.ChaptersCount);
-            command.Parameters.AddWithValue("@Views", book.Views);
-            command.Parameters.AddWithValue("@Rating", book.Rating);
-            command.Parameters.AddWithValue("@CreatedAt", book.CreatedAt);
-            command.Parameters.AddWithValue("@UpdatedAt", book.UpdatedAt);
-        }
+            nameof(BookListItemDto.Views) => criteria.SortAscending
+                ? query.OrderBy(x => x.Views)
+                : query.OrderByDescending(x => x.Views),
 
-        public async Task UpdateStatusAsync(int bookId, BookStatus status)
-        {
-            const string sql = @"
-            UPDATE Books
-            SET BookStatus = @BookStatus,
-                UpdatedAt = SYSDATETIME()
-            WHERE BookId = @BookId";
+            nameof(BookListItemDto.ChaptersCount) => criteria.SortAscending
+                ? query.OrderBy(x => x.ChaptersCount)
+                : query.OrderByDescending(x => x.ChaptersCount),
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            using var command = connection.CreateCommand();
+            nameof(BookListItemDto.SymbolsCount) => criteria.SortAscending
+                ? query.OrderBy(x => x.SymbolsCount)
+                : query.OrderByDescending(x => x.SymbolsCount),
 
-            command.CommandText = sql;
-            command.Parameters.Add(new SqlParameter("@BookId", SqlDbType.Int) { Value = bookId });
-            command.Parameters.Add(new SqlParameter("@BookStatus", SqlDbType.Int) { Value = (int)status });
+            nameof(BookListItemDto.BookStatus) => criteria.SortAscending
+                ? query.OrderBy(x => x.BookStatus)
+                : query.OrderByDescending(x => x.BookStatus),
 
-            await connection.OpenAsync();
-            await command.ExecuteNonQueryAsync();
-        }
+            nameof(BookListItemDto.WritingStatus) => criteria.SortAscending
+                ? query.OrderBy(x => x.WritingStatus)
+                : query.OrderByDescending(x => x.WritingStatus),
 
-        public async Task<IReadOnlyList<BookListItem>> SearchAsync(BookFilterCriteria criteria)
-        {
-            var sql = new StringBuilder(@"
-            SELECT
-                b.BookId,
-                b.PublisherId,
-                u.UserName AS PublisherName,
-                b.Title,
-                b.AuthorName,
-                b.CoverImagePath,
-                b.BookStatus,
-                b.WritingStatus,
-                b.Language,
-                b.AgeRating,
-                b.Views,
-                b.Rating,
-                ISNULL(ch.ChaptersCount, 0) AS ChaptersCount,
-                ISNULL(ch.SymbolsCount, 0) AS SymbolsCount,
-                tg.TagsData,
-                cg.CategoriesData
-            FROM Books b
-            JOIN Users u ON u.UserId = b.PublisherId
-            OUTER APPLY
-            (
-                SELECT 
-                    COUNT(*) AS ChaptersCount,
-                    ISNULL(SUM(LEN(c.Text)), 0) AS SymbolsCount
-                FROM Chapters c
-                WHERE c.BookId = b.BookId
-            ) ch
-            OUTER APPLY
-            (
-                SELECT STRING_AGG(CONCAT(t.TagId, N'|', t.Name), N';') WITHIN GROUP (ORDER BY t.Name) AS TagsData
-                FROM BookTags bt
-                JOIN Tags t ON t.TagId = bt.TagId
-                WHERE bt.BookId = b.BookId
-            ) tg
-            OUTER APPLY
-            (
-                SELECT STRING_AGG(CONCAT(ca.CategoryId, N'|', ca.Name), N';') WITHIN GROUP (ORDER BY ca.Name) AS CategoriesData
-                FROM BookCategories bc
-                JOIN Categories ca ON ca.CategoryId = bc.CategoryId
-                WHERE bc.BookId = b.BookId
-            ) cg
-            WHERE 1 = 1
-            ");
+            nameof(BookListItemDto.CreatedAt) => criteria.SortAscending
+                ? query.OrderBy(x => x.CreatedAt)
+                : query.OrderByDescending(x => x.CreatedAt),
 
-            var parameters = new List<SqlParameter>();
-
-            if (!string.IsNullOrWhiteSpace(criteria.SearchText))
-            {
-                sql.AppendLine(@"
-                AND (
-                    b.Title LIKE @SearchText OR
-                    b.AuthorName LIKE @SearchText
-                )");
-                parameters.Add(new SqlParameter("@SearchText", $"%{criteria.SearchText.Trim()}%"));
-            }
-
-            AddIncludeExcludeFilter(sql, parameters, "b.BookStatus", criteria.IncludeBookStatuses, criteria.ExcludeBookStatuses, "BookStatus");
-
-            AddIncludeExcludeFilter(sql, parameters, "b.WritingStatus", criteria.IncludeWritingStatuses, criteria.ExcludeWritingStatuses, "WritingStatus");
-
-            AddIncludeExcludeFilter(sql, parameters, "b.Language", criteria.IncludeLanguages, criteria.ExcludeLanguages, "Language");
-
-            AddIncludeExcludeFilter(sql, parameters, "b.AgeRating", criteria.IncludeAgeRatings, criteria.ExcludeAgeRatings, "AgeRating");
-
-            if (criteria.RatingFrom.HasValue)
-            {
-                sql.AppendLine("AND b.Rating >= @RatingFrom");
-                parameters.Add(new SqlParameter("@RatingFrom", criteria.RatingFrom.Value));
-            }
-
-            if (criteria.RatingTo.HasValue)
-            {
-                sql.AppendLine("AND b.Rating <= @RatingTo");
-                parameters.Add(new SqlParameter("@RatingTo", criteria.RatingTo.Value));
-            }
-
-            if (criteria.CreatedFrom.HasValue)
-            {
-                sql.AppendLine("AND b.CreatedAt >= @CreatedFrom");
-                parameters.Add(new SqlParameter("@CreatedFrom", criteria.CreatedFrom.Value));
-            }
-
-            if (criteria.CreatedTo.HasValue)
-            {
-                sql.AppendLine("AND b.CreatedAt <= @CreatedTo");
-                parameters.Add(new SqlParameter("@CreatedTo", criteria.CreatedTo.Value));
-            }
-
-            if (criteria.ChaptersFrom.HasValue)
-            {
-                sql.AppendLine("AND ISNULL(ch.ChaptersCount, 0) >= @ChaptersFrom");
-                parameters.Add(new SqlParameter("@ChaptersFrom", criteria.ChaptersFrom.Value));
-            }
-
-            if (criteria.ChaptersTo.HasValue)
-            {
-                sql.AppendLine("AND ISNULL(ch.ChaptersCount, 0) <= @ChaptersTo");
-                parameters.Add(new SqlParameter("@ChaptersTo", criteria.ChaptersTo.Value));
-            }
-
-            if (criteria.SymbolsFrom.HasValue)
-            {
-                sql.AppendLine("AND ISNULL(ch.SymbolsCount, 0) >= @SymbolsFrom");
-                parameters.Add(new SqlParameter("@SymbolsFrom", criteria.SymbolsFrom.Value));
-            }
-
-            if (criteria.SymbolsTo.HasValue)
-            {
-                sql.AppendLine("AND ISNULL(ch.SymbolsCount, 0) <= @SymbolsTo");
-                parameters.Add(new SqlParameter("@SymbolsTo", criteria.SymbolsTo.Value));
-            }
-
-            AddTagFilter(sql, parameters, criteria);
-            AddCategoryFilter(sql, parameters, criteria);
-
-            sql.AppendLine($"ORDER BY {BuildOrderBy(criteria)};");
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql.ToString(), connection);
-            command.Parameters.AddRange(parameters.ToArray());
-
-            var result = new List<BookListItem>();
-
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                result.Add(MapBookListItem(reader));
-            }
-
-            return result;
-        }
-
-        private void AddIncludeExcludeFilter<T>(
-            StringBuilder sql,
-            List<SqlParameter> parameters,
-            string columnName,
-            IReadOnlyList<T> includeList,
-            IReadOnlyList<T> excludeList,
-            string paramNamePrefix
-            )
-        {
-            if (includeList != null && includeList.Count > 0)
-            {
-                var inList = BuildInList(includeList, parameters, $"{paramNamePrefix}Inc");
-                sql.AppendLine($"AND {columnName} IN ({inList})");
-            }
-
-            if (excludeList != null && excludeList.Count > 0)
-            {
-                var notInList = BuildInList(excludeList, parameters, $"{paramNamePrefix}Exc");
-                sql.AppendLine($"AND {columnName} NOT IN ({notInList})");
-            }
-        }
-
-        private static void AddTagFilter(StringBuilder sql, List<SqlParameter> parameters, BookFilterCriteria criteria)
-        {
-            if (criteria.ExcludeTagIds.Count > 0)
-            {
-                var pName = $"@ExcludeTags";
-                sql.AppendLine($@"
-            AND NOT EXISTS (
-                SELECT 1 FROM BookTags bt 
-                WHERE bt.BookId = b.BookId 
-                AND bt.TagId IN ({BuildInList(criteria.ExcludeTagIds, parameters, "ExTag")})
-            )");
-            }
-
-            if (criteria.IncludeTagIds.Count > 0)
-            {
-                if (criteria.StrictTagMatch)
-                {
-                    foreach (var tagId in criteria.IncludeTagIds)
-                    {
-                        var pName = $"@IncTag{tagId}";
-                        sql.AppendLine($"AND EXISTS (SELECT 1 FROM BookTags WHERE BookId = b.BookId AND TagId = {pName})");
-                        parameters.Add(new SqlParameter(pName, tagId));
-                    }
-                }
-                else
-                {
-                    sql.AppendLine($@"
-                AND EXISTS (
-                    SELECT 1 FROM BookTags bt 
-                    WHERE bt.BookId = b.BookId 
-                    AND bt.TagId IN ({BuildInList(criteria.IncludeTagIds, parameters, "IncTag")})
-                )");
-                }
-            }
-        }
-
-        private static void AddCategoryFilter(StringBuilder sql, List<SqlParameter> parameters, BookFilterCriteria criteria)
-        {
-            if (criteria.ExcludeCategoryIds.Count > 0)
-            {
-                var pName = $"@ExcludeCategories";
-                sql.AppendLine($@"
-            AND NOT EXISTS (
-                SELECT 1 FROM BookCategories bt 
-                WHERE bt.BookId = b.BookId 
-                AND bt.CategoryId IN ({BuildInList(criteria.ExcludeCategoryIds, parameters, "ExCategory")})
-            )");
-            }
-
-            if (criteria.IncludeCategoryIds.Count > 0)
-            {
-                if (criteria.StrictCategoryMatch)
-                {
-                    foreach (var tagId in criteria.IncludeCategoryIds)
-                    {
-                        var pName = $"@IncCategory{tagId}";
-                        sql.AppendLine($"AND EXISTS (SELECT 1 FROM BookCategories WHERE BookId = b.BookId AND CategoryId = {pName})");
-                        parameters.Add(new SqlParameter(pName, tagId));
-                    }
-                }
-                else
-                {
-                    sql.AppendLine($@"
-                AND EXISTS (
-                    SELECT 1 FROM BookCategories bt 
-                    WHERE bt.BookId = b.BookId 
-                    AND bt.CategoryId IN ({BuildInList(criteria.IncludeCategoryIds, parameters, "IncCategory")})
-                )");
-                }
-            }
-        }
-
-        private static string BuildInList<T>(IReadOnlyList<T> values, List<SqlParameter> parameters, string prefix)
-        {
-            var names = new List<string>(values.Count);
-
-            for (int i = 0; i < values.Count; i++)
-            {
-                var name = $"@{prefix}{i}";
-                parameters.Add(new SqlParameter(name, values[i]!));
-                names.Add(name);
-            }
-
-            return string.Join(", ", names);
-        }
-
-        private static string BuildOrderBy(BookFilterCriteria criteria)
-        {
-            string column = criteria.SortField switch
-            {
-                nameof(BookListItem.Title) => "b.Title",
-                nameof(BookListItem.AuthorName) => "b.AuthorName",
-                nameof(BookListItem.Rating) => "b.Rating",
-                nameof(BookListItem.Views) => "b.Views",
-                nameof(BookListItem.ChaptersCount) => "ISNULL(ch.ChaptersCount, 0)",
-                nameof(BookListItem.SymbolsCount) => "ISNULL(ch.SymbolsCount, 0)",
-                nameof(BookListItem.BookStatus) => "b.BookStatus",
-                nameof(BookListItem.WritingStatus) => "b.WritingStatus",
-                nameof(BookListItem.CreatedAt) => "b.CreatedAt",
-                _ => "b.Title"
-            };
-
-            return $"{column} {(criteria.SortAscending ? "ASC" : "DESC")}";
-        }
-
-        private static BookListItem MapBookListItem(SqlDataReader reader)
-        {
-            return new BookListItem
-            {
-                BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
-                PublisherId = reader.GetInt32(reader.GetOrdinal("PublisherId")),
-                PublisherName = reader.GetString(reader.GetOrdinal("PublisherName")),
-                Title = reader.IsDBNull(reader.GetOrdinal("Title")) ? null : reader.GetString(reader.GetOrdinal("Title")),
-                AuthorName = reader.IsDBNull(reader.GetOrdinal("AuthorName")) ? null : reader.GetString(reader.GetOrdinal("AuthorName")),
-                CoverImagePath = reader.IsDBNull(reader.GetOrdinal("CoverImagePath")) ? null : reader.GetString(reader.GetOrdinal("CoverImagePath")),
-                BookStatus = (BookStatus)reader.GetInt32(reader.GetOrdinal("BookStatus")),
-                WritingStatus = (WritingStatus)reader.GetInt32(reader.GetOrdinal("WritingStatus")),
-                Language = (Language)reader.GetInt32(reader.GetOrdinal("Language")),
-                AgeRating = reader.GetInt32(reader.GetOrdinal("AgeRating")),
-                Views = reader.GetInt32(reader.GetOrdinal("Views")),
-                Rating = (double)reader.GetDecimal(reader.GetOrdinal("Rating")),
-                ChaptersCount = reader.GetInt32(reader.GetOrdinal("ChaptersCount")),
-                SymbolsCount = (int)reader.GetInt64(reader.GetOrdinal("SymbolsCount")),
-                Tags = ParseTags(reader.IsDBNull(reader.GetOrdinal("TagsData")) ? null : reader.GetString(reader.GetOrdinal("TagsData"))),
-                Categories = ParseCategories(reader.IsDBNull(reader.GetOrdinal("CategoriesData")) ? null : reader.GetString(reader.GetOrdinal("CategoriesData")))
-            };
-        }
-
-        private static List<Tag> ParseTags(string? data)
-        {
-            var result = new List<Tag>();
-            if (string.IsNullOrWhiteSpace(data))
-                return result;
-
-            foreach (var part in data.Split(';', StringSplitOptions.RemoveEmptyEntries))
-            {
-                var pieces = part.Split('|', 2);
-                if (pieces.Length != 2)
-                    continue;
-
-                if (!int.TryParse(pieces[0], out var ChapterId))
-                    continue;
-
-                result.Add(new Tag { TagId = ChapterId, Name = pieces[1] });
-            }
-
-            return result;
-        }
-
-        private static List<Category> ParseCategories(string? data)
-        {
-            var result = new List<Category>();
-            if (string.IsNullOrWhiteSpace(data))
-                return result;
-
-            foreach (var part in data.Split(';', StringSplitOptions.RemoveEmptyEntries))
-            {
-                var pieces = part.Split('|', 2);
-                if (pieces.Length != 2)
-                    continue;
-
-                if (!int.TryParse(pieces[0], out var ChapterId))
-                    continue;
-
-                result.Add(new Category { CategoryId = ChapterId, Name = pieces[1] });
-            }
-
-            return result;
-        }
+            _ => criteria.SortAscending
+                ? query.OrderBy(x => x.Title)
+                : query.OrderByDescending(x => x.Title)
+        };
     }
 }

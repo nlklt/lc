@@ -259,7 +259,7 @@
                                 BorderThickness="1">
 
                             <DockPanel>
-                                <TextBlock Text="Категории"
+                                <TextBlock Text="Теги"
                                            Style="{DynamicResource FieldLabel}"
                                            DockPanel.Dock="Top"
                                            Margin="0,0,0,8"/>
@@ -286,22 +286,24 @@
                                TextWrapping="Wrap"
                                Margin="0,0,0,2">
                     </TextBlock>
-                    
+
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
-                        <Button Grid.Column="0" Content="Далее"
+
+                        <Button Grid.Column="0"
+                                Content="Сохранить"
                                 Command="{Binding SaveCommand}"
                                 Style="{DynamicResource PrimaryButtonStyle}"
                                 Margin="0,0,4,0"/>
 
-                        <Button Grid.Column="1" Content="Сохранить черновик"
+                        <Button Grid.Column="1"
+                                Content="Отмена"
                                 Command="{Binding CancelCommand}"
                                 Style="{DynamicResource SecondaryButtonStyle}"/>
                     </Grid>
-                    
                 </StackPanel>
             </Border>
         </Grid>

@@ -164,21 +164,28 @@
                                     SelectedItem="{Binding PreferredTheme}"
                                     Style="{DynamicResource ComboBoxBaseStyle}" Margin="0,0,0,16"/>
 
-                        <Button Content="Сохранить изменения" 
+                        <TextBlock Text="{Binding StatusMessage}"
+                                   Foreground="Tomato"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,8" />
+
+                        <Button Content="Сохранить изменения"
                                 Command="{Binding SaveSettingsCommand}"
-                                Style="{DynamicResource PrimaryButtonStyle}" Margin="0,0,0,16"/>
+                                Style="{DynamicResource PrimaryButtonStyle}"
+                                Margin="0,0,0,16"
+                                IsEnabled="{Binding CanSave}" />
                         
                         <Button  Content="Выйти из аккаунта" 
-                                    Command="{Binding LogoutCommand}"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Foreground="{DynamicResource WarningFrontBrush}" 
-                                    BorderBrush="{DynamicResource WarningFrontBrush}" Margin="0,0,0,8"/>
+                                 Command="{Binding LogoutCommand}"
+                                 Style="{DynamicResource SecondaryButtonStyle}"
+                                 Foreground="{DynamicResource WarningFrontBrush}" 
+                                 BorderBrush="{DynamicResource WarningFrontBrush}" Margin="0,0,0,8"/>
                         
                         <Button  Content="Удалить аккаунт" 
-                                    Command="{Binding DeleteAccountCommand}"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Foreground="{DynamicResource WarningFrontBrush}" 
-                                    BorderBrush="{DynamicResource WarningFrontBrush}"/>
+                                 Command="{Binding DeleteAccountCommand}"
+                                 Style="{DynamicResource SecondaryButtonStyle}"
+                                 Foreground="{DynamicResource WarningFrontBrush}" 
+                                 BorderBrush="{DynamicResource WarningFrontBrush}"/>
                     </StackPanel>
                 </Border>
             </Grid>

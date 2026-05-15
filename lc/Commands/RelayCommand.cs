@@ -9,13 +9,18 @@ namespace lc.Commands
 
         public RelayCommand(Action execute, Func<bool>? canExecute = null)
         {
+            ArgumentNullException.ThrowIfNull(execute);
+
             _execute = _ => execute();
-            _canExecute = canExecute == null ? null : _ => canExecute();
+            _canExecute = canExecute is null ? null : _ => canExecute();
         }
-        public RelayCommand(Action<object?> execute, Func<object?, bool>? canExecute = null)
+
+        public RelayCommand(Action<object?> execute, Func<object?, bool?>? canExecute = null)
         {
+            ArgumentNullException.ThrowIfNull(execute);
+
             _execute = execute;
-            _canExecute = canExecute;
+            _canExecute = canExecute is null ? null : p => canExecute(p) ?? true;
         }
 
         public event EventHandler? CanExecuteChanged
@@ -23,13 +28,8 @@ namespace lc.Commands
             add => CommandManager.RequerySuggested += value;
             remove => CommandManager.RequerySuggested -= value;
         }
-
         public bool CanExecute(object? parameter) => _canExecute?.Invoke(parameter) ?? true;
         public void Execute(object? parameter) => _execute(parameter);
-
-        internal void RaiseCanExecuteChanged()
-        {
-            throw new NotImplementedException();
-        }
+        public void RaiseCanExecuteChanged() => CommandManager.InvalidateRequerySuggested();
     }
 }

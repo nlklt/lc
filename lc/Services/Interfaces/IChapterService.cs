@@ -4,6 +4,9 @@ namespace lc.Services.Interfaces
 {
     public interface IChapterService
     {
-        Task<List<Chapter>> GetByBookIdAsync(int bookId);
+        Task<Chapter?> GetByIdAsync(int chapterId);
+        Task<IReadOnlyList<Chapter>> GetByBookIdAsync(int bookId);
+        Task<int> SaveAsync(int bookId, Chapter chapter);
+        Task DeleteAsync(int chapterId);
     }
 }

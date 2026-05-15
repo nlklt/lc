@@ -1,20 +1,31 @@
 ﻿using System.Windows;
 using lc.Services.Interfaces;
 using lc.Views.Windows;
+using lc.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace lc.Services
 {
     public class WindowService : IWindowService
     {
-        public Task OpenReaderAsync(int bookId, int? chapterId = null)
+        private readonly IServiceProvider _provider;
+
+        public WindowService(IServiceProvider provider)
         {
-            var window = new ReaderWindow(bookId, chapterId)
+            _provider = provider;
+        }
+
+        public async Task OpenReaderAsync(int bookId, int? chapterId = null)
+        {
+            var window = _provider.GetRequiredService<ReaderWindow>();
+            window.Owner = Application.Current.MainWindow;
+
+            if (window.DataContext is ReaderViewModel vm)
             {
-                Owner = Application.Current.MainWindow
-            };
+                await vm.InitializeAsync(bookId, chapterId);
+            }
 
             window.Show();
-            return Task.CompletedTask;
         }
     }
 }

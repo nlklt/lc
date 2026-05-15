@@ -1,108 +1,148 @@
 ﻿using lc.Commands;
+using lc.Helpers;
 using lc.Infrastructure;
 using lc.Models.Enums;
+using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
 using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace lc.ViewModels
 {
     public class NavigationViewModel : ViewModelBase
     {
-        private readonly AppState _appState;
+        private readonly AppState               _appState;
+        private readonly IAuthService           _auth;
+        private readonly IDialogService         _dialog;
+        private readonly INavigationService     _navigation;
+        private readonly IThemeService          _themeService;
+        private readonly ILocalizationService   _localizationService;
+        private readonly IBookService           _bookService;
 
-        private readonly IAuthService       _auth;
-        private readonly IDialogService     _dialog;
-        private readonly INavigationService _navigation;
+        public bool IsGuest =>          _appState.IsGuest;
+        public bool IsWriter =>         _appState.IsWriter;
+        public bool IsAdmin =>          _appState.IsAdmin;
+        public bool IsReader =>         _appState.IsReader;
+        public bool IsAuthenticated =>  _appState.IsAuthenticated;
 
-        private readonly IThemeService        _themeService;
-        private readonly ILocalizationService _localizationService;
-
-        public bool IsGuest => _appState.IsGuest;
-        public bool IsWriter => _appState.IsWriter;
-        public bool IsAdmin => _appState.IsAdmin;
-        public bool IsReader => _appState.IsReader;
-        public bool IsAuthenticated => _appState.IsAuthenticated;
-
-        public string CurrentUserName => _appState.CurrentUser?.UserName ?? "Гость";
-        public UserRole CurrentUserRole => _appState.CurrentUser?.Role ?? UserRole.Guest;
-        public string AvatarPath => _appState.CurrentUser?.AvatarPath ?? "";
+        public string CurrentUserName =>    _appState.CurrentUser?.UserName ?? "Гость";
+        public UserRole CurrentUserRole =>  _appState.CurrentUser?.Role ?? UserRole.Guest;
+        public string AvatarPath =>         _appState.CurrentUser?.AvatarPath ?? string.Empty;
 
         // Гость
         public ICommand NavigateRegisterCommand { get; }
         public ICommand NavigateLoginCommand { get; }
-
-        // Читатель
         public ICommand NavigateCatalogCommand { get; }
         public ICommand RandomBookCommand { get; }
-        public ICommand NavigateMarkBookCommand { get; }
-        public ICommand BecomeAuthorCommand { get; }
 
-
-        public ICommand NavigateCreateBookCommand { get; }
+        // Читатель
         public ICommand NavigateProfileCommand { get; }
-
+        public ICommand NavigateFavoritesCommand { get; }
+        public ICommand BecomeAuthorCommand { get; }
         public ICommand NavigateSettingsCommand { get; }
         public ICommand LogoutCommand { get; }
 
-        public NavigationViewModel()
+        // Писатель
+        public ICommand NavigateCreateBookCommand { get; }
+
+        // Админ
+
+
+        public NavigationViewModel(
+            AppState appState,
+            IAuthService auth,
+            IDialogService dialog,
+            INavigationService navigation,
+            IThemeService themeService,
+            ILocalizationService localizationService,
+            IBookService bookService)
         {
-            _appState = ServiceLocator.AppState;
-
-            _auth       = ServiceLocator.AuthService;
-            _dialog     = ServiceLocator.DialogService;
-            _navigation = ServiceLocator.NavigationService;
-
-            _themeService = ServiceLocator.ThemeService;
-            _localizationService = ServiceLocator.LocalisationService;
+            _appState               = appState ?? throw new ArgumentNullException(nameof(appState));
+            _auth                   = auth ?? throw new ArgumentNullException(nameof(auth));
+            _dialog                 = dialog ?? throw new ArgumentNullException(nameof(dialog));
+            _navigation             = navigation ?? throw new ArgumentNullException(nameof(navigation));
+            _themeService           = themeService ?? throw new ArgumentNullException(nameof(themeService));
+            _localizationService    = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
+            _bookService            = bookService ?? throw new ArgumentNullException(nameof(bookService));
 
             NavigateLoginCommand    = new RelayCommand(_ => _dialog.ShowLoginDialog());
             NavigateRegisterCommand = new RelayCommand(_ => _dialog.ShowRegisterDialog());
-            
-            NavigateProfileCommand  = new RelayCommand(_ => _navigation.Navigate(new ProfileViewModel()));
+            NavigateCatalogCommand  = new RelayCommand(_ => _navigation.NavigateTo<CatalogViewModel>());
+            RandomBookCommand       = new AsyncRelayCommand(NavigateRandomBookAsync);
 
-            NavigateCatalogCommand  = new RelayCommand(_ => _navigation.Navigate(new CatalogViewModel()));
-
-            RandomBookCommand = new RelayCommand(_ =>
+            NavigateFavoritesCommand    = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
+            NavigateProfileCommand      = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
+            NavigateSettingsCommand     = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
+            LogoutCommand               = new RelayCommand(_ => Logout());
+            BecomeAuthorCommand         = new RelayCommand(_ =>
             {
-                Random random = new();
-                //var books = await ServiceLocator.BookService.GetRandomBookAsync();
-                int bookId = random.Next(21, 32);
-                _navigation.Navigate(new BookDetailsViewModel(bookId));
+                if (IsWriter || IsAdmin)
+                {
+                    _navigation.NavigateTo<EditBookViewModel>();
+                    return;
+                }
+
+                _ = _dialog.ShowMessageAsync(
+                    "Стать автором",
+                    "Запрос на повышение роли пока не реализован. Эта кнопка может вести на будущую форму заявки.");
             });
 
-            // NavigateMarkBookCommand = new RelayCommand(_ => _navigation.Navigate(new BookDetailsViewModel()));
-
-            // BecomeAuthorCommand = new RelayCommand(_ => _navigation.Navigate(new EditBookViewModel()));
-
-            NavigateCreateBookCommand = new RelayCommand(_ => _navigation.Navigate(new EditBookViewModel()));
-
-            NavigateSettingsCommand = new RelayCommand(_ =>
+            NavigateCreateBookCommand = new RelayCommand(_ =>
             {
-                var vm = new ProfileViewModel();
-                vm.IsSettingsOpen = true;
-                _navigation.Navigate(vm);
+                if (!IsWriter && !IsAdmin)
+                {
+                    _ = _dialog.ShowMessageAsync("Недоступно", "Создание книги доступно только авторам.");
+                    return;
+                }
+
+                _navigation.NavigateTo<EditBookViewModel>();
             });
 
-            LogoutCommand           = new RelayCommand(_ => Logout());
+            _appState.PropertyChanged += AppStateOnPropertyChanged;
+        }
 
-            _appState.PropertyChanged += (_, __) =>
+        private async Task NavigateRandomBookAsync()
+        {
+            var criteria = new BookFilterCriteria
             {
-                OnPropertyChanged(nameof(IsGuest));
-                OnPropertyChanged(nameof(IsWriter));
-                OnPropertyChanged(nameof(IsAdmin));
-                OnPropertyChanged(nameof(IsAuthenticated));
-                OnPropertyChanged(nameof(CurrentUserName));
-                OnPropertyChanged(nameof(CurrentUserRole));
-                OnPropertyChanged(nameof(AvatarPath));
+                IncludeBookStatuses = [BookStatus.Published]
             };
+
+            var books = await _bookService.GetCatalogAsync(criteria);
+
+            if (books.Count == 0)
+            {
+                await _dialog.ShowMessageAsync("Книги не найдены", "В каталоге нет опубликованных книг.");
+                return;
+            }
+
+            var random = Random.Shared.Next(books.Count);
+            var bookId = books[random].BookId;
+
+            _navigation.NavigateTo<BookDetailsViewModel>(bookId);
         }
 
         private void Logout()
         {
             _auth.Logout();
-            _navigation.Navigate(new CatalogViewModel());
+            _navigation.NavigateTo<CatalogViewModel>();
+        }
+
+        private void AppStateOnPropertyChanged(object? sender, PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName is nameof(AppState.CurrentUser))
+            {
+                OnPropertyChanged(nameof(IsGuest));
+                OnPropertyChanged(nameof(IsWriter));
+                OnPropertyChanged(nameof(IsAdmin));
+                OnPropertyChanged(nameof(IsReader));
+                OnPropertyChanged(nameof(IsAuthenticated));
+                OnPropertyChanged(nameof(CurrentUserName));
+                OnPropertyChanged(nameof(CurrentUserRole));
+                OnPropertyChanged(nameof(AvatarPath));
+            }
         }
     }
 }

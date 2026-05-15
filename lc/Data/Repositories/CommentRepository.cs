@@ -1,137 +1,78 @@
-﻿using lc.Data;
-using lc.Infrastructure.Data;
+﻿using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-namespace lc.Infrastructure.Repositories.Sql
+namespace lc.Infrastructure.Repositories.Sql;
+
+public sealed class CommentRepository : ICommentRepository
 {
-    public sealed class CommentRepository : ICommentRepository
+    private readonly AppDbContext _db;
+
+    public CommentRepository(AppDbContext db)
     {
-        public async Task<Comment?> GetByIdAsync(int commentId)
-        {
-            const string sql = @"
-            SELECT
-                c.CommentId, c.UserId, u.UserName, c.BookId,
-                c.Text, c.CreatedAt, c.UpdatedAt
-            FROM Comments c
-            JOIN Users u ON u.UserId = c.UserId
-            WHERE c.CommentId = @CommentId;";
+        _db = db;
+    }
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+    public async Task<Comment?> GetByIdAsync(int commentId)
+    {
+        return await _db.Comments
+            .AsNoTracking()
+            .Include(x => x.User)
+            .FirstOrDefaultAsync(x => x.CommentId == commentId);
+    }
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@CommentId", commentId);
+    public async Task<IReadOnlyList<Comment>> GetByBookIdAsync(int bookId)
+    {
+        return await _db.Comments
+            .AsNoTracking()
+            .Include(x => x.User)
+            .Where(x => x.BookId == bookId)
+            .OrderByDescending(x => x.CreatedAt)
+            .ToListAsync();
+    }
 
-            await using var reader = await command.ExecuteReaderAsync();
-            if (!await reader.ReadAsync())
-                return null;
+    public async Task<int> CreateAsync(Comment comment)
+    {
+        ArgumentNullException.ThrowIfNull(comment);
 
-            return Map(reader);
-        }
+        if (comment.CreatedAt == default)
+            comment.CreatedAt = DateTime.Now;
 
-        public async Task<IReadOnlyList<Comment>> GetByBookIdAsync(int bookId)
-        {
-            const string sql = @"
-            SELECT
-                c.CommentId, c.UserId, c.BookId, c.Text, c.CreatedAt, c.UpdatedAt
-            FROM Comments c
-            WHERE c.BookId = @BookId
-            ORDER BY c.CreatedAt DESC;";
+        comment.UpdatedAt = DateTime.Now;
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+        _db.Comments.Add(comment);
+        await _db.SaveChangesAsync();
 
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@BookId", bookId);
+        return comment.CommentId;
+    }
 
-            var result = new List<Comment>();
-            await using var reader = await command.ExecuteReaderAsync();
+    public async Task UpdateAsync(Comment comment)
+    {
+        ArgumentNullException.ThrowIfNull(comment);
 
-            while (await reader.ReadAsync())
-                result.Add(Map(reader));
+        var existing = await _db.Comments
+            .FirstOrDefaultAsync(x => x.CommentId == comment.CommentId)
+            ?? throw new InvalidOperationException($"Комментарий с CommentId={comment.CommentId} не найден.");
 
-            return result;
-        }
+        var createdAt = existing.CreatedAt;
 
-        public async Task<int> CreateAsync(Comment comment)
-        {
-            const string sql = @"
-            INSERT INTO Comments
-            (
-                UserId, BookId, Text, CreatedAt, UpdatedAt
-            )
-            OUTPUT INSERTED.CommentId
-            VALUES
-            (
-                @UserId, @BookId, @Text, @CreatedAt, @UpdatedAt
-            );";
+        _db.Entry(existing).CurrentValues.SetValues(comment);
+        existing.CreatedAt = createdAt;
+        existing.UpdatedAt = DateTime.Now;
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
+        await _db.SaveChangesAsync();
+    }
 
-            await using var command = new SqlCommand(sql, connection);
-            AddParameters(command, comment);
+    public async Task DeleteAsync(int commentId)
+    {
+        var comment = await _db.Comments
+            .FirstOrDefaultAsync(x => x.CommentId == commentId);
 
-            var result = await command.ExecuteScalarAsync();
-            return result is int ChapterId ? ChapterId : 0;
-        }
+        if (comment is null)
+            return;
 
-        public async Task UpdateAsync(Comment comment)
-        {
-            const string sql = @"
-            UPDATE Comments
-            SET
-                UserId = @UserId,
-                BookId = @BookId,
-                Text = @Text,
-                UpdatedAt = @UpdatedAt
-            WHERE CommentId = @CommentId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@CommentId", comment.CommentId);
-            AddParameters(command, comment);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        public async Task DeleteAsync(int commentId)
-        {
-            const string sql = @"DELETE FROM Comments WHERE CommentId = @CommentId;";
-
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            command.Parameters.AddWithValue("@CommentId", commentId);
-
-            await command.ExecuteNonQueryAsync();
-        }
-
-        private static void AddParameters(SqlCommand command, Comment comment)
-        {
-            command.Parameters.AddWithValue("@UserId", comment.UserId);
-            command.Parameters.AddWithValue("@BookId", comment.BookId);
-            command.Parameters.AddWithValue("@Text", comment.Text);
-            command.Parameters.AddWithValue("@CreatedAt", comment.CreatedAt);
-            command.Parameters.AddWithValue("@UpdatedAt", comment.UpdatedAt);
-        }
-
-        private static Comment Map(SqlDataReader reader)
-        {
-            return new Comment
-            {
-                CommentId = reader.GetInt32(reader.GetOrdinal("CommentId")),
-                UserId = reader.GetInt32(reader.GetOrdinal("UserId")),
-                BookId = reader.GetInt32(reader.GetOrdinal("BookId")),
-                Text = reader.GetString(reader.GetOrdinal("Text")),
-                CreatedAt = reader.GetDateTimeSafe("CreatedAt"),
-                UpdatedAt = reader.GetDateTimeSafe("UpdatedAt")
-            };
-        }
+        _db.Comments.Remove(comment);
+        await _db.SaveChangesAsync();
     }
 }

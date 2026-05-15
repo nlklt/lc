@@ -1,13 +1,17 @@
-﻿using lc.Models;
+﻿using lc.Helpers;
 
 namespace lc.Services.Interfaces
 {
     public interface IUserLibraryService
     {
-        Task<IReadOnlyList<UserLibraryListDto>> GetListsAsync(int userId);
-        Task<IReadOnlyList<BookListItem>> GetBooksFromListAsync(int userId, int listId);
-        Task AddBookToListAsync(int userId, int listId, int bookId);
-        Task RemoveBookFromListAsync(int userId, int listId, int bookId);
+        Task<IReadOnlyList<UserLibraryListDto>> GetListsAsync();
+        Task<int> CreateListAsync(string name);
+        Task RenameListAsync(int listId, string name);
+        Task DeleteListAsync(int listId);
+
+        Task<IReadOnlyList<BookListItemDto>> GetBooksFromListAsync(int listId);
+        Task AddBookToListAsync(int listId, int bookId);
+        Task RemoveBookFromListAsync(int listId, int bookId);
 
         Task AddToLibraryAsync(int bookId);
         Task RemoveFromLibraryAsync(int bookId);

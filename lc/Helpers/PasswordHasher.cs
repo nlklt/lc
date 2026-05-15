@@ -1,6 +1,6 @@
 ﻿using System.Security.Cryptography;
 
-namespace lc.Services
+namespace lc.Helpers
 {
     public static class PasswordHasher
     {

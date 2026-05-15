@@ -5,26 +5,19 @@ namespace lc.Views.Windows
 {
     public partial class RegisterWindow : Window
     {
-        private void Minimize_Click(object sender, RoutedEventArgs e)
+        private void Minimize_Click(object sender, RoutedEventArgs e) { WindowState = WindowState.Minimized; }
+        private void Maximize_Click(object sender, RoutedEventArgs e) 
         {
-            WindowState = WindowState.Minimized;
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else WindowState = WindowState.Maximized;
         }
 
-        private void Maximize_Click(object sender, RoutedEventArgs e)
-        {
-            if (WindowState == WindowState.Maximized)
-                WindowState = WindowState.Normal;
-            else
-                WindowState = WindowState.Maximized;
-        }
-
-        public RegisterWindow()
+        public RegisterWindow(RegisterViewModel vm)
         {
             InitializeComponent();
 
-            var vm = new RegisterViewModel();
-            vm.RequestClose = this.Close;
             DataContext = vm;
+            vm.RequestClose = Close;
         }
     }
 }

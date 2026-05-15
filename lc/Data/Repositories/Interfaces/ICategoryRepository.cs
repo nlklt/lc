@@ -4,6 +4,6 @@ namespace lc.Data.Repositories.Interfaces
 {
     public interface ICategoryRepository
     {
-        public Task<IReadOnlyList<Category>> GetAllAsync();
+        Task<IReadOnlyList<Category>> GetAllAsync();
     }
 }

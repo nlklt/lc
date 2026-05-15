@@ -160,7 +160,7 @@
                                                         Style="{DynamicResource DatePickerPlaceholderStyle}" />
                                         </StackPanel>
 
-                                        <TextBlock Text="Статус Тайтла" Margin="8,8,8,4"
+                                        <TextBlock Text="Статус книги" Margin="8,8,8,4"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
                                         <ItemsControl ItemsSource="{Binding WritingStatusOptions}">
                                             <ItemsControl.ItemsPanel>
@@ -181,6 +181,30 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
+
+                                        <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+                                            <TextBlock Text="Состояние Книги" Margin="8,8,8,4"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                            <ItemsControl ItemsSource="{Binding BookStatusOptions}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <UniformGrid Columns="2"/>
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <CheckBox Content="{Binding Name}"
+                                                                  Style="{DynamicResource CheckBoxThreeStateStyle}"
+                                                                  Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                  IsThreeState="True"
+                                                                  IsChecked="{Binding State, Mode=TwoWay,
+                                                                  Converter={StaticResource CheckBoxStateToNullableBoolConverter}}"
+                                                                  Margin="8,2"/>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </Grid>
 
                                         <TextBlock Text="Язык тайтла" Margin="8,8,8,4"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"/>

@@ -1,166 +1,73 @@
-﻿using lc.Commands;
-using lc.Infrastructure;
-using lc.Models;
+﻿using System.Windows.Controls;
+using lc.Commands;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
-using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Input;
 
-namespace lc.ViewModels
+namespace lc.ViewModels;
+
+public sealed class RegisterViewModel : AuthViewModelBase
 {
-    public class RegisterViewModel : ViewModelBase
+    public AsyncRelayCommand RegisterCommand { get; }
+    public RelayCommand      CancelCommand { get; }
+    public RelayCommand      NavigateLoginCommand { get; }
+
+    public RegisterViewModel(
+        IAuthService        authService,
+        IDialogService      dialogService,
+        INavigationService  navigationService) : base(authService, dialogService, navigationService)
     {
-        private readonly AppState _appState;
+        RegisterCommand      = new AsyncRelayCommand(RegisterAsync, CanRegister);
+        CancelCommand        = new RelayCommand(_ => RequestClose?.Invoke());
+        NavigateLoginCommand = new RelayCommand(_ => OpenLogin());
+    }
 
-        private readonly IAuthService       _auth;
-        private readonly IDialogService     _dialog;
-        private readonly INavigationService _navigation;
+    private bool CanRegister(object? parameter) { return !IsBusy; }
 
-        private string _userName     = string.Empty;
-        private string _errorMessage = string.Empty;
-        private bool _isBusy;
-
-        private const int MaxUserNameLength = 16;
-        private const int MaxPasswordLength = 24;
-
-        public Action? RequestClose { get; set; }
-
-        public string UserName
+    private async Task RegisterAsync(object? parameter)
+    {
+        if (parameter is not object[] values || values.Length != 2)
         {
-            get => _userName;
-            set => SetProperty(ref _userName, value);
+            SetError("Ошибка формы регистрации.");
+            return;
         }
 
-        public string ErrorMessage
+        var password = (values[0] as PasswordBox)?.Password ?? string.Empty;
+        var confirmPassword = (values[1] as PasswordBox)?.Password ?? string.Empty;
+
+        if (!ValidateCredentials(UserName, password, out var error))
         {
-            get => _errorMessage;
-            set => SetProperty(ref _errorMessage, value);
+            SetError(error);
+            return;
         }
 
-        public bool IsBusy
+        if (password != confirmPassword)
         {
-            get => _isBusy;
-            set => SetProperty(ref _isBusy, value);
+            SetError("Пароли не совпадают.");
+            return;
         }
 
-        public ICommand RegisterCommand { get; }
-        public ICommand CancelCommand { get; }
-        public ICommand NavigateLoginCommand { get; }
-
-        public RegisterViewModel()
+        try
         {
+            IsBusy = true;
+            ClearError();
 
-            _appState   = ServiceLocator.AppState;
-            _auth       = ServiceLocator.AuthService;
-            _dialog     = ServiceLocator.DialogService;
-            _navigation = ServiceLocator.NavigationService;
+            await AuthService.RegisterAsync(UserName, password);
 
-            CancelCommand        = new RelayCommand(GoBack);
-            RegisterCommand      = new AsyncRelayCommand(RegisterAsync, CanRegister);
-            NavigateLoginCommand = new RelayCommand(OpenLogin);
-        }
-
-        private bool CanRegister(object? obj)
-        {
-            return !IsBusy && !string.IsNullOrWhiteSpace(UserName);
-        }
-
-        private async Task RegisterAsync(object? parameter)
-        {
-            if (parameter is object[] passwordBoxes && passwordBoxes.Length == 2)
-            {
-                var passBox = passwordBoxes[0] as PasswordBox;
-                var confirmPassBox = passwordBoxes[1] as PasswordBox;
-
-                var password = passBox?.Password ?? string.Empty;
-                var confirmPassword = confirmPassBox?.Password ?? string.Empty;
-
-                if (!ValidateLoginData(UserName, password, out var error))
-                {
-                    ErrorMessage = error;
-                    return;
-                }
-
-                if (confirmPassword.Length > MaxPasswordLength)
-                {
-                    ErrorMessage = $"Пароль не должен быть длиннее {MaxPasswordLength} символов.";
-                    return;
-                }
-
-                if (string.IsNullOrWhiteSpace(password) || string.IsNullOrWhiteSpace(confirmPassword))
-                {
-                    ErrorMessage = "Заполните оба поля пароля.";
-                    return;
-                }
-
-                if (password != confirmPassword)
-                {
-                    ErrorMessage = "Пароли не совпадают.";
-                    return;
-                }
-
-                try
-                {
-                    IsBusy = true;
-                    ErrorMessage = string.Empty;
-
-                    await _auth.RegisterAsync(UserName, password);
-
-                    RequestClose?.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    ErrorMessage = ex.Message;
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            }
-        }
-
-        private bool ValidateLoginData(string userName, string password, out string error)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                error = "Введите логин.";
-                return false;
-            }
-
-            if (userName.Length > MaxUserNameLength)
-            {
-                error = $"Логин не должен быть длиннее {MaxUserNameLength} символов.";
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                error = "Введите пароль.";
-                return false;
-            }
-
-            if (password.Length > MaxPasswordLength)
-            {
-                error = $"Пароль не должен быть длиннее {MaxPasswordLength} символов.";
-                return false;
-            }
-
-            error = string.Empty;
-            return true;
-        }
-
-        private void GoBack(object? obj)
-        {
             RequestClose?.Invoke();
-            _navigation.Navigate(_appState?.PrevViewModel ?? new CatalogViewModel());
-            
         }
+        catch (InvalidOperationException ex) { SetError(ex.Message); }
+        catch (Exception) { SetError("Не удалось создать аккаунт."); }
+        finally { IsBusy = false; }
+    }
 
-        private void OpenLogin(object? obj)
-        {
-            RequestClose?.Invoke();
-            _dialog.ShowLoginDialog();
-        }
+    private void OpenLogin()
+    {
+        RequestClose?.Invoke();
+        DialogService.ShowLoginDialog();
+    }
+
+    protected override void OnBusyStateChanged()
+    {
+        RegisterCommand.RaiseCanExecuteChanged();
     }
 }

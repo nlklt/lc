@@ -4,7 +4,9 @@ namespace lc.Services.Interfaces
 {
     public interface ICommentService
     {
-        Task<List<Comment>> GetByBookIdAsync(int bookId);
-        Task AddAsync(int bookId, int userId, string text, int rating);
+        Task<IReadOnlyList<Comment>> GetByBookIdAsync(int bookId);
+        Task<int> AddAsync(int bookId, string text);
+        Task UpdateAsync(Comment comment);
+        Task DeleteAsync(int commentId);
     }
 }

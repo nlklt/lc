@@ -1,133 +1,102 @@
 ﻿using lc.Data.Repositories.Interfaces;
+using lc.Helpers;
 using lc.Infrastructure;
-using lc.Infrastructure.Repositories.Sql;
-using lc.Models;
+using lc.Infrastructure.Repositories.Abstractions;
 using lc.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace lc.Services
+namespace lc.Services;
+
+public sealed class UserLibraryService : IUserLibraryService
 {
-    public sealed class UserLibraryService : IUserLibraryService
+    private readonly AppState _appState;
+    private readonly IUserLibraryListRepository _listRepository;
+    private readonly IUserLibraryListBookRepository _listBookRepository;
+    private readonly IFavoriteRepository _favoriteRepository;
+
+    public UserLibraryService(
+        AppState appState,
+        IUserLibraryListRepository listRepository,
+        IUserLibraryListBookRepository listBookRepository,
+        IFavoriteRepository favoriteRepository)
     {
-        private readonly IUserLibraryRepository _libraryRepository;
+        _appState = appState ?? throw new ArgumentNullException(nameof(appState));
+        _listRepository = listRepository ?? throw new ArgumentNullException(nameof(listRepository));
+        _listBookRepository = listBookRepository ?? throw new ArgumentNullException(nameof(listBookRepository));
+        _favoriteRepository = favoriteRepository ?? throw new ArgumentNullException(nameof(favoriteRepository));
+    }
 
-        private readonly IUserLibraryRepository _userLibraryRepository;
-        private readonly AppState _appState;
+    public Task<IReadOnlyList<UserLibraryListDto>> GetListsAsync()
+        => _listRepository.GetListsAsync(CurrentUserId);
 
-        public UserLibraryService(
-            IUserLibraryRepository userLibraryRepository,
-            AppState appState)
+    public Task<int> CreateListAsync(string name)
+        => _listRepository.CreateAsync(CurrentUserId, name);
+
+    public Task RenameListAsync(int listId, string name)
+        => _listRepository.RenameAsync(CurrentUserId, listId, name);
+
+    public Task DeleteListAsync(int listId)
+        => _listRepository.DeleteAsync(CurrentUserId, listId);
+
+    public Task<IReadOnlyList<BookListItemDto>> GetBooksFromListAsync(int listId)
+        => _listBookRepository.GetBooksAsync(CurrentUserId, listId);
+
+    public Task AddBookToListAsync(int listId, int bookId)
+        => _listBookRepository.AddBookAsync(CurrentUserId, listId, bookId);
+
+    public Task RemoveBookFromListAsync(int listId, int bookId)
+        => _listBookRepository.RemoveBookAsync(CurrentUserId, listId, bookId);
+
+    public async Task AddToLibraryAsync(int bookId)
+    {
+        var listId = await GetOrCreateDefaultLibraryListIdAsync();
+        await _listBookRepository.AddBookAsync(CurrentUserId, listId, bookId);
+    }
+
+    public async Task RemoveFromLibraryAsync(int bookId)
+    {
+        var lists = await _listRepository.GetListsAsync(CurrentUserId);
+
+        foreach (var list in lists)
         {
-            _userLibraryRepository = userLibraryRepository;
-            _appState = appState;
-        }
-
-
-        public UserLibraryService(IUserLibraryRepository libraryRepository)
-        {
-            _libraryRepository = libraryRepository ?? throw new ArgumentNullException(nameof(libraryRepository));
-        }
-        private int CurrentUserId => ServiceLocator.AppState.CurrentUser?.UserId
-            ?? throw new InvalidOperationException("Действие невозможно: пользователь не авторизован.");
-        
-        public Task<IReadOnlyList<UserLibraryListDto>> GetListsAsync(int userId)
-        {
-            return _libraryRepository.GetListsAsync(userId);
-        }
-
-        public Task<IReadOnlyList<BookListItem>> GetBooksFromListAsync(int userId, int listId)
-        {
-            return _libraryRepository.GetBooksFromListAsync(userId, listId);
-        }
-
-        //public async Task AddToLibraryAsync(int bookId)
-        //{
-        //    var lists = await _libraryRepository.GetListsAsync(CurrentUserId);
-
-        //    var targetList = lists.FirstOrDefault()
-        //        ?? throw new InvalidOperationException("У пользователя не найдено ни одного списка библиотеки.");
-
-        //    await _libraryRepository.AddBookToListAsync(CurrentUserId, targetList.ListId, bookId);
-        //}
-
-        //public async Task RemoveFromLibraryAsync(int bookId)
-        //{
-        //    var lists = await _libraryRepository.GetListsAsync(CurrentUserId);
-        //    foreach (var list in lists)
-        //    {
-        //        await _libraryRepository.RemoveBookFromListAsync(CurrentUserId, list.ListId, bookId);
-        //    }
-        //}
-
-        public async Task AddToLibraryAsync(int bookId)
-        {
-            if (bookId <= 0)
-                throw new ArgumentException("Некорректный идентификатор книги.");
-
-            if (_appState.CurrentUser is null)
-                throw new InvalidOperationException("Пользователь не авторизован.");
-
-            var userId = _appState.CurrentUser.UserId;
-
-            var exists = await _userLibraryRepository.IsBookInLibraryAsync(userId, bookId);
-
-            if (exists)
-                return;
-
-            await _userLibraryRepository.AddToLibraryAsync(userId, bookId);
-        }
-
-        public async Task RemoveFromLibraryAsync(int bookId)
-        {
-            if (_appState.CurrentUser is null)
-                throw new InvalidOperationException("Пользователь не авторизован.");
-
-            await _userLibraryRepository.RemoveFromLibraryAsync(
-                _appState.CurrentUser.UserId,
-                bookId);
-        }
-
-        public async Task AddToFavoritesAsync(int bookId)
-        {
-            if (await IsBookFavoriteAsync(bookId)) return;
-
-            await _libraryRepository.AddToFavoritesAsync(CurrentUserId, bookId);
-        }
-
-        public async Task RemoveFromFavoritesAsync(int bookId)
-        {
-            await _libraryRepository.RemoveFromFavoritesAsync(CurrentUserId, bookId);
-        }
-
-
-        public async Task<bool> IsBookInLibraryAsync(int bookId)
-        {
-            var lists = await _libraryRepository.GetListsAsync(CurrentUserId);
-            foreach (var list in lists)
-            {
-                var books = await _libraryRepository.GetBooksFromListAsync(CurrentUserId, list.ListId);
-                if (books.Any(b => b.BookId == bookId))
-                    return true;
-            }
-            return false;
-        }
-
-        public Task<bool> IsBookFavoriteAsync(int bookId)
-        {
-            return _libraryRepository.IsBookFavoriteAsync(CurrentUserId, bookId);
-        }
-
-        public Task AddBookToListAsync(int userId, int listId, int bookId)
-        {
-            return _libraryRepository.AddBookToListAsync(userId, listId, bookId);
-        }
-
-        public Task RemoveBookFromListAsync(int userId, int listId, int bookId)
-        {
-            return _libraryRepository.RemoveBookFromListAsync(userId, listId, bookId);
+            if (await _listBookRepository.ExistsAsync(CurrentUserId, list.ListId, bookId))
+                await _listBookRepository.RemoveBookAsync(CurrentUserId, list.ListId, bookId);
         }
     }
+
+    public Task AddToFavoritesAsync(int bookId)
+        => _favoriteRepository.AddAsync(CurrentUserId, bookId);
+
+    public Task RemoveFromFavoritesAsync(int bookId)
+        => _favoriteRepository.RemoveAsync(CurrentUserId, bookId);
+
+    public async Task<bool> IsBookInLibraryAsync(int bookId)
+    {
+        var lists = await _listRepository.GetListsAsync(CurrentUserId);
+
+        foreach (var list in lists)
+        {
+            if (await _listBookRepository.ExistsAsync(CurrentUserId, list.ListId, bookId))
+                return true;
+        }
+
+        return false;
+    }
+
+    public Task<bool> IsBookFavoriteAsync(int bookId)
+        => _favoriteRepository.ExistsAsync(CurrentUserId, bookId);
+
+    private async Task<int> GetOrCreateDefaultLibraryListIdAsync()
+    {
+        var lists = await _listRepository.GetListsAsync(CurrentUserId);
+
+        var library = lists.FirstOrDefault(x => x.Name == "Библиотека");
+        if (library is not null)
+            return library.ListId;
+
+        return await _listRepository.CreateAsync(CurrentUserId, "Библиотека");
+    }
+
+    private int CurrentUserId =>
+        _appState.CurrentUser?.UserId
+        ?? throw new InvalidOperationException("Действие невозможно: пользователь не авторизован.");
 }

@@ -5,27 +5,17 @@ namespace lc
 {
     public partial class MainWindow : Window
     {
-        private void Minimize_Click(object sender, RoutedEventArgs e)
-        {
-            WindowState = WindowState.Minimized;
-        }
-
+        private void Minimize_Click(object sender, RoutedEventArgs e) { WindowState = WindowState.Minimized; }
         private void Maximize_Click(object sender, RoutedEventArgs e)
         {
-            if (WindowState == WindowState.Maximized)
-                WindowState = WindowState.Normal;
-            else
-                WindowState = WindowState.Maximized;
+            if (WindowState == WindowState.Maximized) WindowState = WindowState.Normal;
+            else WindowState = WindowState.Maximized;
         }
+        private void Close_Click(object sender, RoutedEventArgs e) { Close(); }
 
-        private void Close_Click(object sender, RoutedEventArgs e)
+        public MainWindow(MainViewModel viewModel)
         {
-            Close();
-        }
-
-        public MainWindow()
-        {
-            DataContext = new MainViewModel();
+            DataContext = viewModel;
             InitializeComponent();
         }
     }

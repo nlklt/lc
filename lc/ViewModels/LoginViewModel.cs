@@ -1,149 +1,73 @@
 ﻿using System.Windows.Controls;
-using System.Windows.Input;
 using lc.Commands;
-using lc.Infrastructure;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
 
-namespace lc.ViewModels
+namespace lc.ViewModels;
+
+public sealed class LoginViewModel : AuthViewModelBase
 {
-    public class LoginViewModel : ViewModelBase
+    public AsyncRelayCommand LoginCommand { get; }
+    public RelayCommand      CancelCommand { get; }
+    public RelayCommand      NavigateRegisterCommand { get; }
+
+    public LoginViewModel(
+        IAuthService       authService,
+        IDialogService     dialogService,
+        INavigationService navigationService) : base(authService, dialogService, navigationService)
     {
-        private readonly IAuthService   _auth;
-        private readonly IDialogService _dialog;
-        private readonly INavigationService _navigation;
+        LoginCommand            = new AsyncRelayCommand(LoginAsync, CanLogin);
+        CancelCommand           = new RelayCommand(_ => RequestClose?.Invoke());
+        NavigateRegisterCommand = new RelayCommand(_ => OpenRegister());
+    }
 
-        private readonly AppState _appState;
+    private bool CanLogin(object? parameter) { return !IsBusy; }
 
-        private string _userName     = string.Empty;
-        private string _errorMessage = string.Empty;
-        private bool   _isBusy;
-
-        public Action? RequestClose { get; set; }
-
-        public string UserName
+    private async Task LoginAsync(object? parameter)
+    {
+        if (parameter is not PasswordBox passwordBox)
         {
-            get => _userName;
-            set => SetProperty(ref _userName, value);
+            SetError("Ошибка формы входа.");
+            return;
         }
 
-        public string ErrorMessage
+        var password = passwordBox.Password;
+
+        if (!ValidateCredentials(UserName, password, out var error))
         {
-            get => _errorMessage;
-            set => SetProperty(ref _errorMessage, value);
+            SetError(error);
+            return;
         }
 
-        public bool IsBusy
+        try
         {
-            get => _isBusy;
-            set => SetProperty(ref _isBusy, value);
-        }
+            IsBusy = true;
+            ClearError();
 
-        public ICommand CancelCommand { get; }
-        public ICommand LoginCommand { get; }
-        public ICommand NavigateRegisterCommand { get; }
+            var user =
+                await AuthService.LoginAsync(UserName, password);
 
-        public LoginViewModel()
-        {
-
-            _appState = ServiceLocator.AppState;
-
-            _auth       = ServiceLocator.AuthService;
-            _dialog     = ServiceLocator.DialogService;
-            _navigation = ServiceLocator.NavigationService;
-
-            CancelCommand           = new RelayCommand(GoBack);
-            LoginCommand            = new AsyncRelayCommand(LoginAsync, CanLogin);
-            NavigateRegisterCommand = new RelayCommand(OpenRegister);
-        }
-
-        private bool CanLogin(object? obj)
-        {
-            return !IsBusy && !string.IsNullOrWhiteSpace(UserName);
-        }
-
-        private async Task LoginAsync(object? parameter)
-        {
-            if (parameter is PasswordBox passwordBox)
+            if (user is null)
             {
-                var password = passwordBox.Password;
-
-                if (!ValidateLoginData(UserName, password, out var error))
-                {
-                    ErrorMessage = error;
-                    return;
-                }
-
-                try
-                {
-                    IsBusy = true;
-                    ErrorMessage = string.Empty;
-
-                    var user = await _auth.LoginAsync(UserName, password);
-
-                    if (user == null)
-                    {
-                        ErrorMessage = "Неверный логин или пароль.";
-                        return;
-                    }
-
-                    _appState.CurrentUser = user;
-                    RequestClose?.Invoke();
-                }
-                catch (Exception ex)
-                {
-                    ErrorMessage = ex.Message;
-                }
-                finally
-                {
-                    IsBusy = false;
-                }
-            }
-        }
-
-        private const int MaxUserNameLength = 16;
-        private const int MaxPasswordLength = 24;
-        private bool ValidateLoginData(string userName, string password, out string error)
-        {
-            if (string.IsNullOrWhiteSpace(userName))
-            {
-                error = "Введите логин.";
-                return false;
+                SetError("Неверный логин или пароль.");
+                return;
             }
 
-            if (userName.Length > MaxUserNameLength)
-            {
-                error = $"Логин не должен быть длиннее {MaxUserNameLength} символов.";
-                return false;
-            }
-
-            if (string.IsNullOrWhiteSpace(password))
-            {
-                error = "Введите пароль.";
-                return false;
-            }
-
-            if (password.Length > MaxPasswordLength)
-            {
-                error = $"Пароль не должен быть длиннее {MaxPasswordLength} символов.";
-                return false;
-            }
-
-            error = string.Empty;
-            return true;
-        }
-
-        private void GoBack(object? obj)
-        {
             RequestClose?.Invoke();
-            _navigation.Navigate(_appState?.PrevViewModel ?? new CatalogViewModel());
-
         }
+        catch (OperationCanceledException ex) { SetError(ex.Message); }
+        catch (Exception) { SetError("Не удалось выполнить вход."); }
+        finally { IsBusy = false; }
+    }
 
-        private void OpenRegister(object? obj)
-        {
-            RequestClose?.Invoke();
-            _dialog.ShowRegisterDialog();
-        }
+    private void OpenRegister()
+    {
+        RequestClose?.Invoke();
+        DialogService.ShowRegisterDialog();
+    }
+
+    protected override void OnBusyStateChanged()
+    {
+        LoginCommand.RaiseCanExecuteChanged();
     }
 }

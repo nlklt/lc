@@ -1,36 +1,24 @@
-﻿using lc.Data;
-using lc.Data.Repositories.Interfaces;
+﻿using lc.Data.Repositories.Interfaces;
+using lc.Infrastructure;
 using lc.Models;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-namespace lc.Infrastructure.Repositories.Sql
+namespace lc.Data.Repositories;
+
+public sealed class CategoryRepository : ICategoryRepository
 {
-    public sealed class CategoryRepository : ICategoryRepository
+    private readonly AppDbContext _db;
+
+    public CategoryRepository(AppDbContext db)
     {
-        public async Task<IReadOnlyList<Category>> GetAllAsync()
-        {
-            const string sql = @"
-            SELECT CategoryId, Name
-            FROM Categories
-            ORDER BY Name;";
+        _db = db;
+    }
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            var result = new List<Category>();
-
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                result.Add(new Category
-                {
-                    CategoryId = reader.GetInt32(reader.GetOrdinal("CategoryId")),
-                    Name = reader.GetString(reader.GetOrdinal("Name"))
-                });
-            }
-
-            return result;
-        }
+    public async Task<IReadOnlyList<Category>> GetAllAsync()
+    {
+        return await _db.Categories
+            .AsNoTracking()
+            .OrderBy(x => x.Name)
+            .ToListAsync();
     }
 }

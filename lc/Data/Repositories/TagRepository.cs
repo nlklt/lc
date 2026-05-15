@@ -1,36 +1,24 @@
-﻿using lc.Data;
-using lc.Data.Repositories.Interfaces;
+﻿using lc.Data.Repositories.Interfaces;
+using lc.Infrastructure;
 using lc.Models;
-using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 
-namespace lc.Infrastructure.Repositories.Sql
+namespace lc.Data.Repositories;
+
+public sealed class TagRepository : ITagRepository
 {
-    public sealed class TagRepository : ITagRepository
+    private readonly AppDbContext _db;
+
+    public TagRepository(AppDbContext db)
     {
-        public async Task<IReadOnlyList<Tag>> GetAllAsync()
-        {
-            const string sql = @"
-            SELECT TagId, Name
-            FROM Tags
-            ORDER BY Name;";
+        _db = db;
+    }
 
-            await using var connection = SqlConnectionFactory.CreateConnection();
-            await connection.OpenAsync();
-
-            await using var command = new SqlCommand(sql, connection);
-            var result = new List<Tag>();
-
-            await using var reader = await command.ExecuteReaderAsync();
-            while (await reader.ReadAsync())
-            {
-                result.Add(new Tag
-                {
-                    TagId = reader.GetInt32(reader.GetOrdinal("TagId")),
-                    Name = reader.GetString(reader.GetOrdinal("Name"))
-                });
-            }
-
-            return result;
-        }
+    public async Task<IReadOnlyList<Tag>> GetAllAsync()
+    {
+        return await _db.Tags
+            .AsNoTracking()
+            .OrderBy(x => x.Name)
+            .ToListAsync();
     }
 }

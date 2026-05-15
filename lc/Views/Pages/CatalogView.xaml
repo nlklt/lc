@@ -66,7 +66,6 @@
                      ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                      ScrollViewer.VerticalScrollBarVisibility="Hidden">
 
-                <!-- Используем WrapPanel для адаптивной сетки -->
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
                         <WrapPanel IsItemsHost="True"
@@ -97,7 +96,6 @@
                                 Width="166" 
                                 Cursor="Hand">
 
-                            <!-- Переход в детали ЛКМ -->
                             <Border.InputBindings>
                                 <MouseBinding MouseAction="LeftClick" 
                                       Command="{Binding DataContext.OpenDetailsCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
@@ -111,7 +109,56 @@
                                 </Grid.RowDefinitions>
 
                                 <!-- Обложка -->
-                                <Path Grid.Row="0">
+                                <Border Grid.Row="0"
+                                        Width="160" Height="236" 
+                                        CornerRadius="6">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <ImageBrush ImageSource="{Binding AvatarPath}" Stretch="UniformToFill"/>
+                                                </Setter.Value>
+                                            </Setter>
+
+                                            <Style.Triggers>
+
+                                                <DataTrigger Binding="{Binding AvatarPath}" Value="{x:Null}">
+                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                                </DataTrigger>
+
+                                                <DataTrigger Binding="{Binding AvatarPath}" Value="">
+                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                                </DataTrigger>
+
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <Grid>
+                                        <TextBlock Text="Обложки нету" 
+                                                   FontStyle="Italic"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   VerticalAlignment="Center" 
+                                                   HorizontalAlignment="Center"
+                                                   FontSize="14">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed"/>
+
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding AvatarPath}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                        <DataTrigger Binding="{Binding AvatarPath}" Value="">
+                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </Border>
+                                <!--<Path Grid.Row="0">
                                     <Path.Data>
                                         <RectangleGeometry Rect="0,0,160,236" 
                                                            RadiusX="6" 
@@ -122,21 +169,21 @@
                                                     Stretch="UniformToFill" 
                                                     RenderOptions.BitmapScalingMode="HighQuality"/>
                                     </Path.Fill>
-                                </Path>
+                                </Path>-->
 
                                 <!-- Инфо -->
                                 <StackPanel Grid.Row="1" Margin="0,0,0,0">
                                     <TextBlock Text="{Binding Title}"
-                                       FontSize="14"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimaryBrush}"
-                                       TextWrapping="Wrap"
-                                       MaxHeight="40"
-                                       TextTrimming="CharacterEllipsis"/>
+                                               FontSize="14"
+                                               FontWeight="SemiBold"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               TextWrapping="Wrap"
+                                               MaxHeight="40"
+                                               TextTrimming="CharacterEllipsis"/>
 
                                     <TextBlock Text="{Binding AuthorName}"
-                                       FontSize="12"
-                                       Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                               FontSize="12"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
                                 </StackPanel>
                             </Grid>
                         </Border>

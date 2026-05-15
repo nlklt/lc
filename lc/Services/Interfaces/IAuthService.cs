@@ -6,7 +6,7 @@ namespace lc.Services.Interfaces
     {
         Task<User?> LoginAsync(string userName, string password);
         Task<User> RegisterAsync(string userName, string password);
-        void Logout();
         Task ApplyUserSettingsAsync(User user);
+        void Logout();
     }
 }

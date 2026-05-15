@@ -1,55 +1,47 @@
 ﻿using lc.Infrastructure;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace lc.Services
+namespace lc.Services;
+
+public sealed class NavigationService : INavigationService
 {
-    public class NavigationService : INavigationService
+    private readonly IServiceProvider _provider;
+    private readonly AppState _appState;
+
+    public NavigationService(IServiceProvider provider, AppState appState)
     {
-        private readonly AppState _appState;
+        _provider = provider;
+        _appState = appState;
+    }
 
-        public NavigationService(AppState appState)
-        {
-            _appState = appState;
-        }
+    public void NavigateTo<TViewModel>(params object[] args)
+        where TViewModel : ViewModelBase
+    {
+        var vm = ActivatorUtilities.CreateInstance<TViewModel>(
+            _provider,
+            args);
 
-        public void Navigate(ViewModelBase viewModel)
-        {
-            if (!CanNavigate(viewModel))
-                return;
+        Navigate(vm);
+    }
 
-            _appState.CurrentViewModel = viewModel;
-        }
+    public void Navigate(ViewModelBase viewModel)
+    {
+        _appState.CurrentViewModel = viewModel;
+    }
 
-        public void GoBack()
-        {
-            if (!CanNavigate(_appState.PrevViewModel))
-                return;
+    public void NavigateBack()
+    {
+        var prev = _appState.PrevViewModel;
 
-            _appState.CurrentViewModel = _appState.PrevViewModel;
-        }
+        if (prev is null)
+            return;
 
-        private bool CanNavigate(ViewModelBase viewModel)
-        {
-            if (viewModel is null)
-                return false;
+        var current = _appState.CurrentViewModel;
 
-            if (viewModel.GetType().Name == "LoginViewModel")
-                return true;
+        _appState.CurrentViewModel = prev;
 
-            if (viewModel.GetType().Name == "RegisterViewModel")
-                return true;
-
-            if (viewModel.GetType().Name == "EditBookViewModel")
-                return _appState.CanManageBooks;
-
-            if (viewModel.GetType().Name == "ReaderViewModel")
-                return !_appState.IsGuest;
-
-            if (viewModel.GetType().Name == "ProfileViewModel")
-                return !_appState.IsGuest;
-
-            return true;
-        }
+        _appState.PrevViewModel = current;
     }
 }

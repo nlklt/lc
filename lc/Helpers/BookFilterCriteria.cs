@@ -1,6 +1,6 @@
 ﻿using lc.Models.Enums;
 
-namespace lc.Models
+namespace lc.Helpers
 {
     public sealed class BookFilterCriteria
     {
@@ -27,8 +27,8 @@ namespace lc.Models
         public List<int> IncludeAgeRatings { get; set; } = [];
         public List<int> ExcludeAgeRatings { get; set; } = [];
 
-        public double? RatingFrom { get; set; }
-        public double? RatingTo { get; set; }
+        public decimal? RatingFrom { get; set; }
+        public decimal? RatingTo { get; set; }
 
         public int? ChaptersFrom { get; set; }
         public int? ChaptersTo { get; set; }
@@ -39,7 +39,7 @@ namespace lc.Models
         public DateTime? CreatedFrom { get; set; }
         public DateTime? CreatedTo { get; set; }
 
-        public string SortField { get; set; } = nameof(BookListItem.Title);
+        public string SortField { get; set; } = nameof(BookListItemDto.Title);
         public bool SortAscending { get; set; } = true;
     }
 }

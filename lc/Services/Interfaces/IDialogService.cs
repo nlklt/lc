@@ -2,13 +2,12 @@
 {
     public interface IDialogService
     {
-        Task ShowMessageAsync(string title, string message);        // Постое соо
-        Task<bool> ShowConfirmAsync(string title, string message);  // Соо об подтверждении
+        Task ShowMessageAsync(string title, string message);
+        Task<bool> ShowConfirmAsync(string title, string message);
 
         string? OpenFile(string title, string filter);
-        Task<string?> ChooseListAsync(string title, string message, IReadOnlyList<string> options);
 
-        bool? ShowLoginDialog();    // Окон входа
-        bool? ShowRegisterDialog(); // Окно регистрации
+        bool? ShowLoginDialog();
+        bool? ShowRegisterDialog();
     }
 }

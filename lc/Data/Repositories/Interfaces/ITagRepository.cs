@@ -4,6 +4,6 @@ namespace lc.Data.Repositories.Interfaces
 {
     public interface ITagRepository
     {
-        public Task<IReadOnlyList<Tag>> GetAllAsync();
+        Task<IReadOnlyList<Tag>> GetAllAsync();
     }
 }

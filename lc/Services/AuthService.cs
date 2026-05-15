@@ -1,60 +1,73 @@
-﻿using lc.Infrastructure;
+﻿using lc.Helpers;
+using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services.Interfaces;
-using System.Globalization;
 
-namespace lc.Services
+namespace lc.Services;
+
+public sealed class AuthService : IAuthService
 {
-    public class AuthService : IAuthService
+    private readonly AppState _appState;
+    private readonly IUserRepository _userRepository;
+
+    public AuthService(AppState appState, IUserRepository userRepository)
     {
-        private readonly AppState        _appState;
-        private readonly IUserRepository _userRepository;
+        _appState = appState ?? throw new ArgumentNullException(nameof(appState));
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+    }
 
-        public AuthService(AppState appState, IUserRepository userRepository)
+    public async Task<User?> LoginAsync(string userName, string password)
+    {
+        var user = await _userRepository.GetByUserNameAsync(userName);
+        if (user is null)
+            return null;
+
+        if (!PasswordHasher.Verify(password, user.PasswordHash))
+            return null;
+
+        _appState.CurrentUser = user;
+
+        return user;
+    }
+
+    public async Task<User> RegisterAsync(string userName, string password)
+    {
+        var existing = await _userRepository.GetByUserNameAsync(userName);
+        if (existing is not null)
+            throw new InvalidOperationException("Пользователь уже существует.");
+
+        var user = new User
         {
-            _appState = appState;
-            _userRepository = userRepository;
-        }
+            UserName = userName,
+            PasswordHash = PasswordHasher.Hash(password),
+            CreatedAt = DateTime.Now,
+            Role = UserRole.Reader,
+            PreferredLanguage = Language.Русский,
+            PreferredTheme = "Dark",
+            BlockedComments = false
+        };
 
-        public async Task<User?> LoginAsync(string userName, string password)
-        {
-            var user = await _userRepository.AuthenticateAsync(userName, password);
-            if (user == null)
-                return null;
+        await _userRepository.CreateAsync(user);
+        _appState.CurrentUser = user;
 
-            _appState.CurrentUser = user;
-            await ApplyUserSettingsAsync(user);
+        return user;
+    }
 
-            return user;
-        }
+    public Task ApplyUserSettingsAsync(User user)
+    {
+        _appState.CurrentLanguage = user.PreferredLanguage;
+        _appState.CurrentTheme = user.PreferredTheme;
+        return Task.CompletedTask;
+    }
 
-        public async Task<User> RegisterAsync(string userName, string password)
-        {
-            var user = await _userRepository.RegisterAsync(userName, password);
-            _appState.CurrentUser = user;
-            await ApplyUserSettingsAsync(user);
-            return user;
-        }
+    public void Logout()
+    {
+        _appState.CurrentUser = null;
+        _appState.SelectedBook = null;
 
-        public async Task ApplyUserSettingsAsync(User user)
-        {
-            _appState.CurrentLanguage = user.PreferredLanguage;
-
-
-            _appState.CurrentTheme = user.PreferredTheme;
-
-            await Task.CompletedTask;
-        }
-
-        public void Logout()
-        {
-            _appState.CurrentUser = null;
-            _appState.SelectedBook = null;
-
-            _appState.CurrentLanguage = Language.Русский;
-            _appState.CurrentTheme = "Dark";
-        }
+        _appState.CurrentLanguage = Language.Русский;
+        _appState.CurrentTheme = "Dark";
     }
 }

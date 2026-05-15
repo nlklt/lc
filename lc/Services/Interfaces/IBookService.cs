@@ -1,4 +1,5 @@
-﻿using lc.Models;
+﻿using lc.Helpers;
+using lc.Models;
 using lc.Models.Enums;
 
 namespace lc.Services
@@ -9,19 +10,14 @@ namespace lc.Services
 
         Task<int> CreateBookAsync(Book book);
         Task UpdateBookAsync(Book book);
-        Task DeleteBookAsync(int bookId);
 
         Task ArchiveBookAsync(int bookId);
         Task RestoreBookAsync(int bookId);
+        Task DeleteBookAsync(int bookId);
 
         Task PublishBookAsync(int bookId);
-        Task SaveBookAsync(int bookId);
-        Task AddRatingAsync(int bookId, int userId, int rating);
 
-        Task<ReaderSession?> OpenReaderAsync(int bookId, int? chapterNumber = null);
-
-        Task<IReadOnlyList<BookListItem>> GetCatalogAsync(BookFilterCriteria criteria);
-
+        Task<IReadOnlyList<BookListItemDto>> GetCatalogAsync(BookFilterCriteria criteria);
         Task<IReadOnlyList<Category>> GetAllCategoriesAsync();
         Task<IReadOnlyList<Tag>> GetAllTagsAsync();
     }

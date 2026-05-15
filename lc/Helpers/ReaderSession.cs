@@ -1,6 +1,6 @@
 ﻿using lc.Models;
 
-namespace lc.Models
+namespace lc.Helpers
 {
     public sealed class ReaderSession
     {

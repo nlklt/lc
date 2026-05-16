@@ -106,8 +106,8 @@
                 </Border>
 
                 <!-- Продолжить чтение -->
-                <TextBlock Text="Продолжить чтение" FontSize="20" 
-                           FontWeight="SemiBold" Margin="12,0,12,12"
+                <TextBlock Text="Продолжить чтение" FontSize="16" 
+                           FontWeight="SemiBold" Margin="4,0,12,12"
                            Style="{DynamicResource BaseTextBlockStyle}"/>
                 <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
                     <!-- Замените ReadingHistory на вашу коллекцию истории во ViewModel -->
@@ -123,7 +123,7 @@
                     <!--<Border Width="130" Margin="0,0,20,0" Background="Transparent" Cursor="Hand">
                                     <StackPanel>
                                         <Border Height="180" CornerRadius="8" Background="{DynamicResource SurfaceAltBrush}" Margin="0,0,0,10">
-                                            <Image Source="{Binding CoverImagePath}" Stretch="UniformToFill">
+                                            <Image Source="{Binding CoverPath}" Stretch="UniformToFill">
                                                 <Image.Clip>
                                                     <RectangleGeometry Rect="0,0,130,180" RadiusX="8" RadiusY="8"/>
                                                 </Image.Clip>
@@ -139,28 +139,112 @@
                 </ScrollViewer>
 
                 <!-- ЛИЧНЫЕ СПИСКИ КНИГ -->
-                <TextBlock Text="Мои списки" FontSize="20" 
-                           FontWeight="SemiBold" Margin="12"
-                           Style="{DynamicResource BaseTextBlockStyle}"/>
-                <!-- Замените UserLists на вашу коллекцию списков во ViewModel -->
-                <!-- <ItemsControl ItemsSource="{Binding UserLists}">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              Margin="4">
+                    <StackPanel Orientation="Horizontal">
+
+                        <ItemsControl ItemsSource="{Binding UserLibraryLists}">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <StackPanel Orientation="Horizontal"/>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Button Command="{Binding DataContext.SelectListCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                            CommandParameter="{Binding}"
+                                            Cursor="Hand"
+                                            Background="Transparent"
+                                            BorderThickness="0"
+                                            Padding="0"
+                                            Margin="0,0,10,0">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border x:Name="BtnBorder" 
+                                                                    CornerRadius="4"
+                                                                    Padding="5,4"
+                                                                    Background="{DynamicResource SurfaceBrush}">
+                                                                <TextBlock Text="{Binding Name}"
+                                                                           FontSize="12"
+                                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                           TextTrimming="CharacterEllipsis"/>
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <Trigger Property="IsMouseOver" Value="True">
+                                                                    <Setter TargetName="BtnBorder" Property="Opacity" Value="0.6"/>
+                                                                </Trigger>
+                                                                <Trigger Property="IsPressed" Value="True">
+                                                                    <Setter TargetName="BtnBorder" Property="Opacity" Value="0.4"/>
+                                                                </Trigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <Button Content="➕" 
+                                FontSize="12"
+                                Cursor="Hand"
+                                Padding="4,4"
+                                Command="{Binding CreateListCommand}"
+                                Style="{DynamicResource SecondaryButtonStyle}"
+                                VerticalAlignment="Center"/>
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- СПИСОК -->
+                <ItemsControl ItemsSource="{Binding SelectedListBooks}">
                     <ItemsControl.ItemsPanel>
                         <ItemsPanelTemplate>
-                            <WrapPanel Orientation="Horizontal"/>
+                            <WrapPanel/>
                         </ItemsPanelTemplate>
                     </ItemsControl.ItemsPanel>
+
                     <ItemsControl.ItemTemplate>
-                        <DataTemplate>-->
-                            <!-- Карточка списка (например, Избранное, Прочитано) -->
-                <!--<Border Width="220" Background="{DynamicResource SurfaceBrush}" CornerRadius="10" Padding="15" Margin="0,0,20,20" Cursor="Hand">
+                        <DataTemplate>
+                            <Border Margin="4,0,4,4"
+                                    Padding="4"
+                                    CornerRadius="6"
+                                    Background="{DynamicResource SurfaceBrush}">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding Name}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8" TextTrimming="CharacterEllipsis"/>
-                                    <TextBlock Text="{Binding BooksCount, StringFormat='0'}" FontSize="13" Foreground="{DynamicResource SurfaceAltBrush}"/>
+                                    <Border Height="236"
+                                            Width="160"
+                                            CornerRadius="6"
+                                            Background="{DynamicResource SurfaceAltBrush}"
+                                            Margin="0,0,0,4">
+                                        <Image Source="{Binding CoverPath}"
+                                               Stretch="UniformToFill"/>
+                                    </Border>
+
+                                    <TextBlock Text="{Binding Title}"
+                                               FontWeight="SemiBold"
+                                               TextTrimming="CharacterEllipsis"
+                                               Margin="0,0,0,2"/>
+
+                                    <TextBlock Text="{Binding ReadingProgressPercent, StringFormat=Прогресс: {0}%}"
+                                               FontSize="12"
+                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                               Margin="0,0,0,2"/>
+
+                                    <ProgressBar Minimum="0"
+                                                 Maximum="100"
+                                                 Value="{Binding ReadingProgressPercent}"
+                                                 Height="6"/>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
                     </ItemsControl.ItemTemplate>
-                </ItemsControl>-->
+                </ItemsControl>
 
             </StackPanel>
         </ScrollViewer>

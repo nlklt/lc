@@ -182,7 +182,7 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
 
-                                        <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
+                                        <StackPanel Orientation="Vertical" Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}">
                                             <TextBlock Text="Состояние Книги" Margin="8,8,8,4"
                                                        Foreground="{DynamicResource TextPrimaryBrush}"/>
                                             <ItemsControl ItemsSource="{Binding BookStatusOptions}">
@@ -204,7 +204,7 @@
                                                     </DataTemplate>
                                                 </ItemsControl.ItemTemplate>
                                             </ItemsControl>
-                                        </Grid>
+                                        </StackPanel>
 
                                         <TextBlock Text="Язык тайтла" Margin="8,8,8,4"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"/>

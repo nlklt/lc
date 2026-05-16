@@ -1,13 +1,11 @@
 ﻿<UserControl x:Class="lc.Views.Pages.EditBookView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="clr-namespace:lc.ViewModels" 
-             xmlns:conv="clr-namespace:lc.Converters" 
+             xmlns:vm="clr-namespace:lc.ViewModels"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vm:EditBookViewModel}"
-             Loaded="EditBookView_Loaded">
+             d:DataContext="{d:DesignInstance Type=vm:EditBookViewModel}">
 
     <UserControl.Resources>
         <Style x:Key="SectionTitle" TargetType="TextBlock">
@@ -29,71 +27,60 @@
         </Style>
     </UserControl.Resources>
 
-    <ScrollViewer VerticalScrollBarVisibility="Hidden" Margin="4"
-                  HorizontalScrollBarVisibility="Disabled">
-
-        <Grid Background="{DynamicResource BackgroundBrush}">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
+    <Grid Background="{DynamicResource BackgroundBrush}">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
 
-            <!-- cover + meta -->
-            <Border Grid.Row="0" Grid.Column="0"
-                    Background="{DynamicResource SurfaceBrush}"
+        <ScrollViewer Grid.Column="0" VerticalScrollBarVisibility="Hidden"
+                      HorizontalScrollBarVisibility="Disabled" VerticalAlignment="Top"
+                      Margin="4">
+            <Border Background="{DynamicResource SurfaceBrush}"
                     CornerRadius="8"
-                    Padding="12">
+                    Padding="12" Height="Auto">
 
                 <StackPanel>
                     <Border Width="290"
                             Height="435"
                             CornerRadius="6">
-
                         <Border.Style>
                             <Style TargetType="Border">
-
                                 <Setter Property="Background">
                                     <Setter.Value>
-                                        <ImageBrush ImageSource="{Binding CoverPath}" 
+                                        <ImageBrush ImageSource="{Binding CoverPath}"
                                                     Stretch="UniformToFill"/>
                                     </Setter.Value>
                                 </Setter>
 
                                 <Style.Triggers>
-
-                                    <DataTrigger Binding="{Binding CoverPath}" 
-                                                 Value="{x:Null}">
+                                    <DataTrigger Binding="{Binding CoverPath}" Value="{x:Null}">
                                         <Setter Property="Background"
                                                 Value="{DynamicResource SurfaceAltBrush}"/>
                                     </DataTrigger>
-
-                                    <DataTrigger Binding="{Binding CoverPath}"
-                                                 Value="">
+                                    <DataTrigger Binding="{Binding CoverPath}" Value="">
                                         <Setter Property="Background"
                                                 Value="{DynamicResource SurfaceAltBrush}"/>
                                     </DataTrigger>
-                                    
                                 </Style.Triggers>
                             </Style>
                         </Border.Style>
                     </Border>
 
-                    <Grid Margin="0,12">
+                    <Grid Margin="0,4,0,12">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Button Grid.Column="0" Content="Выбрать обложку"
+                        <Button Grid.Column="0"
+                                Content="Выбрать обложку"
                                 Command="{Binding ChooseCoverCommand}"
                                 Style="{DynamicResource SecondaryButtonStyle}"
                                 Margin="0,0,4,0"/>
 
-                        <Button Grid.Column="1" Content="Очистить"
+                        <Button Grid.Column="1"
+                                Content="Очистить"
                                 Command="{Binding ClearCoverCommand}"
                                 Foreground="{DynamicResource WarningFrontBrush}"
                                 Background="{DynamicResource WarningBackBrush}"
@@ -102,10 +89,10 @@
                     </Grid>
 
                     <Border Background="{DynamicResource BackgroundBrush}"
-                                CornerRadius="8"
-                                Padding="12"
-                                BorderBrush="{DynamicResource BorderBrush}"
-                                BorderThickness="1">
+                            CornerRadius="8"
+                            Padding="12"
+                            BorderBrush="{DynamicResource BorderBrush}"
+                            BorderThickness="1">
 
                         <StackPanel>
                             <TextBlock Text="Информация"
@@ -120,12 +107,14 @@
 
                                 <StackPanel>
                                     <TextBlock Text="Статус" Style="{StaticResource MutedValue}"/>
-                                    <TextBlock Text="{Binding SelectedBookStatus}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding BookStatusText}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="Язык" Style="{StaticResource MutedValue}"/>
-                                    <TextBlock Text="{Binding SelectedLanguage}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding LanguageText}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
                             </Grid>
 
@@ -137,12 +126,14 @@
 
                                 <StackPanel>
                                     <TextBlock Text="Создана" Style="{StaticResource MutedValue}"/>
-                                    <TextBlock Text="{Binding CreatedAtText}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding CreatedAtText}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="Обновлена" Style="{StaticResource MutedValue}"/>
-                                    <TextBlock Text="{Binding UpdatedAtText}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding UpdatedAtText}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
                             </Grid>
 
@@ -154,80 +145,83 @@
 
                                 <StackPanel>
                                     <TextBlock Text="Символов" Style="{StaticResource MutedValue}"/>
-                                    <TextBlock Text="{Binding SymbolsCount}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding SymbolsCount}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
 
                                 <StackPanel Grid.Column="1">
                                     <TextBlock Text="Глав" Style="{StaticResource MutedValue}"/>
-                                    <TextBlock Text="{Binding ChaptersCount}" Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                    <TextBlock Text="{Binding ChaptersCount}"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
                                 </StackPanel>
                             </Grid>
                         </StackPanel>
                     </Border>
                 </StackPanel>
             </Border>
+        </ScrollViewer>
 
-            <!-- Inputs -->
-            <Border Grid.Row="0" Grid.RowSpan="2" Grid.Column="2"
+        <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Hidden" VerticalAlignment="Top"
+                      HorizontalScrollBarVisibility="Disabled" Margin="0,4,4,4">
+            <Border Grid.Column="1" Height="Auto"
                     Background="{DynamicResource SurfaceBrush}"
-                    CornerRadius="8" Padding="12" Margin="4,0,0,0">
-
+                    CornerRadius="8"
+                    Padding="12">
 
                 <StackPanel>
+                    <TextBlock Text="{Binding HeaderText}"
+                               Margin="0,0,0,12"
+                               FontSize="16"
+                               FontStyle="Italic"
+                               Foreground="{DynamicResource TextMutedBrush}"/>
 
-                    <StackPanel DockPanel.Dock="Left">
-                        <TextBlock Text="{Binding HeaderText}" Margin="0,0,0,8"
-                                    FontSize="16" FontStyle="Italic"
-                                    Foreground="{DynamicResource TextMutedBrush}"/>
-                    </StackPanel>
+                    <TextBlock Text="Название" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{DynamicResource TextBoxPlaceholderStyle}"
+                             Margin="0,0,0,12"/>
 
-                    <StackPanel Margin="0,0,0,16">
-                        
-                        <StackPanel Grid.Column="0" Margin="0,0,0,16">
-                            <TextBlock Text="Название" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{DynamicResource TextBoxPlaceholderStyle}"   Margin="0,0,0,16"/>
+                    <TextBlock Text="Автор" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding AuthorName, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{DynamicResource TextBoxPlaceholderStyle}"
+                             Margin="0,0,0,12"/>
 
-                            <TextBlock Text="Автор" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Text="{Binding AuthorName, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{DynamicResource TextBoxPlaceholderStyle}" Margin="0,0,0,16"/>
+                    <TextBlock Text="Описание" Style="{StaticResource FieldLabel}"/>
+                    <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                             Style="{DynamicResource TextBoxPlaceholderStyle}"
+                             AcceptsReturn="True"
+                             TextWrapping="Wrap"
+                             VerticalScrollBarVisibility="Hidden"
+                             Height="175"/>
 
-                            <TextBlock Text="Описание" Style="{StaticResource FieldLabel}"/>
-                            <TextBox Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
-                                     Style="{DynamicResource TextBoxPlaceholderStyle}"
-                                     AcceptsReturn="True" TextWrapping="Wrap"
-                                     VerticalScrollBarVisibility="Hidden"
-                                     Height="180"/>
-                        </StackPanel>
+                    <TextBlock Text="Статус написания" Style="{StaticResource FieldLabel}" Margin="0,16,0,4"/>
+                    <ComboBox ItemsSource="{Binding WritingStatuses}"
+                              Style="{DynamicResource ComboBoxBaseStyle}"
+                              SelectedItem="{Binding SelectedWritingStatus, Mode=TwoWay}"
+                              Margin="0,0,0,12"/>
 
-                        <StackPanel Grid.Column="1">
-                            <TextBlock Text="Статус написания" Style="{StaticResource FieldLabel}"/>
-                            <ComboBox ItemsSource="{Binding WritingStatuses}"
-                                      Style="{DynamicResource ComboBoxBaseStyle}"
-                                          SelectedItem="{Binding SelectedWritingStatus, Mode=TwoWay}"
-                                          Margin="0,0,0,16"/>
+                    <TextBlock Text="Язык" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox ItemsSource="{Binding Languages}"
+                              Style="{DynamicResource ComboBoxBaseStyle}"
+                              SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
+                              Margin="0,0,0,12"/>
 
-                            <TextBlock Text="Язык" Style="{StaticResource FieldLabel}"/>
-                            <ComboBox ItemsSource="{Binding Languages}"
-                                      Style="{DynamicResource ComboBoxBaseStyle}"
-                                      SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}"
-                                      Margin="0,0,0,16"/>
+                    <TextBlock Text="Возрастной рейтинг" Style="{StaticResource FieldLabel}"/>
+                    <ComboBox ItemsSource="{Binding AgeRatings}"
+                              Style="{DynamicResource ComboBoxBaseStyle}"
+                              SelectedItem="{Binding SelectedAgeRating, Mode=TwoWay}"
+                              Margin="0,0,0,16"/>
 
-                            <TextBlock Text="Возрастной рейтинг" Style="{StaticResource FieldLabel}"/>
-                            <ComboBox ItemsSource="{Binding AgeRatings}"
-                                      Style="{DynamicResource ComboBoxBaseStyle}"
-                                      SelectedItem="{Binding SelectedAgeRating, Mode=TwoWay}"/>
-                        </StackPanel>
-                    </StackPanel>
-
-                    <Grid Margin="0,0,0,2">
+                    <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
 
-                        <Border Grid.Column="0" Background="{DynamicResource SurfaceBrush}"
-                                CornerRadius="4" Padding="6" Margin="0,0,4,0"
+                        <Border Grid.Column="0"
+                                Background="{DynamicResource SurfaceBrush}"
+                                CornerRadius="4"
+                                Padding="6"
+                                Margin="0,0,4,0"
                                 BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="1">
 
@@ -237,7 +231,8 @@
                                            DockPanel.Dock="Top"
                                            Margin="0,0,0,8"/>
 
-                                <ScrollViewer VerticalScrollBarVisibility="Hidden" MaxHeight="200"
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                              MaxHeight="200"
                                               HorizontalScrollBarVisibility="Hidden">
                                     <ItemsControl ItemsSource="{Binding CategoryItems}">
                                         <ItemsControl.ItemTemplate>
@@ -253,8 +248,11 @@
                             </DockPanel>
                         </Border>
 
-                        <Border Grid.Column="1" Background="{DynamicResource SurfaceBrush}"
-                                CornerRadius="4" Padding="6" Margin="0,0,4,0"
+                        <Border Grid.Column="1"
+                                Background="{DynamicResource SurfaceBrush}"
+                                CornerRadius="4"
+                                Padding="6"
+                                Margin="0,0,0,0"
                                 BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="1">
 
@@ -264,7 +262,8 @@
                                            DockPanel.Dock="Top"
                                            Margin="0,0,0,8"/>
 
-                                <ScrollViewer VerticalScrollBarVisibility="Hidden"  MaxHeight="200"
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                                              MaxHeight="200"
                                               HorizontalScrollBarVisibility="Hidden">
                                     <ItemsControl ItemsSource="{Binding TagItems}">
                                         <ItemsControl.ItemTemplate>
@@ -284,28 +283,57 @@
                     <TextBlock Text="{Binding ErrorMessage}"
                                Foreground="Tomato"
                                TextWrapping="Wrap"
-                               Margin="0,0,0,2">
-                    </TextBlock>
+                               Margin="0,4,0,2"/>
 
                     <Grid>
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="4"/>
                             <ColumnDefinition Width="*"/>
                         </Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="4"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
-                        <Button Grid.Column="0"
-                                Content="Сохранить"
-                                Command="{Binding SaveCommand}"
-                                Style="{DynamicResource PrimaryButtonStyle}"
-                                Margin="0,0,4,0"/>
+                        <Button Grid.Row="0" Grid.Column="0"
+                                Content="{Binding PrimaryActionText}"
+                                Command="{Binding SaveCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+                                    <Setter Property="Grid.ColumnSpan" Value="1"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPublishedEditMode}" Value="True">
+                                            <Setter Property="Grid.ColumnSpan" Value="3"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
 
-                        <Button Grid.Column="1"
+                        <Button Grid.Row="0" Grid.Column="2"
+                                Content="Опубликовать"
+                                Command="{Binding PublishCommand}">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource PrimaryButtonStyle}">
+                                    <Setter Property="Visibility" Value="Visible"/>
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsPublishedEditMode}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+
+                        <Button Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
                                 Content="Отмена"
                                 Command="{Binding CancelCommand}"
                                 Style="{DynamicResource SecondaryButtonStyle}"/>
                     </Grid>
                 </StackPanel>
             </Border>
+        </ScrollViewer>
         </Grid>
-    </ScrollViewer>
 </UserControl>

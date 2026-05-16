@@ -1,4 +1,5 @@
 ﻿using lc.Services.Interfaces;
+using lc.ViewModels;
 using lc.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
@@ -27,7 +28,40 @@ namespace lc.Services
             var result = MessageBox.Show(message, title, MessageBoxButton.OKCancel, MessageBoxImage.Question);
             return Task.FromResult(result == MessageBoxResult.OK);
         }
-        
+
+        public async Task<string?> ShowInputAsync(string title, string message, string placeholder = "")
+        {
+            return await Application.Current.Dispatcher.InvokeAsync(() =>
+            {
+                var dialog = _provider.GetRequiredService<InputDialog>();
+
+                if (dialog.DataContext is InputViewModel vm)
+                {
+                    vm.Title = title;
+                    vm.Message = message;
+
+                    dialog.Owner = Application.Current.MainWindow;
+
+                    vm.RequestClose = (result) =>
+                    {
+                        try
+                        {
+                            dialog.DialogResult = result;
+                        }
+                        catch { }
+                        dialog.Close();
+                    };
+
+                    if (dialog.ShowDialog() == true)
+                    {
+                        return vm.InputText;
+                    }
+                }
+
+                return null;
+            });
+        }
+
         public string? OpenFile(string title, string filter)
         {
             OpenFileDialog openFileDialog = new OpenFileDialog

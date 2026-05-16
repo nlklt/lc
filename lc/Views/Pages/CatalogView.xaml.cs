@@ -11,13 +11,7 @@ namespace lc.Views.Pages
     {
         public CatalogView()
         {
-            Loaded += CatalogView_Loaded;
             InitializeComponent();
-        }
-        private async void CatalogView_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (DataContext is CatalogViewModel vm)
-                await vm.InitializeAsync();
         }
     }
 }

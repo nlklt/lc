@@ -6,9 +6,7 @@
              xmlns:vm="clr-namespace:lc.ViewModels" 
              xmlns:vc="clr-namespace:lc.Views.Controls"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vm:CatalogViewModel}"
-             d:DesignHeight="700"
-             d:DesignWidth="1200">
+             d:DataContext="{d:DesignInstance Type=vm:CatalogViewModel}">
 
     <Grid Background="{DynamicResource BackgroundBrush}" Margin="4">
         <Grid.ColumnDefinitions>
@@ -104,30 +102,31 @@
 
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="245"/>
+                                    <RowDefinition Height="249"/>
                                     <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
 
                                 <!-- Обложка -->
                                 <Border Grid.Row="0"
-                                        Width="160" Height="236" 
+                                        Width="166" Height="249" 
                                         CornerRadius="6">
                                     <Border.Style>
                                         <Style TargetType="Border">
 
                                             <Setter Property="Background">
                                                 <Setter.Value>
-                                                    <ImageBrush ImageSource="{Binding AvatarPath}" Stretch="UniformToFill"/>
+                                                    <ImageBrush ImageSource="{Binding CoverPath}"
+                                                                Stretch="UniformToFill"/>
                                                 </Setter.Value>
                                             </Setter>
 
                                             <Style.Triggers>
 
-                                                <DataTrigger Binding="{Binding AvatarPath}" Value="{x:Null}">
+                                                <DataTrigger Binding="{Binding CoverImagePath}" Value="{x:Null}">
                                                     <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
                                                 </DataTrigger>
 
-                                                <DataTrigger Binding="{Binding AvatarPath}" Value="">
+                                                <DataTrigger Binding="{Binding CoverImagePath}" Value="">
                                                     <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
                                                 </DataTrigger>
 
@@ -146,10 +145,10 @@
                                                     <Setter Property="Visibility" Value="Collapsed"/>
 
                                                     <Style.Triggers>
-                                                        <DataTrigger Binding="{Binding AvatarPath}" Value="{x:Null}">
+                                                        <DataTrigger Binding="{Binding CoverImagePath}" Value="{x:Null}">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
-                                                        <DataTrigger Binding="{Binding AvatarPath}" Value="">
+                                                        <DataTrigger Binding="{Binding CoverImagePath}" Value="">
                                                             <Setter Property="Visibility" Value="Visible"/>
                                                         </DataTrigger>
                                                     </Style.Triggers>
@@ -158,18 +157,6 @@
                                         </TextBlock>
                                     </Grid>
                                 </Border>
-                                <!--<Path Grid.Row="0">
-                                    <Path.Data>
-                                        <RectangleGeometry Rect="0,0,160,236" 
-                                                           RadiusX="6" 
-                                                           RadiusY="6" />
-                                    </Path.Data>
-                                    <Path.Fill>
-                                        <ImageBrush ImageSource="{Binding CoverImagePath}" 
-                                                    Stretch="UniformToFill" 
-                                                    RenderOptions.BitmapScalingMode="HighQuality"/>
-                                    </Path.Fill>
-                                </Path>-->
 
                                 <!-- Инфо -->
                                 <StackPanel Grid.Row="1" Margin="0,0,0,0">

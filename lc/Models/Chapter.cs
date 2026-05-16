@@ -1,16 +1,19 @@
-﻿namespace lc.Models
+﻿using lc.Models.Enums;
+
+namespace lc.Models;
+
+public class Chapter
 {
-    public class Chapter
-    {
-        public int ChapterId { get; set; }
-        public int BookId { get; set; }
-        public Book? Book { get; set; }
+    public int ChapterId { get; set; }
 
-        public int ChapterNumber { get; set; }
-        public string Title { get; set; } = string.Empty;
-        public string Text { get; set; } = string.Empty;
+    public int BookId { get; set; }
+    public Book Book { get; set; } = null!;
 
-        public DateTime CreatedAt { get; set; }
-        public DateTime UpdatedAt { get; set; }
-    }
+    public int ChapterNumber { get; set; }
+    public string Title { get; set; } = string.Empty;
+    public string Text { get; set; } = string.Empty;
+    public ChapterStatus Status { get; set; }
+
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
 }

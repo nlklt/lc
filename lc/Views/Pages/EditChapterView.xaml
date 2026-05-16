@@ -1,0 +1,136 @@
+﻿<UserControl x:Class="lc.Views.Pages.EditChapterView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="clr-namespace:lc.ViewModels"
+             mc:Ignorable="d"
+             d:DataContext="{d:DesignInstance Type=vm:EditChapterViewModel}">
+
+    <UserControl.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+
+        <Style x:Key="SectionTitle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+        </Style>
+
+        <Style x:Key="FieldLabel" TargetType="TextBlock">
+            <Setter Property="Margin" Value="0,0,0,4"/>
+            <Setter Property="FontSize" Value="14"/>
+            <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        </Style>
+
+        <Style x:Key="MutedValue" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{DynamicResource TextSecondaryBrush}"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+    </UserControl.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Hidden"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Background="{DynamicResource BackgroundBrush}"
+                  Margin="4">
+        <Border Background="{DynamicResource SurfaceBrush}"
+                CornerRadius="8"
+                Padding="12">
+            <StackPanel>
+                <TextBlock Text="{Binding HeaderText}"
+                           Style="{StaticResource SectionTitle}"
+                           Margin="0,0,0,16"/>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel>
+                        <TextBlock Text="Номер главы" Style="{StaticResource MutedValue}"/>
+                        <TextBlock Text="{Binding ChapterNumberText}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1">
+                        <TextBlock Text="Статус" Style="{StaticResource MutedValue}"/>
+                        <TextBlock Text="{Binding StatusText}"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"/>
+                    </StackPanel>
+                </Grid>
+
+                <TextBlock Text="Название" Style="{StaticResource FieldLabel}"/>
+                <TextBox Text="{Binding Title, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource TextBoxPlaceholderStyle}"
+                         MaxLength="255"
+                         Margin="0,0,0,16"/>
+
+                <TextBlock Text="Текст главы" Style="{StaticResource FieldLabel}"/>
+                <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
+                         Style="{DynamicResource TextBoxPlaceholderStyle}"
+                         AcceptsReturn="True"
+                         TextWrapping="Wrap"
+                         VerticalScrollBarVisibility="Auto"
+                         MinHeight="360"
+                         Margin="0,0,0,16"/>
+
+                <TextBlock Text="{Binding ErrorMessage}"
+                           Foreground="Tomato"
+                           TextWrapping="Wrap"
+                           Margin="0,0,0,12"/>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <Grid Visibility="{Binding ShowDraftActions, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Content="Сохранить черновик"
+                                Command="{Binding SaveDraftCommand}"
+                                Style="{DynamicResource SecondaryButtonStyle}"
+                                Margin="0,0,4,0"/>
+
+                        <Button Grid.Column="1"
+                                Content="Опубликовать"
+                                Command="{Binding PublishCommand}"
+                                Style="{DynamicResource PrimaryButtonStyle}"
+                                Margin="0,0,4,0"/>
+
+                        <Button Grid.Column="2"
+                                Content="Отмена"
+                                Command="{Binding CancelCommand}"
+                                Style="{DynamicResource SecondaryButtonStyle}"/>
+                    </Grid>
+
+                    <Grid Visibility="{Binding ShowSaveAction, Converter={StaticResource BoolToVisibilityConverter}}">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0"
+                                Content="Сохранить"
+                                Command="{Binding SaveCommand}"
+                                Style="{DynamicResource PrimaryButtonStyle}"
+                                Margin="0,0,4,0"/>
+
+                        <Button Grid.Column="1"
+                                Content="Отмена"
+                                Command="{Binding CancelCommand}"
+                                Style="{DynamicResource SecondaryButtonStyle}"/>
+                    </Grid>
+                </Grid>
+            </StackPanel>
+        </Border>
+    </ScrollViewer>
+</UserControl>

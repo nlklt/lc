@@ -21,7 +21,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
     public DbSet<UserLibraryList> UserLibraryLists => Set<UserLibraryList>();
     public DbSet<UserLibraryListBook> UserLibraryListBooks => Set<UserLibraryListBook>();
-    public DbSet<Favorite> Favorites => Set<Favorite>();
+
     public DbSet<ReadingHistory> ReadingHistories => Set<ReadingHistory>();
     public DbSet<ReadingProgress> ReadingProgresses => Set<ReadingProgress>();
 
@@ -42,7 +42,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
             entity.Property(x => x.BlockedComments).HasDefaultValue(false);
             entity.Property(x => x.CreatedAt).HasDefaultValueSql("SYSDATETIME()");
-            entity.Property(x => x.PreferredTheme).HasMaxLength(50).HasDefaultValue("Light");
+            entity.Property(x => x.PreferredTheme).HasMaxLength(50).HasDefaultValue("Dark");
 
             entity.Property(x => x.Role).HasConversion<int>().IsRequired();
             entity.Property(x => x.PreferredLanguage).HasConversion<int>().IsRequired();
@@ -67,9 +67,9 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.Property(x => x.Description);
             entity.Property(x => x.CoverImagePath).HasMaxLength(500);
 
-            entity.Property(x => x.BookStatus).IsRequired();
-            entity.Property(x => x.WritingStatus).IsRequired();
-            entity.Property(x => x.Language).IsRequired();
+            entity.Property(x => x.BookStatus).HasConversion<int>().IsRequired();
+            entity.Property(x => x.WritingStatus).HasConversion<int>().IsRequired();
+            entity.Property(x => x.Language).HasConversion<int>().IsRequired();
             entity.Property(x => x.AgeRating).IsRequired();
 
             entity.Property(x => x.SymbolsCount).HasDefaultValue(0L);
@@ -79,6 +79,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
 
             entity.Property(x => x.CreatedAt).HasDefaultValueSql("SYSDATETIME()");
             entity.Property(x => x.UpdatedAt).HasDefaultValueSql("SYSDATETIME()");
+
+            entity.HasIndex(x => x.PublisherId);
 
             entity.HasMany(x => x.Chapters)
                 .WithOne(x => x.Book)
@@ -103,8 +105,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.HasMany(x => x.Tags)
                 .WithMany(x => x.Books)
                 .UsingEntity<BookTag>(
-                    j => j.HasOne(x => x.Tag).WithMany().HasForeignKey(x => x.TagId).OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(x => x.Tag)
+                          .WithMany()
+                          .HasForeignKey(x => x.TagId)
+                          .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(x => x.Book)
+                          .WithMany()
+                          .HasForeignKey(x => x.BookId)
+                          .OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {
                         j.ToTable("BookTags");
@@ -114,8 +122,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.HasMany(x => x.Categories)
                 .WithMany(x => x.Books)
                 .UsingEntity<BookCategory>(
-                    j => j.HasOne(x => x.Category).WithMany().HasForeignKey(x => x.CategoryId).OnDelete(DeleteBehavior.Cascade),
-                    j => j.HasOne(x => x.Book).WithMany().HasForeignKey(x => x.BookId).OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(x => x.Category)
+                          .WithMany()
+                          .HasForeignKey(x => x.CategoryId)
+                          .OnDelete(DeleteBehavior.Cascade),
+                    j => j.HasOne(x => x.Book)
+                          .WithMany()
+                          .HasForeignKey(x => x.BookId)
+                          .OnDelete(DeleteBehavior.Cascade),
                     j =>
                     {
                         j.ToTable("BookCategories");
@@ -131,6 +145,11 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.Property(x => x.ChapterNumber).IsRequired();
             entity.Property(x => x.Title).HasMaxLength(255).IsRequired();
             entity.Property(x => x.Text).IsRequired();
+
+            entity.Property(x => x.Status)
+                .HasConversion<int>()
+                .IsRequired()
+                .HasDefaultValue(ChapterStatus.Draft);
 
             entity.Property(x => x.CreatedAt).HasDefaultValueSql("SYSDATETIME()");
             entity.Property(x => x.UpdatedAt).HasDefaultValueSql("SYSDATETIME()");
@@ -151,6 +170,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                 .WithMany(x => x.Comments)
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Book)
+                .WithMany(x => x.Comments)
+                .HasForeignKey(x => x.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => x.BookId);
+            entity.HasIndex(x => x.UserId);
         });
 
         modelBuilder.Entity<Tag>(entity =>
@@ -216,6 +243,7 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.HasKey(x => x.ListId);
 
             entity.Property(x => x.Name).HasMaxLength(100).IsRequired();
+            entity.HasIndex(x => new { x.UserId, x.Name }).IsUnique();
 
             entity.HasOne(x => x.User)
                 .WithMany(x => x.LibraryLists)
@@ -241,30 +269,14 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                 .OnDelete(DeleteBehavior.Cascade);
         });
 
-        modelBuilder.Entity<Favorite>(entity =>
-        {
-            entity.ToTable("Favorites");
-            entity.HasKey(x => new { x.UserId, x.BookId });
-
-            entity.Property(x => x.AddedAt).HasDefaultValueSql("SYSDATETIME()");
-
-            entity.HasOne(x => x.User)
-                .WithMany(x => x.Favorites)
-                .HasForeignKey(x => x.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
-
-            entity.HasOne(x => x.Book)
-                .WithMany()
-                .HasForeignKey(x => x.BookId)
-                .OnDelete(DeleteBehavior.Cascade);
-        });
-
         modelBuilder.Entity<ReadingHistory>(entity =>
         {
-            entity.ToTable("ReadingHistory");
+            entity.ToTable("ReadingHistories");
             entity.HasKey(x => x.HistoryId);
 
             entity.Property(x => x.LastOpenedAt).HasDefaultValueSql("SYSDATETIME()");
+
+            entity.HasIndex(x => new { x.UserId, x.BookId }).IsUnique();
 
             entity.HasOne(x => x.User)
                 .WithMany(x => x.ReadingHistory)
@@ -291,10 +303,17 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
                 .HasForeignKey(x => x.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            entity.HasOne(x => x.Book)
+                .WithMany()
+                .HasForeignKey(x => x.BookId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             entity.HasOne(x => x.Chapter)
                 .WithMany()
                 .HasForeignKey(x => x.ChapterId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasIndex(x => new { x.BookId, x.ChapterId });
         });
     }
 }

@@ -1,8 +1,5 @@
-﻿using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.IO;
-using System.Windows.Input;
-using lc.Commands;
+﻿using lc.Commands;
+using lc.Helpers;
 using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
@@ -10,6 +7,10 @@ using lc.Models.Enums;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
 using Microsoft.Win32;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
+using System.IO;
+using System.Windows.Input;
 
 namespace lc.ViewModels;
 
@@ -25,7 +26,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     private readonly IThemeService _themeService;
     private readonly ILocalizationService _localizationService;
     private readonly IDialogService _dialogService;
+    private readonly IUserLibraryService _userLibraryService;
 
+    private readonly bool _openedDirectlyToSettings;
     private bool _isBusy;
     private bool _isSettingsOpen;
     private bool _isDisposed;
@@ -44,6 +47,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     private Language _originalPreferredLanguage;
     private string _originalPreferredTheme = "Dark";
 
+    public ObservableCollection<UserLibraryListDto> UserLibraryLists { get; } = [];
+    public ObservableCollection<BookListItemDto> SelectedListBooks { get; } = [];
+
     public ProfileViewModel(
         AppState appState,
         IUserRepository userRepository,
@@ -51,7 +57,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         INavigationService navigationService,
         IThemeService themeService,
         ILocalizationService localizationService,
-        IDialogService dialogService)
+        IDialogService dialogService,
+        IUserLibraryService userLibraryService,
+        bool openSettings = false)
     {
         _appState = appState ?? throw new ArgumentNullException(nameof(appState));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -60,6 +68,10 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         _themeService = themeService ?? throw new ArgumentNullException(nameof(themeService));
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
+        _userLibraryService = userLibraryService ?? throw new ArgumentNullException(nameof(userLibraryService));
+
+        _openedDirectlyToSettings = openSettings;
+        IsSettingsOpen = openSettings;
 
         _appState.PropertyChanged += OnAppStatePropertyChanged;
 
@@ -70,9 +82,18 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         LogoutCommand = new AsyncRelayCommand(_ => LogoutAsync(), _ => IsAuthenticated && !IsBusy);
         DeleteAccountCommand = new AsyncRelayCommand(_ => DeleteAccountAsync(), _ => IsAuthenticated && !IsBusy);
         ToggleSettingsCommand = new RelayCommand(_ => IsSettingsOpen = true);
-        GoBackCommand = new RelayCommand(_ => IsSettingsOpen = false, _ => IsSettingsOpen);
+        GoBackCommand = new RelayCommand(_ => GoBack(), _ => IsSettingsOpen);
+
+        LoadLibraryListsCommand = new AsyncRelayCommand(_ => LoadLibraryListsAsync(), _ => IsAuthenticated && !IsBusy);
+        CreateListCommand = new AsyncRelayCommand(_ => CreateListAsync(), _ => IsAuthenticated && !IsBusy);
+        SelectListCommand = new RelayCommand(p =>
+        {
+            if (p is UserLibraryListDto list)
+                SelectedList = list;
+        });
 
         LoadFromCurrentUser();
+        _ = LoadLibraryListsAsync();
     }
 
     public User? CurrentUser => _appState.CurrentUser;
@@ -87,6 +108,20 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
             {
                 RefreshCommands();
                 OnPropertyChanged(nameof(CanSave));
+            }
+        }
+    }
+
+    private UserLibraryListDto? _selectedList;
+    public UserLibraryListDto? SelectedList
+    {
+        get => _selectedList;
+        set
+        {
+            if (SetProperty(ref _selectedList, value))
+            {
+                RefreshCommands();
+                _ = LoadSelectedListBooksAsync();
             }
         }
     }
@@ -195,6 +230,11 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     public ICommand DeleteAccountCommand { get; }
     public ICommand ToggleSettingsCommand { get; }
     public ICommand GoBackCommand { get; }
+
+    // Списки
+    public ICommand LoadLibraryListsCommand { get; }
+    public ICommand CreateListCommand { get; }
+    public ICommand SelectListCommand { get; }
 
     private void OnAppStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -398,6 +438,116 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private void GoBack()
+    {
+        if (IsSettingsOpen == true)
+        {
+            if (!_openedDirectlyToSettings)
+            {
+                IsSettingsOpen = false;
+                return;
+            }
+
+            _navigationService.NavigateBack();
+        }
+        else
+        {
+            _navigationService.NavigateBack();
+        }
+    }
+
+    private async Task LoadLibraryListsAsync()
+    {
+        if (!IsAuthenticated)
+            return;
+
+        try
+        {
+            IsBusy = true;
+
+            await _userLibraryService.EnsureDefaultListsAsync();
+
+            var lists = await _userLibraryService.GetListsAsync();
+            ReplaceCollection(UserLibraryLists, lists);
+
+            SelectedList ??= UserLibraryLists.FirstOrDefault();
+            if (SelectedList is not null)
+                await LoadSelectedListBooksAsync();
+            else
+                SelectedListBooks.Clear();
+        }
+        catch
+        {
+            StatusMessage = "Не удалось загрузить списки.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task LoadSelectedListBooksAsync()
+    {
+        if (SelectedList is null || !IsAuthenticated)
+        {
+            SelectedListBooks.Clear();
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+
+            var books = await _userLibraryService.GetBooksFromListAsync(SelectedList.ListId);
+            ReplaceCollection(SelectedListBooks, books);
+        }
+        catch
+        {
+            StatusMessage = "Не удалось загрузить книги списка.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task CreateListAsync()
+    {
+        if (!IsAuthenticated)
+            return;
+
+        var name = await _dialogService.ShowInputAsync(
+            "Новый список",
+            "Введите название списка:",
+            "Например: Мои книги");
+
+        if (string.IsNullOrWhiteSpace(name))
+            return;
+
+        try
+        {
+            IsBusy = true;
+
+            await _userLibraryService.CreateListAsync(name);
+            await LoadLibraryListsAsync();
+        }
+        catch
+        {
+            StatusMessage = "Не удалось создать список.";
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private static void ReplaceCollection<T>(ObservableCollection<T> target, IEnumerable<T> source)
+    {
+        target.Clear();
+        foreach (var item in source)
+            target.Add(item);
+    }
+
     private void ApplyThemePreview(string themeName)
     {
         if (!string.Equals(_appState.CurrentTheme, themeName, StringComparison.Ordinal))
@@ -438,6 +588,15 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
 
         if (GoBackCommand is RelayCommand goBack)
             goBack.RaiseCanExecuteChanged();
+
+        if(CreateListCommand is AsyncRelayCommand createList)
+        createList.RaiseCanExecuteChanged();
+
+        if (LoadLibraryListsCommand is AsyncRelayCommand loadLists)
+            loadLists.RaiseCanExecuteChanged();
+
+        if (SelectListCommand is RelayCommand selectList)
+            selectList.RaiseCanExecuteChanged();
     }
 
     private static string? Normalize(string? value)

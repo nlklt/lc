@@ -1,6 +1,7 @@
 ﻿using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
+using lc.Infrastructure.Repositories.Sql;
 using lc.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
@@ -12,17 +13,20 @@ public sealed class BookStatsService : IBookStatsService
     private readonly IBookRepository _bookRepository;
     private readonly IBookViewRepository _bookViewRepository;
     private readonly IBookRatingRepository _bookRatingRepository;
+    private readonly IChapterRepository _chapterRepository;
 
     public BookStatsService(
         AppState appState,
         IBookRepository bookRepository,
         IBookViewRepository bookViewRepository,
-        IBookRatingRepository bookRatingRepository)
+        IBookRatingRepository bookRatingRepository,
+        IChapterRepository chapterRepository)
     {
         _appState = appState ?? throw new ArgumentNullException(nameof(appState));
         _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
         _bookViewRepository = bookViewRepository ?? throw new ArgumentNullException(nameof(bookViewRepository));
         _bookRatingRepository = bookRatingRepository ?? throw new ArgumentNullException(nameof(bookRatingRepository));
+        _chapterRepository = chapterRepository ?? throw new ArgumentNullException(nameof(chapterRepository));
     }
 
     public async Task RegisterViewAsync(int bookId)
@@ -56,7 +60,8 @@ public sealed class BookStatsService : IBookStatsService
         book.Views = await _bookViewRepository.CountAsync(bookId);
         book.Rating = await _bookRatingRepository.GetAverageRatingAsync(bookId);
 
-        var chapters = book.Chapters ?? [];
+        var chapters = await _chapterRepository.GetByBookIdAsync(bookId, includeDrafts: false);
+
         book.ChaptersCount = chapters.Count;
         book.SymbolsCount = chapters.Sum(x => (long)x.Text.Length);
 

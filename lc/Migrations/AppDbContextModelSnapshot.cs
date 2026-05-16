@@ -217,6 +217,11 @@ namespace lc.Migrations
                         .HasColumnType("datetime2")
                         .HasDefaultValueSql("SYSDATETIME()");
 
+                    b.Property<int>("Status")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(0);
+
                     b.Property<string>("Text")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -332,6 +337,9 @@ namespace lc.Migrations
                     b.Property<int>("ChapterId")
                         .HasColumnType("int");
 
+                    b.Property<int>("BookId")
+                        .HasColumnType("int");
+
                     b.Property<int>("LastPosition")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
@@ -350,6 +358,8 @@ namespace lc.Migrations
                     b.HasKey("UserId", "ChapterId");
 
                     b.HasIndex("ChapterId");
+
+                    b.HasIndex("BookId", "ChapterId");
 
                     b.ToTable("ReadingProgress", (string)null);
                 });
@@ -631,10 +641,16 @@ namespace lc.Migrations
 
             modelBuilder.Entity("lc.Models.ReadingProgress", b =>
                 {
+                    b.HasOne("lc.Models.Book", "Book")
+                        .WithMany()
+                        .HasForeignKey("BookId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("lc.Models.Chapter", "Chapter")
                         .WithMany()
                         .HasForeignKey("ChapterId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.NoAction)
                         .IsRequired();
 
                     b.HasOne("lc.Models.User", "User")
@@ -642,6 +658,8 @@ namespace lc.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Book");
 
                     b.Navigation("Chapter");
 

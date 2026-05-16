@@ -1,10 +1,9 @@
-﻿namespace lc.Models
-{
-    public class Category
-    {
-        public int CategoryId { get; set; }
-        public string Name { get; set; } = string.Empty;
+﻿namespace lc.Models;
 
-        public ICollection<Book> Books { get; set; } = [];
-    }
+public class Category
+{
+    public int CategoryId { get; set; }
+    public string Name { get; set; } = string.Empty;
+
+    public ICollection<Book> Books { get; set; } = [];
 }

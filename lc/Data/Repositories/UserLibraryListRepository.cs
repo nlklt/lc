@@ -9,6 +9,13 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class UserLibraryListRepository : IUserLibraryListRepository
 {
+    private static readonly string[] DefaultListNames =
+    [
+        "Читаю",
+        "В планах",
+        "Брошено"
+    ];
+
     private readonly AppDbContext _db;
 
     public UserLibraryListRepository(AppDbContext db)
@@ -21,7 +28,10 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
         return await _db.UserLibraryLists
             .AsNoTracking()
             .Where(x => x.UserId == userId)
-            .OrderBy(x => x.Name)
+            .OrderBy(x => x.Name == "Читаю" ? 0 :
+                          x.Name == "В планах" ? 1 :
+                          x.Name == "Брошено" ? 2 : 100)
+            .ThenBy(x => x.Name)
             .Select(x => new UserLibraryListDto
             {
                 ListId = x.ListId,
@@ -80,6 +90,29 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
             return;
 
         _db.UserLibraryLists.Remove(list);
+        await _db.SaveChangesAsync();
+    }
+
+    public async Task EnsureDefaultListsAsync(int userId)
+    {
+        var existingNames = await _db.UserLibraryLists
+            .AsNoTracking()
+            .Where(x => x.UserId == userId)
+            .Select(x => x.Name)
+            .ToListAsync();
+
+        foreach (var name in DefaultListNames)
+        {
+            if (existingNames.Any(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase)))
+                continue;
+
+            _db.UserLibraryLists.Add(new UserLibraryList
+            {
+                UserId = userId,
+                Name = name
+            });
+        }
+
         await _db.SaveChangesAsync();
     }
 

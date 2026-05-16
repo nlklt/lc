@@ -55,16 +55,13 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        // DATABASE
         services.AddDbContext<AppDbContext>(options =>
         {
             options.UseSqlServer(ConnectionStrings.ELibDb);
         });
 
-        // APPLICATION STATE
         services.AddSingleton<AppState>();
 
-        // REPOSITORIES
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBookRepository, BookRepository>();
         services.AddScoped<IChapterRepository, ChapterRepository>();
@@ -75,7 +72,6 @@ public partial class App : Application
 
         services.AddScoped<IUserLibraryListRepository, UserLibraryListRepository>();
         services.AddScoped<IUserLibraryListBookRepository, UserLibraryListBookRepository>();
-        services.AddScoped<IFavoriteRepository, FavoriteRepository>();
 
         services.AddScoped<IBookRatingRepository, BookRatingRepository>();
         services.AddScoped<IBookViewRepository, BookViewRepository>();
@@ -83,7 +79,6 @@ public partial class App : Application
         services.AddScoped<IReadingHistoryRepository, ReadingHistoryRepository>();
         services.AddScoped<IReadingProgressRepository, ReadingProgressRepository>();
 
-        // SERVICES
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IBookService, BookService>();
         services.AddScoped<IBookStatsService, BookStatsService>();
@@ -93,6 +88,7 @@ public partial class App : Application
 
         services.AddScoped<IReaderService, ReaderService>();
         services.AddScoped<IUserLibraryService, UserLibraryService>();
+        services.AddScoped<IReadingProgressService, ReadingProgressService>();
 
         services.AddSingleton<INavigationService, NavigationService>();
         services.AddSingleton<IThemeService, ThemeService>();
@@ -100,22 +96,23 @@ public partial class App : Application
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IWindowService, WindowService>();
 
-        // VIEW MODELS
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();
         services.AddTransient<RegisterViewModel>();
-
         services.AddTransient<CatalogViewModel>();
         services.AddTransient<ProfileViewModel>();
         services.AddTransient<BookDetailsViewModel>();
         services.AddTransient<EditBookViewModel>();
         services.AddTransient<ReaderViewModel>();
-
+        services.AddTransient<EditChapterViewModel>();
         services.AddTransient<NavigationViewModel>();
+        services.AddTransient<InputViewModel>();
 
-        // WINDOWS
         services.AddSingleton<MainWindow>();
         services.AddTransient<LoginWindow>();
         services.AddTransient<RegisterWindow>();
+        services.AddTransient<ReaderWindow>();
+
+        services.AddTransient<InputDialog>();
     }
 }

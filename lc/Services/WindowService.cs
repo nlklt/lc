@@ -1,31 +1,45 @@
 ﻿using System.Windows;
 using lc.Services.Interfaces;
-using lc.Views.Windows;
 using lc.ViewModels;
+using lc.Views.Windows;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace lc.Services
+namespace lc.Services;
+
+public sealed class WindowService : IWindowService
 {
-    public class WindowService : IWindowService
+    private readonly IServiceScopeFactory _scopeFactory;
+
+    public WindowService(IServiceScopeFactory scopeFactory)
     {
-        private readonly IServiceProvider _provider;
+        _scopeFactory = scopeFactory;
+    }
 
-        public WindowService(IServiceProvider provider)
+    public async Task OpenReaderAsync(int bookId, int? chapterNumber = null)
+    {
+        var scope = _scopeFactory.CreateScope();
+
+        try
         {
-            _provider = provider;
-        }
+            var vm = ActivatorUtilities.CreateInstance<ReaderViewModel>(
+                scope.ServiceProvider,
+                bookId,
+                chapterNumber);
 
-        public async Task OpenReaderAsync(int bookId, int? chapterId = null)
-        {
-            var window = _provider.GetRequiredService<ReaderWindow>();
-            window.Owner = Application.Current.MainWindow;
+            await vm.InitializeAsync();
 
-            if (window.DataContext is ReaderViewModel vm)
+            var window = new ReaderWindow(vm)
             {
-                await vm.InitializeAsync(bookId, chapterId);
-            }
+                Owner = Application.Current.MainWindow
+            };
 
+            window.Closed += (_, _) => scope.Dispose();
             window.Show();
+        }
+        catch
+        {
+            scope.Dispose();
+            throw;
         }
     }
 }

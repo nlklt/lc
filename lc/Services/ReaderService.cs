@@ -25,23 +25,16 @@ public sealed class ReaderService : IReaderService
             throw new InvalidOperationException("В ридер можно открыть только опубликованную книгу.");
 
         var chapters = (book.Chapters ?? [])
+            .Where(c => c.Status == ChapterStatus.Published)
             .OrderBy(c => c.ChapterNumber)
             .ToList();
 
         if (chapters.Count == 0)
-            throw new InvalidOperationException("У книги нет глав.");
+            throw new InvalidOperationException("У книги нет опубликованных глав.");
 
-        Chapter currentChapter;
-
-        if (chapterNumber.HasValue)
-        {
-            currentChapter = chapters.FirstOrDefault(c => c.ChapterNumber == chapterNumber.Value)
-                ?? throw new InvalidOperationException($"Глава №{chapterNumber.Value} не найдена.");
-        }
-        else
-        {
-            currentChapter = chapters[0];
-        }
+        var currentChapter = chapterNumber.HasValue
+            ? chapters.FirstOrDefault(c => c.ChapterNumber == chapterNumber.Value) ?? chapters[0]
+            : chapters[0];
 
         var index = chapters.FindIndex(c => c.ChapterId == currentChapter.ChapterId);
 

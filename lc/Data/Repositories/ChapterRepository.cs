@@ -1,6 +1,7 @@
 ﻿using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
+using lc.Models.Enums;
 using Microsoft.EntityFrameworkCore;
 
 namespace lc.Infrastructure.Repositories.Sql;
@@ -21,11 +22,16 @@ public sealed class ChapterRepository : IChapterRepository
             .FirstOrDefaultAsync(x => x.ChapterId == chapterId);
     }
 
-    public async Task<IReadOnlyList<Chapter>> GetByBookIdAsync(int bookId)
+    public async Task<IReadOnlyList<Chapter>> GetByBookIdAsync(int bookId, bool includeDrafts = true)
     {
-        return await _db.Chapters
+        var query = _db.Chapters
             .AsNoTracking()
-            .Where(x => x.BookId == bookId)
+            .Where(x => x.BookId == bookId);
+
+        if (!includeDrafts)
+            query = query.Where(x => x.Status == ChapterStatus.Published);
+
+        return await query
             .OrderBy(x => x.ChapterNumber)
             .ToListAsync();
     }

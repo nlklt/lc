@@ -13,14 +13,9 @@ namespace lc.Services.Interfaces
         Task AddBookToListAsync(int listId, int bookId);
         Task RemoveBookFromListAsync(int listId, int bookId);
 
-        Task AddToLibraryAsync(int bookId);
-        Task RemoveFromLibraryAsync(int bookId);
-
-        Task AddToFavoritesAsync(int bookId);
-        Task RemoveFromFavoritesAsync(int bookId);
-
         Task<bool> IsBookInLibraryAsync(int bookId);
-        Task<bool> IsBookFavoriteAsync(int bookId);
+
+        Task EnsureDefaultListsAsync();
     }
 
     public sealed class UserLibraryListDto

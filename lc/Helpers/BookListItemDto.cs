@@ -33,6 +33,8 @@ namespace lc.Helpers
         public ICollection<Tag> Tags { get; set; } = [];
         public ICollection<Category> Categories { get; set; } = [];
 
+        public int? ReadingProgressPercent { get; set; }
+
         public BookListItemDto Clone()
         {
             return new BookListItemDto
@@ -55,7 +57,8 @@ namespace lc.Helpers
                 CreatedAt = CreatedAt,
                 UpdatedAt = UpdatedAt,
                 Tags = [.. Tags],
-                Categories = [.. Categories]
+                Categories = [.. Categories],
+                ReadingProgressPercent = ReadingProgressPercent
             };
         }
     }

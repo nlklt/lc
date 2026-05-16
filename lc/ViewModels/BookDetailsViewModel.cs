@@ -9,6 +9,7 @@ using lc.ViewModels.Base;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Net;
 using System.Threading;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -26,29 +27,32 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     private readonly IDialogService _dialogService;
     private readonly INavigationService _navigationService;
     private readonly IUserLibraryService _userLibraryService;
-
+    private readonly IWindowService _windowService;
+    private readonly IReadingProgressService _readingProgressService;
     private readonly SemaphoreSlim _loadGate = new(1, 1);
     private int _loadVersion;
     private bool _isDisposed;
 
     private Book? _book;
-    private ImageSource? _coverImage;
+    private ImageSource? _coverPath;
     private bool _isLoading;
-    private bool _isFavorite;
     private bool _isInLibrary;
+    private int _publishedChaptersCount;
     private string _newCommentText = string.Empty;
     private string _errorMessage = string.Empty;
 
     public BookDetailsViewModel(
-        int bookId,
-        AppState appState,
-        IBookService bookService,
-        IChapterService chapterService,
-        ICommentService commentService,
-        IBookStatsService bookStatsService,
-        IDialogService dialogService,
-        INavigationService navigationService,
-        IUserLibraryService userLibraryService)
+    int bookId,
+    AppState appState,
+    IBookService bookService,
+    IChapterService chapterService,
+    ICommentService commentService,
+    IBookStatsService bookStatsService,
+    IDialogService dialogService,
+    INavigationService navigationService,
+    IUserLibraryService userLibraryService,
+    IWindowService windowService,
+    IReadingProgressService readingProgressService)
     {
         if (bookId <= 0)
             throw new ArgumentOutOfRangeException(nameof(bookId));
@@ -62,25 +66,29 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _userLibraryService = userLibraryService ?? throw new ArgumentNullException(nameof(userLibraryService));
+        _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+        _readingProgressService = readingProgressService ?? throw new ArgumentNullException(nameof(readingProgressService));
 
         BackCommand = new RelayCommand(_ => _navigationService.NavigateBack());
         ReloadCommand = new AsyncRelayCommand(_ => ReloadAsync(), _ => !IsLoading);
 
-        StartReadingCommand = new AsyncRelayCommand(_ => StartReadingAsync(), _ => CanRead);
-        OpenChapterCommand = new RelayCommand(OpenChapter, _ => CanRead);
-
-        ToggleFavoriteCommand = new AsyncRelayCommand(_ => ToggleFavoriteAsync(), _ => CanToggleLibraryActions);
         ToggleLibraryCommand = new AsyncRelayCommand(_ => ToggleLibraryAsync(), _ => CanToggleLibraryActions);
 
         AddCommentCommand = new AsyncRelayCommand(_ => AddCommentAsync(), _ => CanComment);
         RateBookCommand = new AsyncRelayCommand(RateBookAsync, _ => CanRate);
 
         EditBookCommand = new RelayCommand(_ => EditBook(), _ => CanEditBook);
-        ArchiveBookCommand = new AsyncRelayCommand(_ => ArchiveBookAsync(), _ => CanArchiveBook);
+        ToggleArchiveCommand = new AsyncRelayCommand(_ => ToggleArchiveAsync(), _ => CanToggleArchiveBook);
         DeleteBookCommand = new AsyncRelayCommand(_ => DeleteBookAsync(), _ => CanDeleteBook);
 
-        _appState.PropertyChanged += OnAppStatePropertyChanged;
+        StartReadingCommand = new AsyncRelayCommand(StartReadingAsync, () => !IsLoading && CanRead);
+        OpenChapterCommand = new AsyncRelayCommand(OpenChapterAsync, _ => !IsLoading);
 
+        AddChapterCommand = new RelayCommand(_ => AddChapter(), _ => CanAddChapter);
+        EditChapterCommand = new RelayCommand(EditChapter, _ => !IsLoading);
+        DeleteChapterCommand = new AsyncRelayCommand(DeleteChapterAsync, _ => !IsLoading);
+
+        _appState.PropertyChanged += OnAppStatePropertyChanged;
         _ = ReloadAsync();
     }
 
@@ -88,8 +96,8 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<string> Tags { get; } = [];
     public ObservableCollection<string> Categories { get; } = [];
-    public ObservableCollection<Chapter> Chapters { get; } = [];
     public ObservableCollection<Comment> Comments { get; } = [];
+    public ObservableCollection<ChapterItem> Chapters { get; } = [];
 
     public string NewCommentText
     {
@@ -118,10 +126,10 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         }
     }
 
-    public ImageSource? CoverImage
+    public ImageSource? CoverPath
     {
-        get => _coverImage;
-        private set => SetProperty(ref _coverImage, value);
+        get => _coverPath;
+        private set => SetProperty(ref _coverPath, value);
     }
 
     public bool IsLoading
@@ -132,24 +140,8 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             if (SetProperty(ref _isLoading, value))
             {
                 RaiseCommandStates();
-                OnPropertyChanged(nameof(CanRead));
-                OnPropertyChanged(nameof(CanComment));
-                OnPropertyChanged(nameof(CanToggleLibraryActions));
-                OnPropertyChanged(nameof(CanRate));
-                OnPropertyChanged(nameof(CanEditBook));
-                OnPropertyChanged(nameof(CanArchiveBook));
-                OnPropertyChanged(nameof(CanDeleteBook));
+                RaiseBookDependentProperties();
             }
-        }
-    }
-
-    public bool IsFavorite
-    {
-        get => _isFavorite;
-        private set
-        {
-            if (SetProperty(ref _isFavorite, value))
-                OnPropertyChanged(nameof(FavoriteButtonText));
         }
     }
 
@@ -163,24 +155,38 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public int PublishedChaptersCount
+    {
+        get => _publishedChaptersCount;
+        private set
+        {
+            if (SetProperty(ref _publishedChaptersCount, value))
+            {
+                OnPropertyChanged(nameof(ChaptersCountText));
+                OnPropertyChanged(nameof(CanRead));
+            }
+        }
+    }
+
     public bool IsAuthenticated => _appState.IsAuthenticated;
     public bool IsAdmin => _appState.IsAdmin;
     public bool IsWriter => _appState.IsWriter;
 
     public bool IsOwner =>
-        _appState.CurrentUser?.UserId is not null &&
+        _appState.CurrentUser is not null &&
         Book is not null &&
         _appState.CurrentUser.UserId == Book.PublisherId;
 
     public bool CanRead =>
         Book is not null &&
         Book.BookStatus == BookStatus.Published &&
-        Chapters.Count > 0 &&
+        PublishedChaptersCount > 0 &&
         !IsLoading;
 
     public bool CanToggleLibraryActions =>
         IsAuthenticated &&
         Book is not null &&
+        Book.BookStatus == BookStatus.Published &&
         !IsLoading;
 
     public bool CanRate =>
@@ -198,19 +204,32 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
     public bool CanEditBook =>
         Book is not null &&
-        (IsAdmin || IsOwner) &&
-        !IsLoading;
+        !IsLoading &&
+        (IsOwner || IsAdmin) &&
+        Book.BookStatus != BookStatus.Archived;
+
+    public bool CanToggleArchiveBook =>
+        Book is not null &&
+        !IsLoading &&
+        IsAdmin &&
+        (Book.BookStatus == BookStatus.Published || Book.BookStatus == BookStatus.Archived);
+
+    public bool CanAddChapter =>
+        Book is not null &&
+        !IsLoading &&
+        Book.BookStatus != BookStatus.Archived &&
+        (IsAdmin || IsOwner);
 
     public bool CanArchiveBook =>
         Book is not null &&
-        (IsAdmin || IsOwner) &&
-        Book.BookStatus != BookStatus.Archived &&
-        !IsLoading;
+        !IsLoading &&
+        IsAdmin &&
+        Book.BookStatus != BookStatus.Archived;
 
     public bool CanDeleteBook =>
         Book is not null &&
-        IsAdmin &&
-        !IsLoading;
+        !IsLoading &&
+        (IsOwner || IsAdmin);
 
     public string Title => Book?.Title ?? "Без названия";
     public string AuthorName => $"Автор: {Book?.AuthorName ?? "Не указан"}";
@@ -224,24 +243,39 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     public string LanguageText => Book is null ? "—" : GetLanguageText(Book.Language);
     public string CreatedAtText => Book is null ? "—" : Book.CreatedAt.ToString("dd.MM.yyyy");
     public string UpdatedAtText => Book is null ? "—" : Book.UpdatedAt.ToString("dd.MM.yyyy");
-    public string ChaptersCountText => Chapters.Count.ToString();
+    public string ChaptersCountText => PublishedChaptersCount.ToString();
     public string SymbolsCountText => Book is null ? "—" : FormatNumber(Book.SymbolsCount);
 
-    public string FavoriteButtonText => IsFavorite ? "❤ В избранном" : "❤ В избранное";
-    public string LibraryButtonText => IsInLibrary ? "Убрать из библиотеки" : "Добавить в список";
+    public string LibraryButtonText => IsInLibrary ? "Убрать из списка" : "Добавить в список";
     public string ReadButtonText => CanRead ? "Читать" : "Чтение недоступно";
+    public string ArchiveButtonText => Book?.BookStatus == BookStatus.Archived ? "Из архива" : "В архив";
+    public string BookStatusOrLangField => CanEditBook ? "Состояние" : "Язык";
+    public string BookStatusOrLangText => CanEditBook
+        ? Book?.BookStatus switch
+        {
+            BookStatus.Draft => "Черновик",
+            BookStatus.Archived => "В архиве",
+            BookStatus.Published => "Опубликована",
+            _ => "Черновик"
+        }
+        : (Book?.Language ?? Language.Русский).ToString();
 
     public ICommand BackCommand { get; }
     public ICommand ReloadCommand { get; }
     public ICommand StartReadingCommand { get; }
-    public ICommand ToggleFavoriteCommand { get; }
     public ICommand ToggleLibraryCommand { get; }
     public ICommand AddCommentCommand { get; }
     public ICommand RateBookCommand { get; }
+
     public ICommand EditBookCommand { get; }
     public ICommand ArchiveBookCommand { get; }
+    public ICommand ToggleArchiveCommand { get; }
     public ICommand DeleteBookCommand { get; }
+
     public ICommand OpenChapterCommand { get; }
+    public ICommand AddChapterCommand { get; }
+    public ICommand EditChapterCommand { get; }
+    public ICommand DeleteChapterCommand { get; }
 
     public async Task ReloadAsync()
     {
@@ -256,29 +290,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            var bookTask = _bookService.GetBookByIdAsync(BookId);
-            var chaptersTask = _chapterService.GetByBookIdAsync(BookId);
-            var commentsTask = _commentService.GetByBookIdAsync(BookId);
-
-            Task<bool>? inLibraryTask = null;
-            Task<bool>? favoriteTask = null;
-
-            if (IsAuthenticated)
-            {
-                inLibraryTask = _userLibraryService.IsBookInLibraryAsync(BookId);
-                favoriteTask = _userLibraryService.IsBookFavoriteAsync(BookId);
-            }
-
-            var allTasks = new List<Task> { bookTask, chaptersTask, commentsTask };
-            if (inLibraryTask is not null) allTasks.Add(inLibraryTask);
-            if (favoriteTask is not null) allTasks.Add(favoriteTask);
-
-            await Task.WhenAll(allTasks);
-
-            if (version != Volatile.Read(ref _loadVersion))
-                return;
-
-            var book = await bookTask;
+            var book = await _bookService.GetBookByIdAsync(BookId);
             if (book is null)
             {
                 ClearState();
@@ -286,52 +298,93 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
                 return;
             }
 
-            var chapters = (await chaptersTask)
-                .OrderBy(x => x.ChapterNumber)
-                .ToList();
-
-            var comments = (await commentsTask)
-                .OrderByDescending(x => x.CreatedAt)
-                .ToList();
+            if (version != Volatile.Read(ref _loadVersion))
+                return;
 
             Book = book;
-            CoverImage = LoadImageSource(book.CoverImagePath);
+            CoverPath = LoadImageSource(book.CoverImagePath);
 
             Tags.Clear();
-            foreach (var tag in book.Tags.OrderBy(x => x.Name))
+            foreach (var tag in book.Tags ?? [])
             {
                 if (!string.IsNullOrWhiteSpace(tag.Name))
                     Tags.Add(tag.Name);
             }
 
             Categories.Clear();
-            foreach (var category in book.Categories.OrderBy(x => x.Name))
+            foreach (var category in book.Categories ?? [])
             {
                 if (!string.IsNullOrWhiteSpace(category.Name))
                     Categories.Add(category.Name);
             }
 
-            Chapters.Clear();
-            foreach (var chapter in chapters)
-                Chapters.Add(chapter);
+            RaiseBookDependentProperties();
 
-            Comments.Clear();
-            foreach (var comment in comments)
-                Comments.Add(comment);
+            var canSeeDrafts = _appState.IsAdmin || (_appState.CurrentUser?.UserId == book.PublisherId);
 
-            IsInLibrary = inLibraryTask is not null && await inLibraryTask;
-            IsFavorite = favoriteTask is not null && await favoriteTask;
+            try
+            {
+                var chapters = await _chapterService.GetByBookIdAsync(BookId, includeDrafts: canSeeDrafts);
+                var orderedChapters = chapters.OrderBy(x => x.ChapterNumber).ToList();
+
+                Chapters.Clear();
+                foreach (var chapter in orderedChapters)
+                {
+                    Chapters.Add(new ChapterItem(
+                        chapter,
+                        canOpen: chapter.Status == ChapterStatus.Published && book.BookStatus == BookStatus.Published,
+                        canEdit: CanEditChapter(chapter, book),
+                        canDelete: CanDeleteChapter(chapter, book)));
+                }
+
+                PublishedChaptersCount = orderedChapters.Count(x => x.Status == ChapterStatus.Published);
+            }
+            catch
+            {
+                Chapters.Clear();
+                PublishedChaptersCount = 0;
+            }
+
+            try
+            {
+                var comments = await _commentService.GetByBookIdAsync(BookId);
+                var orderedComments = comments.OrderByDescending(x => x.CreatedAt).ToList();
+
+                Comments.Clear();
+                foreach (var comment in orderedComments)
+                    Comments.Add(comment);
+            }
+            catch
+            {
+                Comments.Clear();
+            }
+
+            try
+            {
+                IsInLibrary = IsAuthenticated && book.BookStatus == BookStatus.Published
+                    ? await _userLibraryService.IsBookInLibraryAsync(BookId)
+                    : false;
+            }
+            catch
+            {
+                IsInLibrary = false;
+            }
 
             RaiseBookDependentProperties();
         }
-        catch (Exception)
+        catch
         {
-            ClearState();
-            ErrorMessage = "Не удалось загрузить данные книги.";
+            if (version == Volatile.Read(ref _loadVersion))
+            {
+                ClearState();
+                ErrorMessage = "Не удалось загрузить данные книги.";
+            }
         }
         finally
         {
-            IsLoading = false;
+            if (version == Volatile.Read(ref _loadVersion))
+                IsLoading = false;
+
             _loadGate.Release();
             RaiseCommandStates();
         }
@@ -340,13 +393,13 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     private void ClearState()
     {
         Book = null;
-        CoverImage = null;
+        CoverPath = null;
         Tags.Clear();
         Categories.Clear();
         Chapters.Clear();
         Comments.Clear();
-        IsFavorite = false;
         IsInLibrary = false;
+        PublishedChaptersCount = 0;
 
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(AuthorName));
@@ -361,7 +414,6 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(UpdatedAtText));
         OnPropertyChanged(nameof(ChaptersCountText));
         OnPropertyChanged(nameof(SymbolsCountText));
-        OnPropertyChanged(nameof(FavoriteButtonText));
         OnPropertyChanged(nameof(LibraryButtonText));
         OnPropertyChanged(nameof(ReadButtonText));
     }
@@ -378,6 +430,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanRate));
         OnPropertyChanged(nameof(CanComment));
         OnPropertyChanged(nameof(CanEditBook));
+        OnPropertyChanged(nameof(CanAddChapter));
         OnPropertyChanged(nameof(CanArchiveBook));
         OnPropertyChanged(nameof(CanDeleteBook));
 
@@ -394,7 +447,6 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(UpdatedAtText));
         OnPropertyChanged(nameof(ChaptersCountText));
         OnPropertyChanged(nameof(SymbolsCountText));
-        OnPropertyChanged(nameof(FavoriteButtonText));
         OnPropertyChanged(nameof(LibraryButtonText));
         OnPropertyChanged(nameof(ReadButtonText));
 
@@ -409,9 +461,6 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         if (StartReadingCommand is AsyncRelayCommand read)
             read.RaiseCanExecuteChanged();
 
-        if (ToggleFavoriteCommand is AsyncRelayCommand favorite)
-            favorite.RaiseCanExecuteChanged();
-
         if (ToggleLibraryCommand is AsyncRelayCommand library)
             library.RaiseCanExecuteChanged();
 
@@ -424,7 +473,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         if (EditBookCommand is RelayCommand edit)
             edit.RaiseCanExecuteChanged();
 
-        if (ArchiveBookCommand is AsyncRelayCommand archive)
+        if (ToggleArchiveCommand is AsyncRelayCommand archive)
             archive.RaiseCanExecuteChanged();
 
         if (DeleteBookCommand is AsyncRelayCommand delete)
@@ -432,6 +481,15 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
         if (OpenChapterCommand is RelayCommand openChapter)
             openChapter.RaiseCanExecuteChanged();
+
+        if (AddChapterCommand is RelayCommand addChapter)
+            addChapter.RaiseCanExecuteChanged();
+
+        if (EditChapterCommand is RelayCommand editChapter)
+            editChapter.RaiseCanExecuteChanged();
+
+        if (DeleteChapterCommand is AsyncRelayCommand deleteChapter)
+            deleteChapter.RaiseCanExecuteChanged();
     }
 
     private async Task StartReadingAsync()
@@ -439,73 +497,84 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         if (!CanRead || Book is null)
             return;
 
-        var firstChapter = Chapters.OrderBy(x => x.ChapterNumber).FirstOrDefault();
-        if (firstChapter is null)
+        await _windowService.OpenReaderAsync(Book.BookId);
+    }
+
+    private async Task OpenChapterAsync(object? parameter)
+    {
+        if (parameter is not ChapterItem item ||
+            !item.CanOpen ||
+            Book is null)
         {
-            await _dialogService.ShowMessageAsync("Уведомление", "В этой книге пока нет глав.");
             return;
         }
 
-        _navigationService.NavigateTo<ReaderViewModel>(Book.BookId, firstChapter.ChapterNumber);
+        await _windowService.OpenReaderAsync(
+            Book.BookId,
+            item.Chapter.ChapterNumber);
     }
 
-    private void OpenChapter(object? parameter)
+    private void AddChapter()
     {
-        if (!CanRead || Book is null)
+        if (!CanAddChapter || Book is null)
             return;
 
-        if (parameter is not Chapter chapter)
-            return;
-
-        _navigationService.NavigateTo<ReaderViewModel>(Book.BookId, chapter.ChapterNumber);
+        _navigationService.NavigateTo<EditChapterViewModel>(Book.BookId);
     }
 
-    private async Task ToggleFavoriteAsync()
+    private void EditChapter(object? parameter)
     {
-        if (!CanToggleLibraryActions || Book is null)
+        if (Book is null || parameter is not ChapterItem item || !item.CanEdit)
+            return;
+
+        _navigationService.NavigateTo<EditChapterViewModel>(Book.BookId, item.Chapter.ChapterId);
+    }
+
+    private async Task DeleteChapterAsync(object? parameter)
+    {
+        if (Book is null || parameter is not ChapterItem item || !item.CanDelete)
+            return;
+
+        var confirmed = await _dialogService.ShowConfirmAsync(
+            "Удалить главу",
+            $"Удалить главу «{item.Chapter.Title}»?");
+
+        if (!confirmed)
             return;
 
         try
         {
-            if (IsFavorite)
-            {
-                await _userLibraryService.RemoveFromFavoritesAsync(Book.BookId);
-                IsFavorite = false;
-            }
-            else
-            {
-                await _userLibraryService.AddToFavoritesAsync(Book.BookId);
-                IsFavorite = true;
-            }
+            await _chapterService.DeleteAsync(item.Chapter.ChapterId);
+            await ReloadAsync();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await _dialogService.ShowMessageAsync("Ошибка", "Не удалось изменить избранное.");
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
         }
     }
 
     private async Task ToggleLibraryAsync()
     {
-        if (!CanToggleLibraryActions || Book is null)
-            return;
+        //if (!CanToggleLibraryActions || Book is null)
+        //    return;
 
-        try
-        {
-            if (IsInLibrary)
-            {
-                await _userLibraryService.RemoveFromLibraryAsync(Book.BookId);
-                IsInLibrary = false;
-            }
-            else
-            {
-                await _userLibraryService.AddToLibraryAsync(Book.BookId);
-                IsInLibrary = true;
-            }
-        }
-        catch (Exception)
-        {
-            await _dialogService.ShowMessageAsync("Ошибка", "Не удалось изменить библиотеку.");
-        }
+        //try
+        //{
+        //    if (IsInLibrary)
+        //    {
+        //        await _userLibraryService.RemoveFromLibraryAsync(Book.BookId);
+        //        IsInLibrary = false;
+        //    }
+        //    else
+        //    {
+        //        await _userLibraryService.AddToLibraryAsync(Book.BookId);
+        //        IsInLibrary = true;
+        //    }
+        //}
+        //catch
+        //{
+        //    await _dialogService.ShowMessageAsync("Ошибка", "Не удалось изменить список.");
+        //}
     }
 
     private async Task AddCommentAsync()
@@ -523,7 +592,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             NewCommentText = string.Empty;
             await ReloadAsync();
         }
-        catch (Exception)
+        catch
         {
             await _dialogService.ShowMessageAsync("Ошибка", "Не удалось добавить комментарий.");
         }
@@ -545,32 +614,9 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             await _bookStatsService.SetRatingAsync(Book.BookId, rating);
             await ReloadAsync();
         }
-        catch (Exception)
+        catch
         {
             await _dialogService.ShowMessageAsync("Ошибка", "Не удалось сохранить оценку.");
-        }
-    }
-
-    private static bool TryParseRating(object? parameter, out byte rating)
-    {
-        rating = 0;
-
-        switch (parameter)
-        {
-            case byte b when b is >= 1 and <= 5:
-                rating = b;
-                return true;
-
-            case int i when i is >= 1 and <= 5:
-                rating = (byte)i;
-                return true;
-
-            case string s when byte.TryParse(s, out var parsed) && parsed is >= 1 and <= 5:
-                rating = parsed;
-                return true;
-
-            default:
-                return false;
         }
     }
 
@@ -580,6 +626,33 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             return;
 
         _navigationService.NavigateTo<EditBookViewModel>(Book.BookId);
+    }
+
+    private async Task ToggleArchiveAsync()
+    {
+        if (!CanToggleArchiveBook || Book is null)
+            return;
+
+        var confirmed = Book.BookStatus == BookStatus.Archived
+            ? await _dialogService.ShowConfirmAsync("Восстановить книгу", $"Вернуть книгу «{Book.Title}» из архива?")
+            : await _dialogService.ShowConfirmAsync("Архивировать книгу", $"Перевести книгу «{Book.Title}» в архив?");
+
+        if (!confirmed)
+            return;
+
+        try
+        {
+            if (Book.BookStatus == BookStatus.Archived)
+                await _bookService.RestoreBookAsync(Book.BookId);
+            else
+                await _bookService.ArchiveBookAsync(Book.BookId);
+
+            await ReloadAsync();
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+        }
     }
 
     private async Task ArchiveBookAsync()
@@ -599,9 +672,9 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             await _bookService.ArchiveBookAsync(Book.BookId);
             _navigationService.NavigateTo<CatalogViewModel>();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await _dialogService.ShowMessageAsync("Ошибка", "Не удалось архивировать книгу.");
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
         }
     }
 
@@ -622,9 +695,51 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             await _bookService.DeleteBookAsync(Book.BookId);
             _navigationService.NavigateTo<CatalogViewModel>();
         }
-        catch (Exception)
+        catch (Exception ex)
         {
-            await _dialogService.ShowMessageAsync("Ошибка", "Не удалось удалить книгу.");
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+        }
+    }
+
+    private bool CanEditChapter(Chapter chapter, Book book)
+    {
+        if (_appState.CurrentUser is null)
+            return false;
+
+        if (book.BookStatus == BookStatus.Archived)
+            return IsAdmin;
+
+        return chapter.Status == ChapterStatus.Draft && (IsOwner || IsAdmin);
+    }
+
+    private bool CanDeleteChapter(Chapter chapter, Book book)
+    {
+        if (_appState.CurrentUser is null)
+            return false;
+
+        if (book.BookStatus == BookStatus.Archived)
+            return IsAdmin;
+
+        return chapter.Status == ChapterStatus.Draft && (IsOwner || IsAdmin);
+    }
+
+    private static bool TryParseRating(object? parameter, out byte rating)
+    {
+        rating = 0;
+
+        switch (parameter)
+        {
+            case byte b when b is >= 1 and <= 5:
+                rating = b;
+                return true;
+            case int i when i is >= 1 and <= 5:
+                rating = (byte)i;
+                return true;
+            case string s when byte.TryParse(s, out var parsed) && parsed is >= 1 and <= 5:
+                rating = parsed;
+                return true;
+            default:
+                return false;
         }
     }
 
@@ -670,7 +785,6 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             image.UriSource = new Uri(fullPath, UriKind.Absolute);
             image.EndInit();
             image.Freeze();
-
             return image;
         }
         catch
@@ -681,10 +795,8 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
     private void OnAppStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
-        if (e.PropertyName is not nameof(AppState.CurrentUser) and not nameof(AppState.SelectedBook))
-            return;
-
-        RaiseBookDependentProperties();
+        if (e.PropertyName is nameof(AppState.CurrentUser) or nameof(AppState.IsAdmin) or nameof(AppState.IsWriter))
+            _ = ReloadAsync();
     }
 
     public void Dispose()
@@ -695,5 +807,21 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         _isDisposed = true;
         _appState.PropertyChanged -= OnAppStatePropertyChanged;
         _loadGate.Dispose();
+    }
+
+    public sealed class ChapterItem
+    {
+        public ChapterItem(Chapter chapter, bool canOpen, bool canEdit, bool canDelete)
+        {
+            Chapter = chapter ?? throw new ArgumentNullException(nameof(chapter));
+            CanOpen = canOpen;
+            CanEdit = canEdit;
+            CanDelete = canDelete;
+        }
+
+        public Chapter Chapter { get; }
+        public bool CanOpen { get; }
+        public bool CanEdit { get; }
+        public bool CanDelete { get; }
     }
 }

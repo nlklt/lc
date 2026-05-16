@@ -1,0 +1,9 @@
+{
+  "profiles": {
+    "lc": {
+      "commandName": "Project",
+      "nativeDebugging": false,
+      "sqlDebugging": false
+    }
+  }
+}

@@ -6,10 +6,12 @@ using lc.Models.Enums;
 using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using Microsoft.Office.Interop.Excel;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Threading;
 using System.Windows.Input;
+using System.Windows.Media;
 
 namespace lc.ViewModels;
 
@@ -70,7 +72,6 @@ public sealed class CatalogViewModel : ViewModelBase, IDisposable
         ResetFiltersCommand = new AsyncRelayCommand(_ => ResetFiltersAsync());
 
         OpenDetailsCommand  = new RelayCommand(OpenDetails);
-        StartReadingCommand = new RelayCommand(StartReading);
 
         AddToListCommand = new AsyncRelayCommand(AddToLibraryAsync);
 
@@ -267,7 +268,6 @@ public sealed class CatalogViewModel : ViewModelBase, IDisposable
         nameof(BookListItemDto.Views),
         nameof(BookListItemDto.ChaptersCount),
         nameof(BookListItemDto.SymbolsCount),
-        nameof(BookListItemDto.BookStatus),
         nameof(BookListItemDto.WritingStatus)
     ];
 
@@ -457,8 +457,13 @@ public sealed class CatalogViewModel : ViewModelBase, IDisposable
             IncludeWritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
             ExcludeWritingStatuses = [.. WritingStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
 
-            IncludeBookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
-            ExcludeBookStatuses = [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
+            IncludeBookStatuses = IsAdmin
+            ? [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)]
+            : [BookStatus.Published],
+
+            ExcludeBookStatuses = IsAdmin
+            ? [.. BookStatusOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)]
+            : [],
 
             IncludeLanguages = [.. LanguageOptions.Where(x => x.State == CheckBoxState.Include).Select(x => x.Value)],
             ExcludeLanguages = [.. LanguageOptions.Where(x => x.State == CheckBoxState.Exclude).Select(x => x.Value)],
@@ -588,7 +593,7 @@ public sealed class CatalogViewModel : ViewModelBase, IDisposable
             return;
         }
 
-        await _userLibraryService.AddToLibraryAsync(book.BookId);
+        //await _userLibraryService.AddBookToListAsync(book.BookId); // !!!
     }
 
     private void OpenDetails(object? parameter)
@@ -598,15 +603,6 @@ public sealed class CatalogViewModel : ViewModelBase, IDisposable
             return;
 
         _navigationService.NavigateTo<BookDetailsViewModel>(book.BookId);
-    }
-
-    private void StartReading(object? parameter)
-    {
-        var book = parameter as BookListItemDto ?? SelectedBook;
-        if (book is null)
-            return;
-
-        _navigationService.NavigateTo<ReaderViewModel>(book.BookId);
     }
 
     private void ToggleCategories()

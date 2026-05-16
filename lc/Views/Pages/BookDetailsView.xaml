@@ -5,8 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:vm="clr-namespace:lc.ViewModels"
              mc:Ignorable="d"
-             d:DataContext="{d:DesignInstance Type=vm:BookDetailsViewModel}"
-             d:DesignWidth="850">
+             d:DataContext="{d:DesignInstance Type=vm:BookDetailsViewModel}">
 
     <UserControl.Resources>
         <BooleanToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
@@ -33,61 +32,99 @@
     <Grid Background="{DynamicResource BackgroundBrush}">
         <ScrollViewer Padding="4"
                       VerticalScrollBarVisibility="Hidden"
-                      HorizontalScrollBarVisibility="Disabled" Cursor="Hand">
+                      HorizontalScrollBarVisibility="Disabled">
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="*"/>
                 </Grid.ColumnDefinitions>
 
-                <StackPanel Grid.Column="0">
-                    <Border Margin="4,4,8,4" Width="290" Height="435" CornerRadius="6">
-                        <Border.Background>
-                            <ImageBrush ImageSource="{Binding CoverImage}" Stretch="UniformToFill"
-                                        RenderOptions.BitmapScalingMode="HighQuality"/>
-                        </Border.Background>
+                <StackPanel Grid.Column="0" Margin="0,0,4,0">
+                    <Border Grid.Row="0"
+                            Width="290" Height="435" 
+                            CornerRadius="6">
+                        <Border.Style>
+                            <Style TargetType="Border">
+
+                                <Setter Property="Background">
+                                    <Setter.Value>
+                                        <ImageBrush ImageSource="{Binding CoverPath}" Stretch="UniformToFill"/>
+                                    </Setter.Value>
+                                </Setter>
+
+                                <Style.Triggers>
+
+                                    <DataTrigger Binding="{Binding CoverPath}" Value="{x:Null}">
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                    </DataTrigger>
+
+                                    <DataTrigger Binding="{Binding CoverPath}" Value="">
+                                        <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                    </DataTrigger>
+
+                                </Style.Triggers>
+                            </Style>
+                        </Border.Style>
+                        <Grid>
+                            <TextBlock Text="Обложки нету" 
+                                       FontStyle="Italic"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       VerticalAlignment="Center" 
+                                       HorizontalAlignment="Center"
+                                       FontSize="20">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Visibility" Value="Collapsed"/>
+
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding CoverPath}" Value="{x:Null}">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                            <DataTrigger Binding="{Binding CoverPath}" Value="">
+                                                <Setter Property="Visibility" Value="Visible"/>
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Grid>
                     </Border>
 
-                    <StackPanel Orientation="Vertical" Margin="0,0,8,4">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-                            
-                            <Button Grid.Column="0"
-                                    Content="{Binding LibraryButtonText}"
+                    <Button Content="Написать главу" Margin="0,4,0,8"
+                            Style="{DynamicResource SecondaryButtonStyle}"
+                            Command="{Binding AddChapterCommand}"
+                            Visibility="{Binding CanAddChapter, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,4,0,4">
+                        <StackPanel>
+                            <Button Content="{Binding LibraryButtonText}"
                                     Style="{DynamicResource SecondaryButtonStyle}"
                                     Command="{Binding ToggleLibraryCommand}"
-                                    Margin="0,0,4,4"
-                                    Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                            <Button Grid.Column="1"
-                                    Content="{Binding FavoriteButtonText}"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding ToggleFavoriteCommand}"
                                     Margin="0,0,0,4"
                                     Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                        </Grid>
 
-                        <Button Content="{Binding ReadButtonText}"
-                                Style="{DynamicResource PrimaryButtonStyle}"
-                                Command="{Binding StartReadingCommand}"
-                                IsEnabled="{Binding CanRead}"/>
-                    </StackPanel>
+                            <Button Content="{Binding ReadButtonText}"
+                                    Style="{DynamicResource PrimaryButtonStyle}"
+                                    Command="{Binding StartReadingCommand}"
+                                    IsEnabled="{Binding CanRead}"/>
+                        </StackPanel>
+                    </Border>
 
-                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,0,8,4">
+                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,0,0,4">
                         <StackPanel>
                             <TextBlock Text="{Binding Title}"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
-                                       FontSize="20" FontWeight="SemiBold"
+                                       FontSize="20"
+                                       FontWeight="SemiBold"
                                        TextWrapping="Wrap"/>
                             <TextBlock Text="{Binding AuthorName}"
                                        Foreground="{DynamicResource TextSecondaryBrush}"
-                                       Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                       Margin="0,4,0,0"
+                                       TextWrapping="Wrap"/>
                             <TextBlock Text="{Binding PublisherName}"
                                        Foreground="{DynamicResource TextMutedBrush}"
-                                       Margin="0,4,0,0" TextWrapping="Wrap"/>
+                                       Margin="0,4,0,0"
+                                       TextWrapping="Wrap"/>
 
                             <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
                                 <Border Style="{DynamicResource ChipStyle}">
@@ -97,38 +134,40 @@
                                     <TextBlock Text="{Binding ViewsText}" Foreground="{StaticResource TextPrimaryBrush}"/>
                                 </Border>
                                 <Border Style="{DynamicResource ChipStyle}"
-                                        Background="{DynamicResource WarningBackBrush}" BorderBrush="{DynamicResource WarningFrontBrush}">
+                                        Background="{DynamicResource WarningBackBrush}"
+                                        BorderBrush="{DynamicResource WarningFrontBrush}">
                                     <TextBlock Text="{Binding AgeRatingText}" Foreground="{DynamicResource WarningFrontBrush}"/>
                                 </Border>
                             </StackPanel>
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,0,8,4">
+                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,0,0,4">
                         <StackPanel>
-                            <TextBlock Text="Информация" Foreground="{DynamicResource TextPrimaryBrush}"
-                                       FontSize="16" FontWeight="SemiBold"
+                            <TextBlock Text="Информация"
+                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
                                        Margin="0,0,0,10"/>
 
                             <UniformGrid Columns="2">
                                 <StackPanel Margin="0,0,10,10">
-                                    <TextBlock Text="Статус" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                                    <TextBlock Text="{Binding BookStatusOrLangField}" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                                    <TextBlock Text="{Binding BookStatusOrLangText}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
+                                </StackPanel>
+                                <StackPanel Margin="0,0,10,10">
+                                    <TextBlock Text="Состояние" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                                     <TextBlock Text="{Binding WritingStatusText}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,0,10,10">
-                                    <TextBlock Text="Публикация" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
+                                    <TextBlock Text="Создана" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                                     <TextBlock Text="{Binding CreatedAtText}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,0,10,10">
                                     <TextBlock Text="Обновлено" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
                                     <TextBlock Text="{Binding UpdatedAtText}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
-                                </StackPanel>
-
-                                <StackPanel Margin="0,0,10,10">
-                                    <TextBlock Text="Язык" Foreground="{DynamicResource TextMutedBrush}" FontSize="12"/>
-                                    <TextBlock Text="{Binding LanguageText}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
                                 </StackPanel>
 
                                 <StackPanel Margin="0,0,10,10">
@@ -141,10 +180,11 @@
                                     <TextBlock Text="{Binding SymbolsCountText}" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14"/>
                                 </StackPanel>
                             </UniformGrid>
+
                             <Grid>
                                 <Grid.RowDefinitions>
-                                    <RowDefinition Height="*"/>
-                                    <RowDefinition Height="*"/>
+                                    <RowDefinition Height="Auto"/>
+                                    <RowDefinition Height="Auto"/>
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
@@ -159,20 +199,22 @@
                                         Visibility="{Binding CanEditBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                                 <Button Grid.Row="0" Grid.Column="1"
-                                        Content="В архив"
+                                        Content="{Binding ArchiveButtonText}"
                                         Style="{DynamicResource SecondaryButtonStyle}"
-                                        Command="{Binding ArchiveBookCommand}"
+                                        Command="{Binding ToggleArchiveCommand}"
                                         Margin="4,0,0,4"
                                         BorderBrush="{DynamicResource WarningFrontBrush}"
+                                        Foreground="{DynamicResource WarningFrontBrush}"
                                         Background="{DynamicResource WarningBackBrush}"
-                                        Visibility="{Binding CanArchiveBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        Visibility="{Binding CanToggleArchiveBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                                <Button Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="2"
+                                <Button Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="2"
                                         Content="Удалить"
                                         Style="{DynamicResource SecondaryButtonStyle}"
                                         Command="{Binding DeleteBookCommand}"
-                                        Margin="4,40,0,0"
+                                        Margin="0,8,0,0"
                                         BorderBrush="{DynamicResource WarningFrontBrush}"
+                                        Foreground="{DynamicResource WarningFrontBrush}"
                                         Background="{DynamicResource WarningBackBrush}"
                                         Visibility="{Binding CanDeleteBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
                             </Grid>
@@ -187,29 +229,18 @@
                             <ColumnDefinition Width="Auto"/>
                         </Grid.ColumnDefinitions>
 
-                        <TextBlock Grid.Column="0" Text="{Binding Title}" Margin="8,0,0,0"
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding Title}"
+                                   Margin="8,4,0,0"
                                    Foreground="{DynamicResource TextPrimaryBrush}"
-                                   FontSize="22" FontWeight="SemiBold" TextWrapping="Wrap"/>
+                                   FontSize="22"
+                                   FontWeight="SemiBold"
+                                   TextWrapping="Wrap"/>
 
-                        <Grid Grid.Column="1" Height="28" HorizontalAlignment="Right">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="Auto"/>
-                            </Grid.ColumnDefinitions>
-
-                            <StackPanel Orientation="Horizontal" Margin="0,0,8,0" Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
-                                <TextBlock Text="Оценить:" FontSize="14" Foreground="{DynamicResource TextPrimaryBrush}" VerticalAlignment="Center" Margin="0,0,4,0"/>
-                                <Button Content="1" Style="{DynamicResource SecondaryButtonStyle}" Command="{Binding RateBookCommand}" CommandParameter="1" Padding="8,2" Margin="2,0"/>
-                                <Button Content="2" Style="{DynamicResource SecondaryButtonStyle}" Command="{Binding RateBookCommand}" CommandParameter="2" Padding="8,2" Margin="2,0"/>
-                                <Button Content="3" Style="{DynamicResource SecondaryButtonStyle}" Command="{Binding RateBookCommand}" CommandParameter="3" Padding="8,2" Margin="2,0"/>
-                                <Button Content="4" Style="{DynamicResource SecondaryButtonStyle}" Command="{Binding RateBookCommand}" CommandParameter="4" Padding="8,2" Margin="2,0"/>
-                                <Button Content="5" Style="{DynamicResource SecondaryButtonStyle}" Command="{Binding RateBookCommand}" CommandParameter="5" Padding="8,2" Margin="2,0"/>
-                            </StackPanel>
-
-                            <Button Grid.Column="1" Content="Назад"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding BackCommand}"/>
-                        </Grid>
+                        <!--<Button Grid.Column="1"
+                                Content="Назад"
+                                Style="{DynamicResource SecondaryButtonStyle}"
+                                Command="{Binding BackCommand}"/>-->
                     </Grid>
 
                     <StackPanel Orientation="Horizontal" Margin="0,4" VerticalAlignment="Top">
@@ -246,19 +277,28 @@
 
                     <Border Style="{DynamicResource InfoCardStyle}">
                         <StackPanel>
-                            <TextBlock Text="Описание" 
+                            <TextBlock Text="Описание"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
-                                       FontSize="16" FontWeight="SemiBold" Margin="0,0,0,10"/>
+                                       FontSize="16"
+                                       FontWeight="SemiBold"
+                                       Margin="0,0,0,10"/>
 
-                            <TextBlock Text="{Binding Description}" FontSize="14" 
+                            <TextBlock Text="{Binding Description}"
+                                       FontSize="14"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
-                                       TextWrapping="Wrap" LineHeight="22"/>
+                                       TextWrapping="Wrap"
+                                       LineHeight="22"/>
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,0,0,4">
+                    <Border Style="{DynamicResource InfoCardStyle}">
                         <StackPanel>
-                            <TextBlock Text="Главы" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                            <StackPanel Margin="0,0,0,8">
+                                <TextBlock Text="Главы"
+                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                           FontSize="16"
+                                           FontWeight="SemiBold"/>
+                            </StackPanel>
 
                             <ItemsControl ItemsSource="{Binding Chapters}">
                                 <ItemsControl.Style>
@@ -268,7 +308,9 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate>
-                                                            <TextBlock Text="Список глав пока пуст..." Foreground="{DynamicResource TextMutedBrush}" FontStyle="Italic"/>
+                                                            <TextBlock Text="Список глав пока пуст..."
+                                                                       Foreground="{DynamicResource TextMutedBrush}"
+                                                                       FontStyle="Italic"/>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -276,35 +318,75 @@
                                         </Style.Triggers>
                                     </Style>
                                 </ItemsControl.Style>
+
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Button Style="{DynamicResource SecondaryButtonStyle}" 
-                                                Content="{Binding Title}" 
-                                                HorizontalAlignment="Stretch" HorizontalContentAlignment="Left"
-                                                Margin="0,0,0,4"
-                                                Command="{Binding DataContext.OpenChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"/>
+                                        <Border BorderBrush="{DynamicResource BorderBrush}"
+                                                Padding="0,8,0,8"
+                                                Margin="0,0,0,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="Auto"/>
+                                                </Grid.ColumnDefinitions>
+
+                                                <StackPanel>
+                                                    <TextBlock Text="{Binding Chapter.ChapterNumber, StringFormat=Глава {0}}"
+                                                               FontWeight="SemiBold"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                    <TextBlock Text="{Binding Chapter.Title}"
+                                                               Foreground="{DynamicResource TextSecondaryBrush}"/>
+                                                    <TextBlock Text="{Binding Chapter.Status}"
+                                                               FontSize="12"
+                                                               Foreground="{DynamicResource TextMutedBrush}"/>
+                                                </StackPanel>
+
+                                                <StackPanel Grid.Column="1"
+                                                            Orientation="Horizontal"
+                                                            VerticalAlignment="Center">
+                                                    <Button Content="Открыть"
+                                                            Style="{DynamicResource SecondaryButtonStyle}"
+                                                            Command="{Binding DataContext.OpenChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Margin="0,0,4,0"
+                                                            Visibility="{Binding CanOpen, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                    <Button Content="Редактировать"
+                                                            Command="{Binding DataContext.EditChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                    <Button Content="Удалить"
+                                                            Command="{Binding DataContext.DeleteChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                            CommandParameter="{Binding}"
+                                                            Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                </StackPanel>
+                                            </Grid>
+                                        </Border>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>
                         </StackPanel>
                     </Border>
 
-                    <Border Style="{DynamicResource InfoCardStyle}" Margin="0,0,0,4">
+                    <Border Style="{DynamicResource InfoCardStyle}">
                         <StackPanel>
                             <Grid Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel>
-                                    <TextBlock Text="Написать комментарий" Foreground="{DynamicResource TextPrimaryBrush}" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                    <TextBlock Text="Написать комментарий"
+                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                               FontSize="16"
+                                               FontWeight="SemiBold"
+                                               Margin="0,0,0,8"/>
 
-                                    <TextBox Text="{Binding NewCommentText, UpdateSourceTrigger=PropertyChanged}" 
+                                    <TextBox Text="{Binding NewCommentText, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{DynamicResource TextBoxPlaceholderStyle}"
-                                             Tag="Отличная книга!!!"
-                                             TextWrapping="Wrap" MinLines="2"/>
+                                             TextWrapping="Wrap"/>
 
-                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,8">
+                                    <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,8,0,0">
                                         <Button Style="{DynamicResource PrimaryButtonStyle}"
-                                Content="Отправить"
-                                Command="{Binding AddCommentCommand}"/>
+                                                Content="Отправить"
+                                                Command="{Binding AddCommentCommand}"/>
                                     </StackPanel>
                                 </StackPanel>
                             </Grid>
@@ -317,7 +399,9 @@
                                                 <Setter Property="Template">
                                                     <Setter.Value>
                                                         <ControlTemplate>
-                                                            <TextBlock Text="Комментариев пока нет..." Foreground="{DynamicResource TextMutedBrush}" FontStyle="Italic"/>
+                                                            <TextBlock Text="Комментариев пока нет..."
+                                                                       Foreground="{DynamicResource TextMutedBrush}"
+                                                                       FontStyle="Italic"/>
                                                         </ControlTemplate>
                                                     </Setter.Value>
                                                 </Setter>
@@ -325,15 +409,28 @@
                                         </Style.Triggers>
                                     </Style>
                                 </ItemsControl.Style>
+
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
-                                        <Border BorderBrush="{DynamicResource BorderBrush}" BorderThickness="0,0,0,1" Padding="0,4,0,8" Margin="0,0,0,8">
+                                        <Border BorderBrush="{DynamicResource BorderBrush}"
+                                                BorderThickness="0,0,0,1"
+                                                Padding="0,4,0,8"
+                                                Margin="0,0,0,8">
                                             <StackPanel>
                                                 <Grid>
-                                                    <TextBlock Text="{Binding UserName}" FontWeight="Bold" Foreground="{DynamicResource TextPrimaryBrush}" HorizontalAlignment="Left"/>
-                                                    <TextBlock Text="{Binding CreatedAt, StringFormat='dd.MM.yyyy HH:mm'}" Foreground="{DynamicResource TextMutedBrush}" FontSize="11" HorizontalAlignment="Right"/>
+                                                    <TextBlock Text="{Binding User.UserName}"
+                                                               FontWeight="Bold"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"
+                                                               HorizontalAlignment="Left"/>
+                                                    <TextBlock Text="{Binding CreatedAt, StringFormat='dd.MM.yyyy HH:mm'}"
+                                                               Foreground="{DynamicResource TextMutedBrush}"
+                                                               FontSize="11"
+                                                               HorizontalAlignment="Right"/>
                                                 </Grid>
-                                                <TextBlock Text="{Binding Text}" Foreground="{DynamicResource TextPrimaryBrush}" TextWrapping="Wrap" Margin="0,4,0,0"/>
+                                                <TextBlock Text="{Binding Text}"
+                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                           TextWrapping="Wrap"
+                                                           Margin="0,4,0,0"/>
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>

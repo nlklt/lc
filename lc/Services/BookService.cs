@@ -4,6 +4,7 @@ using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace lc.Services;
 
@@ -41,8 +42,8 @@ public sealed class BookService : IBookService
 
         NormalizeDraft(book);
 
-        book.BookStatus = BookStatus.Draft;
-        book.CreatedAt = DateTime.Now;
+        book.BookStatus = EnsureValidBookStatus(book.BookStatus, BookStatus.Draft);
+        book.CreatedAt = book.CreatedAt == default ? DateTime.Now : book.CreatedAt;
         book.UpdatedAt = DateTime.Now;
 
         return await _bookRepository.CreateAsync(book);
@@ -59,11 +60,12 @@ public sealed class BookService : IBookService
 
         book.CreatedAt = existing.CreatedAt;
         book.UpdatedAt = DateTime.Now;
-        book.BookStatus = BookStatus.Draft;
+        book.BookStatus = EnsureValidBookStatus(book.BookStatus, existing.BookStatus);
 
         await _bookRepository.UpdateAsync(book);
     }
 
+    
     public async Task ArchiveBookAsync(int bookId)
     {
         var book = await _bookRepository.GetByIdAsync(bookId);
@@ -75,7 +77,6 @@ public sealed class BookService : IBookService
 
         await _bookRepository.UpdateStatusAsync(bookId, BookStatus.Archived);
     }
-
     public async Task RestoreBookAsync(int bookId)
     {
         var book = await _bookRepository.GetByIdAsync(bookId)
@@ -110,6 +111,11 @@ public sealed class BookService : IBookService
         book.UpdatedAt = DateTime.Now;
 
         await _bookRepository.UpdateAsync(book);
+    }
+
+    private static BookStatus EnsureValidBookStatus(BookStatus status, BookStatus fallback)
+    {
+        return Enum.IsDefined(typeof(BookStatus), status) ? status : fallback;
     }
 
     private static void NormalizeDraft(Book book)

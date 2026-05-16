@@ -1,5 +1,4 @@
 ﻿using lc.Commands;
-using lc.Helpers;
 using lc.Infrastructure;
 using lc.Models;
 using lc.Models.Enums;
@@ -7,9 +6,13 @@ using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
 using Microsoft.Win32;
+using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
+using System.Net;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
@@ -18,14 +21,15 @@ namespace lc.ViewModels;
 
 public sealed class EditBookViewModel : ViewModelBase
 {
-    private const int MaxTitleLength = 100;
-    private const int MaxAuthorLength = 64;
+    private const int MaxTitleLength = 32;
+    private const int MaxAuthorLength = 16;
     private const int MaxDescriptionLength = 1_000;
+
+    private static readonly string[] AllowedCoverExtensions = [".png", ".jpg", ".jpeg", ".bmp", ".webp"];
 
     private readonly IBookService _bookService;
     private readonly INavigationService _navigation;
     private readonly AppState _appState;
-
     private readonly SemaphoreSlim _initGate = new(1, 1);
 
     private Book? _originalBook;
@@ -48,6 +52,7 @@ public sealed class EditBookViewModel : ViewModelBase
     private int _chaptersCount;
     private DateTime _createdAt;
     private DateTime _updatedAt;
+    private BookStatus _bookStatus = BookStatus.Draft;
 
     private ObservableCollection<SelectableItem<Category>> _categoryItems = [];
     private ObservableCollection<SelectableItem<Tag>> _tagItems = [];
@@ -69,12 +74,17 @@ public sealed class EditBookViewModel : ViewModelBase
 
         InitializeCommand = new AsyncRelayCommand(_ => InitializeAsync(), _ => !IsBusy && !_isInitialized);
         SaveCommand = new AsyncRelayCommand(_ => SaveAsync(), _ => CanSave);
+        PublishCommand = new AsyncRelayCommand(_ => PublishAsync(), _ => CanPublish);
         CancelCommand = new RelayCommand(_ => Cancel(), _ => !IsBusy);
         ChooseCoverCommand = new RelayCommand(_ => ChooseCover(), _ => !IsBusy);
         ClearCoverCommand = new RelayCommand(_ => ClearCover(), _ => !IsBusy && HasCover);
+
+        _ = InitializeAsync();
     }
 
     public bool IsEditMode => BookId.HasValue;
+
+    public bool IsPublishedEditMode => IsEditMode && _originalBook?.BookStatus == BookStatus.Published;
 
     public int? BookId
     {
@@ -84,12 +94,25 @@ public sealed class EditBookViewModel : ViewModelBase
             if (SetProperty(ref _bookId, value))
             {
                 OnPropertyChanged(nameof(IsEditMode));
+                OnPropertyChanged(nameof(IsPublishedEditMode));
                 OnPropertyChanged(nameof(HeaderText));
+                OnPropertyChanged(nameof(PrimaryActionText));
+                OnPropertyChanged(nameof(ShowPublishAction));
+                OnPropertyChanged(nameof(CanSave));
+                OnPropertyChanged(nameof(CanPublish));
             }
         }
     }
 
     public string HeaderText => IsEditMode ? "Редактирование книги..." : "Создание книги...";
+
+    public string PrimaryActionText => IsPublishedEditMode
+        ? "Сохранить"
+        : IsEditMode
+            ? "Сохранить черновик"
+            : "Создать черновик";
+
+    public bool ShowPublishAction => !IsPublishedEditMode;
 
     public bool IsBusy
     {
@@ -116,9 +139,7 @@ public sealed class EditBookViewModel : ViewModelBase
         {
             var normalized = value ?? string.Empty;
             if (SetProperty(ref _title, normalized))
-            {
                 OnBookChanged();
-            }
         }
     }
 
@@ -160,6 +181,7 @@ public sealed class EditBookViewModel : ViewModelBase
     }
 
     public bool HasCover => !string.IsNullOrWhiteSpace(CoverImagePath);
+
     public ImageSource? CoverPath => BuildCoverPath(CoverImagePath);
 
     public WritingStatus SelectedWritingStatus
@@ -192,6 +214,14 @@ public sealed class EditBookViewModel : ViewModelBase
         }
     }
 
+    public BookStatus SelectedBookStatus => _bookStatus;
+
+    public string CreatedAtText =>
+        CreatedAt == default ? "-" : CreatedAt.ToString("dd.MM.yyyy");
+
+    public string UpdatedAtText =>
+        UpdatedAt == default ? "-" : UpdatedAt.ToString("dd.MM.yyyy");
+
     public long SymbolsCount
     {
         get => _symbolsCount;
@@ -216,6 +246,10 @@ public sealed class EditBookViewModel : ViewModelBase
         private set => SetProperty(ref _updatedAt, value);
     }
 
+    public string BookStatusText => GetBookStatusText(SelectedBookStatus);
+
+    public string LanguageText => GetLanguageText(SelectedLanguage);
+
     public ObservableCollection<SelectableItem<Category>> CategoryItems
     {
         get => _categoryItems;
@@ -234,6 +268,7 @@ public sealed class EditBookViewModel : ViewModelBase
 
     public ICommand InitializeCommand { get; }
     public ICommand SaveCommand { get; }
+    public ICommand PublishCommand { get; }
     public ICommand CancelCommand { get; }
     public ICommand ChooseCoverCommand { get; }
     public ICommand ClearCoverCommand { get; }
@@ -241,6 +276,12 @@ public sealed class EditBookViewModel : ViewModelBase
     public bool CanSave =>
         !IsBusy &&
         _isInitialized &&
+        IsValid();
+
+    public bool CanPublish =>
+        !IsBusy &&
+        _isInitialized &&
+        !IsPublishedEditMode &&
         IsValid();
 
     public async Task InitializeAsync()
@@ -260,22 +301,27 @@ public sealed class EditBookViewModel : ViewModelBase
 
             await LoadLookupsAsync();
 
+            bool loaded = true;
+
             if (BookId.HasValue)
             {
-                await LoadBookAsync(BookId.Value);
+                loaded = await LoadBookAsync(BookId.Value);
             }
             else
             {
                 LoadDefaultsForCreate();
             }
 
+            if (!loaded)
+                return;
+
             _isInitialized = true;
+            RefreshStateProperties();
             RefreshCommands();
-            OnPropertyChanged(nameof(CanSave));
         }
-        catch
+        catch (Exception ex)
         {
-            ErrorMessage = "Ошибка инициализации формы книги.";
+            ErrorMessage = $"Ошибка инициализации формы книги: {ex.Message}";
         }
         finally
         {
@@ -297,19 +343,19 @@ public sealed class EditBookViewModel : ViewModelBase
             tags.Select(x => new SelectableItem<Tag>(x, x.Name)));
     }
 
-    private async Task LoadBookAsync(int bookId)
+    private async Task<bool> LoadBookAsync(int bookId)
     {
         var book = await _bookService.GetBookByIdAsync(bookId);
         if (book is null)
         {
             ErrorMessage = "Книга не найдена.";
-            return;
+            return false;
         }
 
         if (!CanCurrentUserEdit(book))
         {
             ErrorMessage = "Недостаточно прав для редактирования книги.";
-            return;
+            return false;
         }
 
         _originalBook = book.Clone();
@@ -327,6 +373,7 @@ public sealed class EditBookViewModel : ViewModelBase
         ChaptersCount = book.ChaptersCount;
         CreatedAt = book.CreatedAt;
         UpdatedAt = book.UpdatedAt;
+        _bookStatus = book.BookStatus;
 
         _originalCategoryIds = book.Categories.Select(x => x.CategoryId).ToHashSet();
         _originalTagIds = book.Tags.Select(x => x.TagId).ToHashSet();
@@ -336,15 +383,24 @@ public sealed class EditBookViewModel : ViewModelBase
 
         foreach (var item in TagItems)
             item.IsSelected = _originalTagIds.Contains(item.Value.TagId);
+
+        RefreshStateProperties();
+        return true;
     }
 
     private void LoadDefaultsForCreate()
     {
+        _originalBook = null;
+        _originalCategoryIds = [];
+        _originalTagIds = [];
+
         SelectedWritingStatus = WritingStatus.Анонс;
         SelectedLanguage = Language.Русский;
-        SelectedAgeRating = 18;
+        SelectedAgeRating = 12;
+
         CreatedAt = DateTime.Now;
-        UpdatedAt = DateTime.Now;
+        UpdatedAt = CreatedAt;
+        _bookStatus = BookStatus.Draft;
     }
 
     private bool CanCurrentUserEdit(Book book)
@@ -353,18 +409,25 @@ public sealed class EditBookViewModel : ViewModelBase
         if (user is null)
             return false;
 
-        return _appState.IsAdmin || user.UserId == book.PublisherId || _appState.IsWriter;
+        if (book.BookStatus == BookStatus.Archived)
+            return _appState.IsAdmin;
+
+        return _appState.IsAdmin || user.UserId == book.PublisherId;
     }
 
     private bool IsValid()
     {
-        if (string.IsNullOrWhiteSpace(Title) || Title.Length > MaxTitleLength)
+        var title = Title.Trim();
+        var author = AuthorName.Trim();
+        var description = Description.Trim();
+
+        if (string.IsNullOrWhiteSpace(title) || title.Length > MaxTitleLength)
             return false;
 
-        if (AuthorName.Length > MaxAuthorLength)
+        if (author.Length > MaxAuthorLength)
             return false;
 
-        if (Description.Length > MaxDescriptionLength)
+        if (description.Length > MaxDescriptionLength)
             return false;
 
         if (SelectedAgeRating is not (3 or 6 or 12 or 16 or 18))
@@ -376,40 +439,53 @@ public sealed class EditBookViewModel : ViewModelBase
         if (!Enum.IsDefined(typeof(Language), SelectedLanguage))
             return false;
 
-        if (!string.IsNullOrWhiteSpace(CoverImagePath) && !File.Exists(CoverImagePath))
+        if (!string.IsNullOrWhiteSpace(CoverImagePath) && !IsValidCoverImagePath(CoverImagePath))
             return false;
 
-        return HasChanges();
-    }
-
-    private bool HasChanges()
-    {
-        if (!_isInitialized)
-            return true;
-
-        var currentCategoryIds = CategoryItems.Where(x => x.IsSelected).Select(x => x.Value.CategoryId).ToHashSet();
-        var currentTagIds = TagItems.Where(x => x.IsSelected).Select(x => x.Value.TagId).ToHashSet();
-
-        return !string.Equals(Title.Trim(), _originalBook?.Title?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
-               !string.Equals(AuthorName.Trim(), _originalBook?.AuthorName?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
-               !string.Equals(Description.Trim(), _originalBook?.Description?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
-               !string.Equals(CoverImagePath.Trim(), _originalBook?.CoverImagePath?.Trim() ?? string.Empty, StringComparison.Ordinal) ||
-               SelectedWritingStatus != (_originalBook?.WritingStatus ?? SelectedWritingStatus) ||
-               SelectedLanguage != (_originalBook?.Language ?? SelectedLanguage) ||
-               SelectedAgeRating != (_originalBook?.AgeRating ?? SelectedAgeRating) ||
-               !currentCategoryIds.SetEquals(_originalCategoryIds) ||
-               !currentTagIds.SetEquals(_originalTagIds);
+        return true;
     }
 
     private void OnBookChanged()
     {
         RefreshCommands();
         OnPropertyChanged(nameof(CanSave));
+        OnPropertyChanged(nameof(CanPublish));
+        OnPropertyChanged(nameof(BookStatusText));
+        OnPropertyChanged(nameof(LanguageText));
+        OnPropertyChanged(nameof(PrimaryActionText));
+    }
+
+    private void RefreshStateProperties()
+    {
+        OnPropertyChanged(nameof(IsEditMode));
+        OnPropertyChanged(nameof(IsPublishedEditMode));
+        OnPropertyChanged(nameof(HeaderText));
+        OnPropertyChanged(nameof(PrimaryActionText));
+        OnPropertyChanged(nameof(ShowPublishAction));
+        OnPropertyChanged(nameof(BookStatusText));
+        OnPropertyChanged(nameof(CreatedAtText));
+        OnPropertyChanged(nameof(UpdatedAtText));
+        OnPropertyChanged(nameof(LanguageText));
+        OnPropertyChanged(nameof(CanSave));
+        OnPropertyChanged(nameof(CanPublish));
     }
 
     private async Task SaveAsync()
     {
-        if (!CanSave)
+        await CommitAsync(IsPublishedEditMode ? (_originalBook?.BookStatus ?? BookStatus.Draft) : BookStatus.Draft);
+    }
+
+    private async Task PublishAsync()
+    {
+        await CommitAsync(BookStatus.Published);
+    }
+
+    private async Task CommitAsync(BookStatus targetStatus)
+    {
+        if (!CanSave && targetStatus == BookStatus.Draft)
+            return;
+
+        if (!CanPublish && targetStatus == BookStatus.Published)
             return;
 
         if (_appState.CurrentUser is null)
@@ -423,6 +499,7 @@ public sealed class EditBookViewModel : ViewModelBase
             IsBusy = true;
             ErrorMessage = string.Empty;
 
+            var now = DateTime.Now;
             var book = new Book
             {
                 BookId = BookId ?? 0,
@@ -440,21 +517,32 @@ public sealed class EditBookViewModel : ViewModelBase
                 ChaptersCount = _originalBook?.ChaptersCount ?? 0,
                 Views = _originalBook?.Views ?? 0,
                 Rating = _originalBook?.Rating ?? 0,
-                CreatedAt = _originalBook?.CreatedAt ?? DateTime.Now,
-                UpdatedAt = DateTime.Now,
-                BookStatus = _originalBook?.BookStatus ?? BookStatus.Draft
+                CreatedAt = _originalBook?.CreatedAt ?? now,
+                UpdatedAt = now,
+                BookStatus = targetStatus
             };
 
-            if (IsEditMode)
-                await _bookService.UpdateBookAsync(book);
-            else
-                await _bookService.CreateBookAsync(book);
+            int savedBookId;
 
-            _navigation.NavigateTo<CatalogViewModel>();
+            if (IsEditMode)
+            {
+                await _bookService.UpdateBookAsync(book);
+                savedBookId = book.BookId;
+            }
+            else
+            {
+                savedBookId = await _bookService.CreateBookAsync(book);
+            }
+
+            BookId = savedBookId;
+            _bookStatus = targetStatus;
+            RefreshStateProperties();
+
+            _navigation.NavigateTo<BookDetailsViewModel>(savedBookId);
         }
-        catch
+        catch (Exception ex)
         {
-            ErrorMessage = "Не удалось сохранить книгу.";
+            ErrorMessage = ex.Message;
         }
         finally
         {
@@ -467,7 +555,11 @@ public sealed class EditBookViewModel : ViewModelBase
         var dialog = new OpenFileDialog
         {
             Title = "Выбор обложки",
-            Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.webp|Все файлы|*.*"
+            Filter = "Изображения|*.png;*.jpg;*.jpeg;*.bmp;*.webp|Все файлы|*.*",
+            CheckFileExists = true,
+            CheckPathExists = true,
+            Multiselect = false,
+            RestoreDirectory = true
         };
 
         if (dialog.ShowDialog() == true)
@@ -481,13 +573,17 @@ public sealed class EditBookViewModel : ViewModelBase
 
     private void Cancel()
     {
-        _navigation.NavigateBack();
+        if (BookId is not null) _navigation.NavigateTo<BookDetailsViewModel>(BookId);
+        else _navigation.NavigateTo<ProfileViewModel>();
     }
 
     private void RefreshCommands()
     {
         if (SaveCommand is AsyncRelayCommand save)
             save.RaiseCanExecuteChanged();
+
+        if (PublishCommand is AsyncRelayCommand publish)
+            publish.RaiseCanExecuteChanged();
 
         if (CancelCommand is RelayCommand cancel)
             cancel.RaiseCanExecuteChanged();
@@ -499,9 +595,21 @@ public sealed class EditBookViewModel : ViewModelBase
             clear.RaiseCanExecuteChanged();
     }
 
+    private static bool IsValidCoverImagePath(string path)
+    {
+        if (string.IsNullOrWhiteSpace(path))
+            return false;
+
+        if (!File.Exists(path))
+            return false;
+
+        var extension = Path.GetExtension(path);
+        return AllowedCoverExtensions.Contains(extension, StringComparer.OrdinalIgnoreCase);
+    }
+
     private static ImageSource? BuildCoverPath(string? path)
     {
-        if (string.IsNullOrWhiteSpace(path) || !File.Exists(path))
+        if (!IsValidCoverImagePath(path ?? string.Empty))
             return null;
 
         try
@@ -519,6 +627,24 @@ public sealed class EditBookViewModel : ViewModelBase
             return null;
         }
     }
+
+    private static string GetBookStatusText(BookStatus status) => status switch
+    {
+        BookStatus.Draft => "Черновик",
+        BookStatus.Published => "Опубликована",
+        BookStatus.Archived => "В архиве",
+        _ => status.ToString()
+    };
+
+    private static string GetLanguageText(Language language) => language switch
+    {
+        Language.Русский => "Русский",
+        Language.Английский => "Английский",
+        Language.Немецкий => "Немецкий",
+        Language.Китайский => "Китайский",
+        Language.Испанский => "Испанский",
+        _ => language.ToString()
+    };
 
     public sealed class SelectableItem<T> : ViewModelBase
     {

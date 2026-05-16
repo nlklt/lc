@@ -27,7 +27,6 @@ public sealed class UserLibraryListBookRepository : IUserLibraryListBookReposito
                 BookId = x.Book.BookId,
                 PublisherId = x.Book.PublisherId,
                 Title = x.Book.Title,
-                Publisher = x.Book.Publisher,
                 AuthorName = x.Book.AuthorName,
                 Description = x.Book.Description,
                 CoverImagePath = x.Book.CoverImagePath,
@@ -45,7 +44,35 @@ public sealed class UserLibraryListBookRepository : IUserLibraryListBookReposito
             .ToListAsync();
 
         await PopulateRelationsAsync(items);
+        await PopulateReadingProgressAsync(userId, items);
+
         return items;
+    }
+
+    private async Task PopulateReadingProgressAsync(int userId, List<BookListItemDto> items)
+    {
+        if (items.Count == 0)
+            return;
+
+        var bookIds = items.Select(x => x.BookId).ToArray();
+        
+        var progressByBook = await _db.ReadingProgresses
+            .AsNoTracking()
+            .Where(x => x.UserId == userId && bookIds.Contains(x.BookId))
+            .GroupBy(x => x.BookId)
+            .Select(g => new
+            {
+                BookId = g.Key,
+                Percent = g.Max(x => x.ProgressPercent)
+            })
+            .ToDictionaryAsync(x => x.BookId, x => x.Percent);
+
+        foreach (var item in items)
+        {
+            item.ReadingProgressPercent = progressByBook.TryGetValue(item.BookId, out var percent)
+                ? percent
+                : 0;
+        }
     }
 
     public async Task AddBookAsync(int userId, int listId, int bookId)
@@ -71,7 +98,6 @@ public sealed class UserLibraryListBookRepository : IUserLibraryListBookReposito
         {
             ListId = listId,
             BookId = bookId,
-            UserId = userId,
             AddedAt = DateTime.Now
         });
 

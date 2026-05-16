@@ -31,23 +31,22 @@ namespace lc.ViewModels
         public UserRole CurrentUserRole =>  _appState.CurrentUser?.Role ?? UserRole.Guest;
         public string AvatarPath =>         _appState.CurrentUser?.AvatarPath ?? string.Empty;
 
-        // Гость
+        // Гость 4/4
         public ICommand NavigateRegisterCommand { get; }
         public ICommand NavigateLoginCommand { get; }
         public ICommand NavigateCatalogCommand { get; }
         public ICommand RandomBookCommand { get; }
 
-        // Читатель
+        // Читатель 3/4
         public ICommand NavigateProfileCommand { get; }
-        public ICommand NavigateFavoritesCommand { get; }
         public ICommand BecomeAuthorCommand { get; }
         public ICommand NavigateSettingsCommand { get; }
         public ICommand LogoutCommand { get; }
 
-        // Писатель
+        // Писатель 1/1 + 2
         public ICommand NavigateCreateBookCommand { get; }
 
-        // Админ
+        // Админ 0/0 + 2
 
 
         public NavigationViewModel(
@@ -72,9 +71,8 @@ namespace lc.ViewModels
             NavigateCatalogCommand  = new RelayCommand(_ => _navigation.NavigateTo<CatalogViewModel>());
             RandomBookCommand       = new AsyncRelayCommand(NavigateRandomBookAsync);
 
-            NavigateFavoritesCommand    = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
             NavigateProfileCommand      = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
-            NavigateSettingsCommand     = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
+            NavigateSettingsCommand     = new RelayCommand(_ => _navigation.NavigateTo <ProfileViewModel>(true));
             LogoutCommand               = new RelayCommand(_ => Logout());
             BecomeAuthorCommand         = new RelayCommand(_ =>
             {

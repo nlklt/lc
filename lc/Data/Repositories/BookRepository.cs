@@ -40,24 +40,24 @@ public sealed class BookRepository : IBookRepository
     {
         ArgumentNullException.ThrowIfNull(book);
 
-        var tagIds = book.Tags.Select(t => t.TagId).Distinct().ToArray();
-        var categoryIds = book.Categories.Select(c => c.CategoryId).Distinct().ToArray();
+        var tagIds = book.Tags?.Select(t => t.TagId).Distinct().ToArray() ?? [];
+        var categoryIds = book.Categories?.Select(c => c.CategoryId).Distinct().ToArray() ?? [];
 
         var entity = new Book
         {
-            Title = string.IsNullOrWhiteSpace(book.Title) ? "Без названия" : book.Title,
+            Title = string.IsNullOrWhiteSpace(book.Title) ? "Без названия" : book.Title.Trim(),
             PublisherId = book.PublisherId,
-            AuthorName = book.AuthorName,
-            Description = book.Description,
-            CoverImagePath = book.CoverImagePath,
-            BookStatus = book.BookStatus,
+            AuthorName = NormalizeString(book.AuthorName),
+            Description = NormalizeString(book.Description),
+            CoverImagePath = NormalizeString(book.CoverImagePath),
+            BookStatus = Enum.IsDefined(typeof(BookStatus), book.BookStatus) ? book.BookStatus : BookStatus.Draft,
             WritingStatus = book.WritingStatus,
             Language = book.Language,
             AgeRating = book.AgeRating,
             SymbolsCount = book.SymbolsCount,
             ChaptersCount = book.ChaptersCount,
-            Views = book.Views,
-            Rating = book.Rating,
+            Views = Math.Max(0, book.Views),
+            Rating = Math.Max(0, book.Rating),
             CreatedAt = book.CreatedAt == default ? DateTime.Now : book.CreatedAt,
             UpdatedAt = book.UpdatedAt == default ? DateTime.Now : book.UpdatedAt
         };
@@ -92,15 +92,23 @@ public sealed class BookRepository : IBookRepository
             .FirstOrDefaultAsync(b => b.BookId == book.BookId)
             ?? throw new InvalidOperationException($"Книга с BookId={book.BookId} не найдена.");
 
-        var createdAt = existing.CreatedAt;
+        var tagIds = book.Tags?.Select(t => t.TagId).Distinct().ToArray() ?? [];
+        var categoryIds = book.Categories?.Select(c => c.CategoryId).Distinct().ToArray() ?? [];
 
-        _db.Entry(existing).CurrentValues.SetValues(book);
-        existing.CreatedAt = createdAt;
+        existing.Title = string.IsNullOrWhiteSpace(book.Title) ? "Без названия" : book.Title.Trim();
+        existing.PublisherId = book.PublisherId;
+        existing.AuthorName = NormalizeString(book.AuthorName);
+        existing.Description = NormalizeString(book.Description);
+        existing.CoverImagePath = NormalizeString(book.CoverImagePath);
+        existing.BookStatus = Enum.IsDefined(typeof(BookStatus), book.BookStatus) ? book.BookStatus : existing.BookStatus;
+        existing.WritingStatus = book.WritingStatus;
+        existing.Language = book.Language;
+        existing.AgeRating = book.AgeRating;
+        existing.SymbolsCount = Math.Max(0, book.SymbolsCount);
+        existing.ChaptersCount = Math.Max(0, book.ChaptersCount);
+        existing.Views = Math.Max(0, book.Views);
+        existing.Rating = Math.Max(0, book.Rating);
         existing.UpdatedAt = DateTime.Now;
-        existing.Title = string.IsNullOrWhiteSpace(book.Title) ? "Без названия" : book.Title;
-
-        var tagIds = book.Tags.Select(t => t.TagId).Distinct().ToArray();
-        var categoryIds = book.Categories.Select(c => c.CategoryId).Distinct().ToArray();
 
         existing.Tags.Clear();
         if (tagIds.Length > 0)
@@ -126,6 +134,9 @@ public sealed class BookRepository : IBookRepository
 
         await _db.SaveChangesAsync();
     }
+
+    private static string? NormalizeString(string? value)
+        => string.IsNullOrWhiteSpace(value) ? null : value.Trim();
 
     public async Task DeleteAsync(int bookId)
     {
@@ -173,7 +184,7 @@ public sealed class BookRepository : IBookRepository
             Views = b.Views,
             Rating = b.Rating,
             ChaptersCount = b.Chapters.Count(),
-            SymbolsCount = b.Chapters.Sum(c => (long?)c.Text.Length) ?? 0,
+            SymbolsCount = b.Chapters.Sum(c => c.Text == null ? 0 : c.Text.Length),
             CreatedAt = b.CreatedAt,
             UpdatedAt = b.UpdatedAt
         });

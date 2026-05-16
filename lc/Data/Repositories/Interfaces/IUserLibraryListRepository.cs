@@ -11,5 +11,7 @@ namespace lc.Data.Repositories.Interfaces
         Task<int> CreateAsync(int userId, string name);
         Task RenameAsync(int userId, int listId, string name);
         Task DeleteAsync(int userId, int listId);
+
+        Task EnsureDefaultListsAsync(int userId);
     }
 }

@@ -1,7 +1,6 @@
-﻿namespace lc.Services.Interfaces
+﻿namespace lc.Services.Interfaces;
+
+public interface IWindowService
 {
-    public interface IWindowService
-    {
-        Task OpenReaderAsync(int bookId, int? chapterNumber = null); // !!! не chapterId
-    }
+    Task OpenReaderAsync(int bookId, int? chapterNumber = null);
 }

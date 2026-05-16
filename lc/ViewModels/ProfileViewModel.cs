@@ -1,4 +1,5 @@
 ﻿using lc.Commands;
+using lc.Data.Repositories.Interfaces;
 using lc.Helpers;
 using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
@@ -27,6 +28,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     private readonly ILocalizationService _localizationService;
     private readonly IDialogService _dialogService;
     private readonly IUserLibraryService _userLibraryService;
+    private readonly IReadingHistoryRepository _readingHistoryRepository;
+    private readonly IReadingProgressService _readingProgressService;
+    private readonly IWindowService _windowService;
 
     private readonly bool _openedDirectlyToSettings;
     private bool _isBusy;
@@ -47,19 +51,23 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     private Language _originalPreferredLanguage;
     private string _originalPreferredTheme = "Dark";
 
+    public ObservableCollection<ContinueReadingItemDto> ContinueReadingBooks { get; } = [];
     public ObservableCollection<UserLibraryListDto> UserLibraryLists { get; } = [];
     public ObservableCollection<BookListItemDto> SelectedListBooks { get; } = [];
 
     public ProfileViewModel(
-        AppState appState,
-        IUserRepository userRepository,
-        IAuthService authService,
-        INavigationService navigationService,
-        IThemeService themeService,
-        ILocalizationService localizationService,
-        IDialogService dialogService,
-        IUserLibraryService userLibraryService,
-        bool openSettings = false)
+    AppState appState,
+    IUserRepository userRepository,
+    IAuthService authService,
+    INavigationService navigationService,
+    IThemeService themeService,
+    ILocalizationService localizationService,
+    IDialogService dialogService,
+    IUserLibraryService userLibraryService,
+    IReadingHistoryRepository readingHistoryRepository,
+    IReadingProgressService readingProgressService,
+    IWindowService windowService,
+    bool openSettings = false)
     {
         _appState = appState ?? throw new ArgumentNullException(nameof(appState));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -69,6 +77,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         _localizationService = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
         _dialogService = dialogService ?? throw new ArgumentNullException(nameof(dialogService));
         _userLibraryService = userLibraryService ?? throw new ArgumentNullException(nameof(userLibraryService));
+        _readingHistoryRepository = readingHistoryRepository ?? throw new ArgumentNullException(nameof(readingHistoryRepository));
+        _readingProgressService = readingProgressService ?? throw new ArgumentNullException(nameof(readingProgressService));
+        _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
 
         _openedDirectlyToSettings = openSettings;
         IsSettingsOpen = openSettings;
@@ -92,8 +103,12 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
                 SelectedList = list;
         });
 
+        OpenContinueReadingCommand = new AsyncRelayCommand(
+            OpenContinueReadingAsync,
+            p => p is ContinueReadingItemDto && !IsBusy);
+
         LoadFromCurrentUser();
-        _ = LoadLibraryListsAsync();
+        _ = LoadInitialAsync();
     }
 
     public User? CurrentUser => _appState.CurrentUser;
@@ -236,10 +251,21 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     public ICommand CreateListCommand { get; }
     public ICommand SelectListCommand { get; }
 
+    public ICommand OpenContinueReadingCommand { get; }
+
     private void OnAppStatePropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
         if (e.PropertyName is nameof(AppState.CurrentUser))
+        {
             LoadFromCurrentUser();
+            _ = LoadInitialAsync();
+        }
+    }
+
+    private async Task LoadInitialAsync()
+    {
+        await LoadLibraryListsAsync();
+        await LoadContinueReadingAsync();
     }
 
     private void LoadFromCurrentUser()
@@ -275,6 +301,67 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         StatusMessage = string.Empty;
         RefreshCommands();
         OnPropertyChanged(nameof(CanSave));
+    }
+
+    private async Task LoadContinueReadingAsync()
+    {
+        if (!IsAuthenticated || _appState.CurrentUser is null)
+        {
+            ContinueReadingBooks.Clear();
+            return;
+        }
+
+        try
+        {
+            IsBusy = true;
+
+            var userId = _appState.CurrentUser.UserId;
+            var histories = await _readingHistoryRepository.GetByUserIdAsync(userId);
+
+            var recentBooks = histories
+                .Where(x => x.Book is not null && x.Book.BookStatus == BookStatus.Published)
+                .GroupBy(x => x.BookId)
+                .Select(g => g.OrderByDescending(x => x.LastOpenedAt).First())
+                .OrderByDescending(x => x.LastOpenedAt)
+                .Take(10)
+                .ToList();
+
+            var items = new List<ContinueReadingItemDto>();
+
+            foreach (var history in recentBooks)
+            {
+                var progress = await _readingProgressService.GetLastBookProgressAsync(userId, history.BookId);
+
+                items.Add(new ContinueReadingItemDto
+                {
+                    BookId = history.BookId,
+                    Title = history.Book?.Title ?? "Без названия",
+                    CoverPath = history.Book?.CoverImagePath,
+                    LastChapterNumber = progress?.Chapter?.ChapterNumber,
+                    ReadingProgressPercent = progress?.ProgressPercent ?? 0,
+                    LastOpenedAt = history.LastOpenedAt
+                });
+            }
+
+            ReplaceCollection(ContinueReadingBooks, items);
+        }
+        catch
+        {
+            StatusMessage = "Не удалось загрузить продолжение чтения.";
+            ContinueReadingBooks.Clear();
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    private async Task OpenContinueReadingAsync(object? parameter)
+    {
+        if (parameter is not ContinueReadingItemDto item || item.BookId <= 0)
+            return;
+
+        await _windowService.OpenReaderAsync(item.BookId);
     }
 
     private void StoreOriginalValues()
@@ -591,6 +678,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
 
         if(CreateListCommand is AsyncRelayCommand createList)
         createList.RaiseCanExecuteChanged();
+
+        if (OpenContinueReadingCommand is AsyncRelayCommand continueReading)
+            continueReading.RaiseCanExecuteChanged();
 
         if (LoadLibraryListsCommand is AsyncRelayCommand loadLists)
             loadLists.RaiseCanExecuteChanged();

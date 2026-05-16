@@ -81,8 +81,15 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         ToggleArchiveCommand = new AsyncRelayCommand(_ => ToggleArchiveAsync(), _ => CanToggleArchiveBook);
         DeleteBookCommand = new AsyncRelayCommand(_ => DeleteBookAsync(), _ => CanDeleteBook);
 
-        StartReadingCommand = new AsyncRelayCommand(StartReadingAsync, () => !IsLoading && CanRead);
-        OpenChapterCommand = new AsyncRelayCommand(OpenChapterAsync, _ => !IsLoading);
+        StartReadingCommand = new AsyncRelayCommand(
+            StartReadingAsync,
+            () => !IsLoading && CanRead,
+            ex => _ = _dialogService.ShowMessageAsync("Ошибка", ex.Message));
+
+        OpenChapterCommand = new AsyncRelayCommand(
+            OpenChapterAsync,
+            _ => !IsLoading,
+            ex => _ = _dialogService.ShowMessageAsync("Ошибка", ex.Message));
 
         AddChapterCommand = new RelayCommand(_ => AddChapter(), _ => CanAddChapter);
         EditChapterCommand = new RelayCommand(EditChapter, _ => !IsLoading);
@@ -249,8 +256,8 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     public string LibraryButtonText => IsInLibrary ? "Убрать из списка" : "Добавить в список";
     public string ReadButtonText => CanRead ? "Читать" : "Чтение недоступно";
     public string ArchiveButtonText => Book?.BookStatus == BookStatus.Archived ? "Из архива" : "В архив";
-    public string BookStatusOrLangField => CanEditBook ? "Состояние" : "Язык";
-    public string BookStatusOrLangText => CanEditBook
+    public string BookStatusOrLangField => CanEditBook | CanDeleteBook | CanArchiveBook | CanAddChapter ? "Статус" : "Язык";
+    public string BookStatusOrLangText => CanEditBook | CanDeleteBook | CanArchiveBook | CanAddChapter
         ? Book?.BookStatus switch
         {
             BookStatus.Draft => "Черновик",
@@ -479,7 +486,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         if (DeleteBookCommand is AsyncRelayCommand delete)
             delete.RaiseCanExecuteChanged();
 
-        if (OpenChapterCommand is RelayCommand openChapter)
+        if (OpenChapterCommand is AsyncRelayCommand openChapter)
             openChapter.RaiseCanExecuteChanged();
 
         if (AddChapterCommand is RelayCommand addChapter)

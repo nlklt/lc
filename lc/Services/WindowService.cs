@@ -21,10 +21,8 @@ public sealed class WindowService : IWindowService
 
         try
         {
-            var vm = ActivatorUtilities.CreateInstance<ReaderViewModel>(
-                scope.ServiceProvider,
-                bookId,
-                chapterNumber);
+            var vm = scope.ServiceProvider.GetRequiredService<ReaderViewModel>();
+            vm.SetParameters(bookId, chapterNumber);
 
             await vm.InitializeAsync();
 

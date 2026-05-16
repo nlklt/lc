@@ -46,22 +46,22 @@
                                     <Setter Property="Background">
                                         <Setter.Value>
                                             <ImageBrush ImageSource="{Binding AvatarPath}" 
-                            Stretch="UniformToFill"/>
+                                                        Stretch="UniformToFill"/>
                                         </Setter.Value>
                                     </Setter>
 
                                     <Style.Triggers>
 
                                         <DataTrigger Binding="{Binding AvatarPath}" 
-                         Value="{x:Null}">
+                                                     Value="{x:Null}">
                                             <Setter Property="Background"
-                        Value="{DynamicResource SurfaceAltBrush}"/>
+                                                    Value="{DynamicResource SurfaceAltBrush}"/>
                                         </DataTrigger>
 
                                         <DataTrigger Binding="{Binding AvatarPath}"
-                         Value="">
+                                                     Value="">
                                             <Setter Property="Background"
-                        Value="{DynamicResource SurfaceAltBrush}"/>
+                                                    Value="{DynamicResource SurfaceAltBrush}"/>
                                         </DataTrigger>
 
                                     </Style.Triggers>
@@ -109,33 +109,81 @@
                 <TextBlock Text="Продолжить чтение" FontSize="16" 
                            FontWeight="SemiBold" Margin="4,0,12,12"
                            Style="{DynamicResource BaseTextBlockStyle}"/>
-                <ScrollViewer HorizontalScrollBarVisibility="Hidden" VerticalScrollBarVisibility="Disabled">
-                    <!-- Замените ReadingHistory на вашу коллекцию истории во ViewModel -->
-                    <!--<ItemsControl ItemsSource="{Binding ReadingHistory}">
+                <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                              VerticalScrollBarVisibility="Disabled"
+                              Margin="0,0,0,12">
+                    <ItemsControl ItemsSource="{Binding ContinueReadingBooks}">
+                        <ItemsControl.Style>
+                            <Style TargetType="ItemsControl">
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding ContinueReadingBooks.Count}" Value="0">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate>
+                                                    <TextBlock Text="Продолжать чтение пока нечего..."
+                                                               Foreground="{DynamicResource TextMutedBrush}"
+                                                               FontStyle="Italic"
+                                                               Margin="4,0,0,0"/>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ItemsControl.Style>
+
                         <ItemsControl.ItemsPanel>
                             <ItemsPanelTemplate>
                                 <StackPanel Orientation="Horizontal"/>
                             </ItemsPanelTemplate>
                         </ItemsControl.ItemsPanel>
+
                         <ItemsControl.ItemTemplate>
-                            <DataTemplate>-->
-                                <!-- Карточка книги -->
-                    <!--<Border Width="130" Margin="0,0,20,0" Background="Transparent" Cursor="Hand">
-                                    <StackPanel>
-                                        <Border Height="180" CornerRadius="8" Background="{DynamicResource SurfaceAltBrush}" Margin="0,0,0,10">
-                                            <Image Source="{Binding CoverPath}" Stretch="UniformToFill">
-                                                <Image.Clip>
-                                                    <RectangleGeometry Rect="0,0,130,180" RadiusX="8" RadiusY="8"/>
-                                                </Image.Clip>
-                                            </Image>
-                                        </Border>
-                                        <TextBlock Text="{Binding Title}" FontWeight="Medium" TextTrimming="CharacterEllipsis" Margin="0,0,0,4"/>
-                                        <TextBlock Text="{Binding LastChapter, StringFormat='Глава {0}'}" FontSize="12" Foreground="{DynamicResource SurfaceAltBrush}" TextTrimming="CharacterEllipsis"/>
-                                    </StackPanel>
-                                </Border>
+                            <DataTemplate>
+                                <Button Command="{Binding DataContext.OpenContinueReadingCommand,
+                                        RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Padding="0"
+                                        Margin="0,0,14,0"
+                                        Cursor="Hand">
+                                    <Border Width="130" Background="Transparent">
+                                        <StackPanel>
+                                            <Border Height="180"
+                                    CornerRadius="8"
+                                    Background="{DynamicResource SurfaceAltBrush}"
+                                    Margin="0,0,0,10">
+                                                <Image Source="{Binding CoverPath}"
+                                       Stretch="UniformToFill"/>
+                                            </Border>
+
+                                            <TextBlock Text="{Binding Title}"
+                                       FontWeight="Medium"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,0,0,4"/>
+
+                                            <TextBlock Text="{Binding LastChapterText}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       TextTrimming="CharacterEllipsis"
+                                       Margin="0,0,0,2"/>
+
+                                            <TextBlock Text="{Binding ReadingProgressPercent, StringFormat=Прогресс: {0}%}"
+                                       FontSize="12"
+                                       Foreground="{DynamicResource TextSecondaryBrush}"
+                                       Margin="0,0,0,4"/>
+
+                                            <ProgressBar Minimum="0"
+                                         Maximum="100"
+                                         Value="{Binding ReadingProgressPercent}"
+                                         Height="6"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
-                    </ItemsControl>-->
+                    </ItemsControl>
                 </ScrollViewer>
 
                 <!-- ЛИЧНЫЕ СПИСКИ КНИГ -->

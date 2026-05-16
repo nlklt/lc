@@ -4,7 +4,8 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:vm="clr-namespace:lc.ViewModels"
-        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework"
+        xmlns:shell="clr-namespace:System.Windows.Shell;assembly=PresentationFramework" 
+        d:DataContext="{d:DesignInstance Type=vm:ReaderViewModel}"
         mc:Ignorable="d"
         Title="Ридер"
         Width="620"
@@ -27,7 +28,7 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <Border Grid.Row="0" Background="{DynamicResource SurfaceBrush}">
+        <Border Grid.Row="0" Background="{DynamicResource BackgroundBrush}">
             <Grid>
                 <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="8,0">
                     <TextBlock Text="☁ LibCloud"
@@ -45,25 +46,22 @@
         </Border>
 
         <Border Grid.Row="1"
-                Background="{DynamicResource SurfaceBrush}"
-                Padding="12">
-            <ScrollViewer VerticalScrollBarVisibility="Auto"
+                Background="{DynamicResource BackgroundBrush}"
+                Padding="12,0,12,12">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden"
                           HorizontalScrollBarVisibility="Disabled">
                 <StackPanel>
                     <TextBlock Text="{Binding BookTitle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"
-                               FontSize="18"
+                               FontSize="20"
                                FontWeight="SemiBold"
-                               Margin="0,0,0,12"
+                               Margin="0,0,0,8"
                                TextWrapping="Wrap"/>
-
-                    <TextBlock Text="Главы"
-                               Foreground="{DynamicResource TextMutedBrush}"
-                               Margin="0,0,0,4"/>
 
                     <ComboBox ItemsSource="{Binding Chapters}"
                               SelectedItem="{Binding SelectedChapter, Mode=TwoWay}"
                               Style="{DynamicResource ComboBoxBaseStyle}"
+                              Background="{DynamicResource SecondaryPressedBrush}"
                               Margin="0,0,0,12"
                               IsEnabled="{Binding IsInitialized}">
                         <ComboBox.ItemTemplate>
@@ -80,15 +78,15 @@
 
                     <TextBlock Text="{Binding ChapterTitle}"
                                Foreground="{DynamicResource TextPrimaryBrush}"
-                               FontSize="16"
+                               FontSize="18"
                                FontWeight="SemiBold"
-                               Margin="0,0,0,12"
+                               Margin="0,0,0,4"
                                TextWrapping="Wrap"/>
 
                     <TextBlock Text="{Binding ChapterText}"
                                TextWrapping="Wrap"
                                Foreground="{DynamicResource TextPrimaryBrush}"
-                               FontSize="15"/>
+                               FontSize="14"/>
 
                     <TextBlock Text="{Binding ErrorMessage}"
                                Foreground="Tomato"

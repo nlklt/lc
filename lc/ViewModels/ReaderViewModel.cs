@@ -13,8 +13,8 @@ public sealed class ReaderViewModel : ViewModelBase
     private readonly AppState _appState;
     private readonly IDialogService _dialogService;
 
-    private readonly int _bookId;
-    private readonly int? _chapterNumber;
+    private int _bookId;
+    private int? _chapterNumber;
 
     private Chapter? _selectedChapter;
     private string _chapterText = string.Empty;
@@ -26,16 +26,18 @@ public sealed class ReaderViewModel : ViewModelBase
 
     public ReaderViewModel(
         IReaderService readerService,
-        IReadingProgressService progressService,
+        IReadingProgressService readingProgressService,
         AppState appState,
-        IDialogService dialogService,
-        int bookId,
-        int? chapterNumber = null)
+        IDialogService dialogService)
     {
         _readerService = readerService;
-        _progressService = progressService;
+        _progressService = readingProgressService;
         _appState = appState;
         _dialogService = dialogService;
+    }
+
+    public void SetParameters(int bookId, int? chapterNumber = null)
+    {
         _bookId = bookId;
         _chapterNumber = chapterNumber;
     }
@@ -92,9 +94,7 @@ public sealed class ReaderViewModel : ViewModelBase
                 ChapterText = value?.Text ?? string.Empty;
 
                 if (!_suppressProgressSaving)
-                {
                     _ = SaveProgressAsync();
-                }
             }
         }
     }
@@ -120,9 +120,7 @@ public sealed class ReaderViewModel : ViewModelBase
 
             Chapters.Clear();
             foreach (var chapter in session.Chapters)
-            {
                 Chapters.Add(chapter);
-            }
 
             _suppressProgressSaving = true;
             SelectedChapter = session.CurrentChapter;
@@ -160,9 +158,7 @@ public sealed class ReaderViewModel : ViewModelBase
         var chapter = Chapters.FirstOrDefault(x => x.ChapterId == progress.ChapterId);
 
         if (chapter is not null)
-        {
             SelectedChapter = chapter;
-        }
     }
 
     private async Task SaveProgressAsync()

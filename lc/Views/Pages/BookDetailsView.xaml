@@ -236,14 +236,9 @@
                                    FontSize="22"
                                    FontWeight="SemiBold"
                                    TextWrapping="Wrap"/>
-
-                        <!--<Button Grid.Column="1"
-                                Content="Назад"
-                                Style="{DynamicResource SecondaryButtonStyle}"
-                                Command="{Binding BackCommand}"/>-->
                     </Grid>
 
-                    <StackPanel Orientation="Horizontal" Margin="0,4" VerticalAlignment="Top">
+                    <WrapPanel Orientation="Horizontal" Margin="0,4" VerticalAlignment="Top">
                         <ItemsControl ItemsSource="{Binding Categories}">
                             <ItemsControl.ItemsPanel>
                                 <ItemsPanelTemplate>
@@ -273,7 +268,7 @@
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
                         </ItemsControl>
-                    </StackPanel>
+                    </WrapPanel>
 
                     <Border Style="{DynamicResource InfoCardStyle}">
                         <StackPanel>

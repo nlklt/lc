@@ -3,48 +3,96 @@
   "WorkspaceRootPath": "D:\\eLibCloud\\lc\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\pages\\bookdetailsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\bookdetailsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\interfaces\\iauthorrequestrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\iauthorrequestrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\authorrequestrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\authorrequestrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\windows\\readerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\readerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\authorrequestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\authorrequestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\adminauthorrequestsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\adminauthorrequestsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\interfaces\\iauthorrequestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\iauthorrequestservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\controls\\adminauthorrequestsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\adminauthorrequestsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\profileviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\helpers\\continuereadingitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\helpers\\continuereadingitemdto.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\profileview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\readinghistoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\readinghistoryrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\controls\\adminauthorrequestsview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\controls\\adminauthorrequestsview.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\readingprogressrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\readingprogressrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\catalogview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\windows\\readerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\readerwindow.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\readerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\readerviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
       "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\readerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\readerservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\interfaces\\ireadingprogressrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\ireadingprogressrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\readingprogressrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\readingprogressrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\readingprogressservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\readingprogressservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\interfaces\\ireadingprogressservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\ireadingprogressservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\windowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\windowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\pages\\bookdetailsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\pages\\bookdetailsview.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\userlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\userlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\interfaces\\iuserlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\interfaces\\iuserlibraryservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\userlibrarylistbookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\userlibrarylistbookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\data\\repositories\\interfaces\\iuserlibrarylistbookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\data\\repositories\\interfaces\\iuserlibrarylistbookrepository.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
   ],
   "DocumentGroupContainers": [
@@ -54,8 +102,60 @@
       "DocumentGroups": [
         {
           "DockedWidth": 1597,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 0,
           "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "IAuthorRequestRepository.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\Interfaces\\IAuthorRequestRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IAuthorRequestRepository.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\Interfaces\\IAuthorRequestRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IAuthorRequestRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAAAAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T17:33:26.126Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "AuthorRequestRepository.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\AuthorRequestRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\AuthorRequestRepository.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\AuthorRequestRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\AuthorRequestRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAgAAABGAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T17:33:10.591Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 4,
+              "Title": "IAuthorRequestService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\Interfaces\\IAuthorRequestService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IAuthorRequestService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\Interfaces\\IAuthorRequestService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IAuthorRequestService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAnAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T17:32:38.693Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "AuthorRequestService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\AuthorRequestService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\AuthorRequestService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\AuthorRequestService.cs",
+              "RelativeToolTip": "lc\\Services\\AuthorRequestService.cs",
+              "ViewState": "AgIAABwAAAAAAAAAAAAewDIAAAAFAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T17:32:22.887Z",
+              "EditorCaption": ""
+            },
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{3ae79031-e1bc-11d0-8f78-00a0c9110057}"
@@ -65,143 +165,250 @@
               "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
             },
             {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{6324226f-61b6-4f28-92ee-18d4b5fe1e48}"
+            },
+            {
               "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "BookDetailsViewModel.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\BookDetailsViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\BookDetailsViewModel.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\BookDetailsViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\BookDetailsViewModel.cs",
-              "ViewState": "AgIAAPkAAAAAAAAAAAAQwAIBAABxAAAAAAAAAA==",
+              "DocumentIndex": 8,
+              "Title": "AdminAuthorRequestsView.xaml.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Controls\\AdminAuthorRequestsView.xaml.cs",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\AdminAuthorRequestsView.xaml.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Controls\\AdminAuthorRequestsView.xaml.cs",
+              "RelativeToolTip": "lc\\Views\\Controls\\AdminAuthorRequestsView.xaml.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAABIAAAA+AAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T07:02:22.694Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 0,
-              "Title": "BookDetailsView.xaml",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\BookDetailsView.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Pages\\BookDetailsView.xaml",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\BookDetailsView.xaml",
-              "RelativeToolTip": "lc\\Views\\Pages\\BookDetailsView.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-16T07:00:28.464Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "ReaderWindow.xaml",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\ReaderWindow.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Windows\\ReaderWindow.xaml",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\ReaderWindow.xaml",
-              "RelativeToolTip": "lc\\Views\\Windows\\ReaderWindow.xaml",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-16T07:00:10.983Z",
+              "WhenOpened": "2026-05-17T16:08:29.001Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 5,
-              "Title": "ContinueReadingItemDto.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Helpers\\ContinueReadingItemDto.cs",
-              "RelativeDocumentMoniker": "lc\\Helpers\\ContinueReadingItemDto.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Helpers\\ContinueReadingItemDto.cs",
-              "RelativeToolTip": "lc\\Helpers\\ContinueReadingItemDto.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T06:38:18.055Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "ReaderService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\ReaderService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\ReaderService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\ReaderService.cs",
-              "RelativeToolTip": "lc\\Services\\ReaderService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAADEAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T05:50:32.845Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "ReadingProgressRepository.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\ReadingProgressRepository.cs",
-              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\ReadingProgressRepository.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\ReadingProgressRepository.cs",
-              "RelativeToolTip": "lc\\Data\\Repositories\\ReadingProgressRepository.cs",
-              "ViewState": "AgIAABkAAAAAAAAAAAAUwFIAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T05:50:48.021Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "ReadingHistoryRepository.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\ReadingHistoryRepository.cs",
-              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\ReadingHistoryRepository.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\ReadingHistoryRepository.cs",
-              "RelativeToolTip": "lc\\Data\\Repositories\\ReadingHistoryRepository.cs",
-              "ViewState": "AgIAABcAAAAAAAAAAADwvxsAAAAbAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T05:50:55.981Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 9,
-              "Title": "ReadingProgressService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\ReadingProgressService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\ReadingProgressService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\ReadingProgressService.cs",
-              "RelativeToolTip": "lc\\Services\\ReadingProgressService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACwAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T05:50:23.447Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "ProfileViewModel.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ProfileViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\ProfileViewModel.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ProfileViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\ProfileViewModel.cs",
-              "ViewState": "AgIAAIECAAAAAAAAAAAAAJECAAA6AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T06:35:39.309Z",
+              "Title": "AdminAuthorRequestsView.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Controls\\AdminAuthorRequestsView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Controls\\AdminAuthorRequestsView.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Controls\\AdminAuthorRequestsView.xaml",
+              "RelativeToolTip": "lc\\Views\\Controls\\AdminAuthorRequestsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-17T16:05:39.536Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 3,
+              "Title": "AdminAuthorRequestsViewModel.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\AdminAuthorRequestsViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\AdminAuthorRequestsViewModel.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\AdminAuthorRequestsViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\AdminAuthorRequestsViewModel.cs",
+              "ViewState": "AgIAAGwAAAAAAAAAAAApwIIAAAANAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T15:59:02.981Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 9,
+              "Title": "CatalogView.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\CatalogView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Pages\\CatalogView.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\CatalogView.xaml",
+              "RelativeToolTip": "lc\\Views\\Pages\\CatalogView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-17T15:51:20.988Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 7,
               "Title": "ProfileView.xaml",
               "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\ProfileView.xaml",
               "RelativeDocumentMoniker": "lc\\Views\\Pages\\ProfileView.xaml",
               "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\ProfileView.xaml",
               "RelativeToolTip": "lc\\Views\\Pages\\ProfileView.xaml",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-16T06:34:09.108Z",
+              "WhenOpened": "2026-05-17T15:44:39.708Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
               "DocumentIndex": 10,
-              "Title": "IReadingProgressService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\Interfaces\\IReadingProgressService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IReadingProgressService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\Interfaces\\IReadingProgressService.cs",
-              "RelativeToolTip": "lc\\Services\\Interfaces\\IReadingProgressService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAoAAAAcAAAAAAAAAA==",
+              "Title": "ReaderWindow.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\ReaderWindow.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Windows\\ReaderWindow.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\ReaderWindow.xaml",
+              "RelativeToolTip": "lc\\Views\\Windows\\ReaderWindow.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-17T15:04:49.052Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 12,
+              "Title": "BookDetailsViewModel.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\BookDetailsViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\BookDetailsViewModel.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\BookDetailsViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\BookDetailsViewModel.cs",
+              "ViewState": "AgIAAB0BAAAAAAAAAAAAwG4CAAAqAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-16T05:55:05.282Z"
+              "WhenOpened": "2026-05-17T13:26:12.4Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 6,
+              "Title": "ProfileViewModel.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ProfileViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\ProfileViewModel.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ProfileViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\ProfileViewModel.cs",
+              "ViewState": "AgIAAFYEAAAAAAAAAAAcwFwEAAAsAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:09:21.613Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 13,
+              "Title": "ReaderService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\ReaderService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\ReaderService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\ReaderService.cs",
+              "RelativeToolTip": "lc\\Services\\ReaderService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAEcAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:15:43.506Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 11,
+              "Title": "ReaderViewModel.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ReaderViewModel.cs",
+              "RelativeDocumentMoniker": "lc\\ViewModels\\ReaderViewModel.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\ReaderViewModel.cs",
+              "RelativeToolTip": "lc\\ViewModels\\ReaderViewModel.cs",
+              "ViewState": "AgIAAB8AAAAAAAAAAAArwCEAAAAbAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:15:00.762Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 14,
+              "Title": "IReadingProgressRepository.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\Interfaces\\IReadingProgressRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IReadingProgressRepository.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\Interfaces\\IReadingProgressRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IReadingProgressRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAkAAABKAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:55:24.882Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 15,
+              "Title": "ReadingProgressRepository.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\ReadingProgressRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\ReadingProgressRepository.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\ReadingProgressRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\ReadingProgressRepository.cs",
+              "ViewState": "AgIAAAgAAAAAAAAAAAAxwBgAAABSAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:55:19.021Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 16,
+              "Title": "ReadingProgressService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\ReadingProgressService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\ReadingProgressService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\ReadingProgressService.cs",
+              "RelativeToolTip": "lc\\Services\\ReadingProgressService.cs",
+              "ViewState": "AgIAABUAAAAAAAAAAAAowAkAAAAvAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:15:51.992Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 17,
+              "Title": "WindowService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\WindowService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\WindowService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\WindowService.cs",
+              "RelativeToolTip": "lc\\Services\\WindowService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T14:15:09.119Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 18,
+              "Title": "BookDetailsView.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\BookDetailsView.xaml",
+              "RelativeDocumentMoniker": "lc\\Views\\Pages\\BookDetailsView.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Pages\\BookDetailsView.xaml",
+              "RelativeToolTip": "lc\\Views\\Pages\\BookDetailsView.xaml",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
+              "WhenOpened": "2026-05-17T14:03:39.441Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 20,
+              "Title": "IUserLibraryService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "RelativeToolTip": "lc\\Services\\Interfaces\\IUserLibraryService.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAwAAAATAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T13:46:49.332Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 21,
+              "Title": "UserLibraryListBookRepository.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\UserLibraryListBookRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\UserLibraryListBookRepository.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\UserLibraryListBookRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\UserLibraryListBookRepository.cs",
+              "ViewState": "AgIAAC8AAAAAAAAAAAAqwDwAAAAaAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T13:44:36.015Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 22,
+              "Title": "IUserLibraryListBookRepository.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\Interfaces\\IUserLibraryListBookRepository.cs",
+              "RelativeDocumentMoniker": "lc\\Data\\Repositories\\Interfaces\\IUserLibraryListBookRepository.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Data\\Repositories\\Interfaces\\IUserLibraryListBookRepository.cs",
+              "RelativeToolTip": "lc\\Data\\Repositories\\Interfaces\\IUserLibraryListBookRepository.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAqwAwAAAABAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T13:44:12.949Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 19,
+              "Title": "UserLibraryService.cs",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\UserLibraryService.cs",
+              "RelativeDocumentMoniker": "lc\\Services\\UserLibraryService.cs",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\UserLibraryService.cs",
+              "RelativeToolTip": "lc\\Services\\UserLibraryService.cs",
+              "ViewState": "AgIAABAAAAAAAAAAAAAgwCQAAABMAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-05-17T13:27:39.958Z",
+              "EditorCaption": ""
             }
           ]
         },

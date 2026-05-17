@@ -142,6 +142,14 @@
 
                 <StackPanel>
 
+                    <Button Style="{DynamicResource NavButtonStyle}"
+                        Command="{Binding LogoutCommand}">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text=" :3 " Style="{DynamicResource IconTextStyle}" />
+                            <TextBlock Text="Бокавая панель" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+
                     <TextBlock Text="ОСНОВНОЕ" 
                                Style="{DynamicResource SectionTextStyle}" />
 
@@ -172,21 +180,12 @@
                             <TextBlock Text="Каталог" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
-                    
+
                     <Button Style="{DynamicResource NavButtonStyle}"
                             Command="{Binding RandomBookCommand}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="🎲" Style="{DynamicResource IconTextStyle}" />
                             <TextBlock Text="Рандомная книга" VerticalAlignment="Center" />
-                        </StackPanel>
-                    </Button>
-
-                    <Button Style="{DynamicResource NavButtonStyle}"
-                            Command="{Binding BecomeAuthorCommand}"
-                            Visibility="{Binding IsReader, Converter={StaticResource BoolToVisibilityConverter}}">
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="🌟" Style="{DynamicResource IconTextStyle}" />
-                            <TextBlock Text="Стать автором" VerticalAlignment="Center" />
                         </StackPanel>
                     </Button>
 
@@ -201,13 +200,6 @@
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="✍️" Style="{DynamicResource IconTextStyle}" />
                                 <TextBlock Text="Создать книгу" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-
-                        <Button Style="{DynamicResource NavButtonStyle}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📝" Style="{DynamicResource IconTextStyle}" />
-                                <TextBlock Text="Черновики" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
 
@@ -230,13 +222,7 @@
                                 <TextBlock Text="Таблица пользователей" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
-
-                        <Button Style="{DynamicResource NavButtonStyle}">
-                            <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="📄" Style="{DynamicResource IconTextStyle}" />
-                                <TextBlock Text="Запросы пользователей" VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
+                        
                     </StackPanel>
                 </StackPanel>
             </ScrollViewer>
@@ -249,16 +235,6 @@
                     <StackPanel Orientation="Horizontal">
                         <TextBlock Text="⚙" Style="{DynamicResource IconTextStyle}" />
                         <TextBlock Text="Настройки" VerticalAlignment="Center"/>
-                    </StackPanel>
-                </Button>
-
-                <Button Style="{DynamicResource NavButtonStyle}"
-                        Command="{Binding LogoutCommand}"
-                        Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
-                    <StackPanel Orientation="Horizontal" Margin="60,0,0,0">
-                        <TextBlock Text="⋆༺𓆩☠︎𓆪༻⋆"
-                                   VerticalAlignment="Center"
-                                   Foreground="{DynamicResource WarningFrontBrush}"/>
                     </StackPanel>
                 </Button>
             </StackPanel>

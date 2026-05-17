@@ -66,7 +66,7 @@
 
     <Style x:Key="CaptionButtonStyle" TargetType="Button">
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Foreground" Value="{DynamicResource TextPrimaryBrush}"/>
+        <Setter Property="Foreground" Value="{DynamicResource TextInverseBrush}"/>
         <Setter Property="Width" Value="46"/>
         <Setter Property="WindowChrome.IsHitTestVisibleInChrome" Value="True"/>
         <Setter Property="Template">
@@ -80,7 +80,7 @@
         </Setter>
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
-                <Setter Property="Background" Value="{DynamicResource TextInverseBrush}"/>
+                <Setter Property="Background" Value="{DynamicResource SecondaryHoverBrush}"/>
             </Trigger>
         </Style.Triggers>
     </Style>
@@ -89,7 +89,6 @@
         <Style.Triggers>
             <Trigger Property="IsMouseOver" Value="True">
                 <Setter Property="Background" Value="{DynamicResource ErrorBrush}"/>
-                <Setter Property="Foreground" Value="White"/>
             </Trigger>
         </Style.Triggers>
     </Style>

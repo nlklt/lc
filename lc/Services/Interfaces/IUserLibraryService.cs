@@ -10,7 +10,7 @@ namespace lc.Services.Interfaces
         Task DeleteListAsync(int listId);
 
         Task<IReadOnlyList<BookListItemDto>> GetBooksFromListAsync(int listId);
-        Task AddBookToListAsync(int listId, int bookId);
+        Task<bool> AddBookToListAsync(int listId, int bookId);
         Task RemoveBookFromListAsync(int listId, int bookId);
 
         Task<bool> IsBookInLibraryAsync(int bookId);

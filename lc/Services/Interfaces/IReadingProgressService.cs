@@ -12,4 +12,5 @@ public interface IReadingProgressService
         int lastPosition);
 
     Task<ReadingProgress?> GetLastBookProgressAsync(int userId, int bookId);
+    Task MarkBookOpenedAsync(int userId, int bookId);
 }

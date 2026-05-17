@@ -97,12 +97,23 @@
 
                     <Border Style="{DynamicResource InfoCardStyle}" Margin="0,4,0,4">
                         <StackPanel>
-                            <Button Content="{Binding LibraryButtonText}"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Command="{Binding ToggleLibraryCommand}"
-                                    Margin="0,0,0,4"
-                                    Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                            <Grid Margin="0,0,0,4"
+                                        Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}" >
+                                <TextBlock Text="Добавить в библиотеку" Panel.ZIndex="999"
+                                           Margin="4,4,0,6" Style="{DynamicResource BaseTextBlockStyle}"
+                                           IsEnabled="False"
+                                           IsHitTestVisible="False"
+                                           FontWeight="SemiBold"/>
 
+                                <ComboBox ItemsSource="{Binding LibraryLists}"
+                                          DisplayMemberPath="Name"
+                                          SelectedValuePath="ListId"
+                                          Style="{DynamicResource ComboBoxBaseStyle}"
+                                          SelectedValue="{Binding SelectedLibraryListId, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                          IsEnabled="{Binding CanChooseLibrary}"
+                                          MinWidth="240"/>
+                            </Grid>
+                            
                             <Button Content="{Binding ReadButtonText}"
                                     Style="{DynamicResource PrimaryButtonStyle}"
                                     Command="{Binding StartReadingCommand}"

@@ -115,7 +115,7 @@
 
                                             <Setter Property="Background">
                                                 <Setter.Value>
-                                                    <ImageBrush ImageSource="{Binding CoverPath}"
+                                                    <ImageBrush ImageSource="{Binding CoverImagePath}"
                                                                 Stretch="UniformToFill"/>
                                                 </Setter.Value>
                                             </Setter>

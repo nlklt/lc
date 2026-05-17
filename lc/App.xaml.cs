@@ -78,6 +78,8 @@ public partial class App : Application
 
         services.AddScoped<IReadingHistoryRepository, ReadingHistoryRepository>();
         services.AddScoped<IReadingProgressRepository, ReadingProgressRepository>();
+        
+        services.AddScoped<IAuthorRequestRepository, AuthorRequestRepository>();
 
         services.AddScoped<IAuthService, AuthService>();
         services.AddScoped<IBookService, BookService>();
@@ -95,6 +97,8 @@ public partial class App : Application
         services.AddSingleton<ILocalizationService, LocalizationService>();
         services.AddSingleton<IDialogService, DialogService>();
         services.AddSingleton<IWindowService, WindowService>();
+
+        services.AddScoped<IAuthorRequestService, AuthorRequestService>();
 
         services.AddTransient<MainViewModel>();
         services.AddTransient<LoginViewModel>();

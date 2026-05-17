@@ -29,7 +29,9 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     private readonly IUserLibraryService _userLibraryService;
     private readonly IWindowService _windowService;
     private readonly IReadingProgressService _readingProgressService;
+
     private readonly SemaphoreSlim _loadGate = new(1, 1);
+    private readonly SemaphoreSlim _libraryGate = new(1, 1);
     private int _loadVersion;
     private bool _isDisposed;
 
@@ -40,6 +42,10 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     private int _publishedChaptersCount;
     private string _newCommentText = string.Empty;
     private string _errorMessage = string.Empty;
+
+    private bool _isLibraryActionInProgress;
+    private int? _selectedLibraryListId;
+    private bool _suppressLibrarySelection;
 
     public BookDetailsViewModel(
     int bookId,
@@ -104,7 +110,9 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     public ObservableCollection<string> Tags { get; } = [];
     public ObservableCollection<string> Categories { get; } = [];
     public ObservableCollection<Comment> Comments { get; } = [];
-    public ObservableCollection<ChapterItem> Chapters { get; } = [];
+    public ObservableCollection<ChapterItem> Chapters { get; } = []; 
+    public ObservableCollection<UserLibraryListDto> LibraryLists { get; } = [];
+
 
     public string NewCommentText
     {
@@ -175,6 +183,29 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         }
     }
 
+    public int? SelectedLibraryListId
+    {
+        get => _selectedLibraryListId;
+        set
+        {
+            if (!SetProperty(ref _selectedLibraryListId, value))
+                return;
+
+            if (!_suppressLibrarySelection && value.HasValue && value.Value > 0)
+                _ = AddToSelectedLibraryListAsync(value.Value);
+        }
+    }
+
+    public bool IsLibraryActionInProgress
+    {
+        get => _isLibraryActionInProgress;
+        private set
+        {
+            if (SetProperty(ref _isLibraryActionInProgress, value))
+                OnPropertyChanged(nameof(CanChooseLibrary));
+        }
+    }
+
     public bool IsAuthenticated => _appState.IsAuthenticated;
     public bool IsAdmin => _appState.IsAdmin;
     public bool IsWriter => _appState.IsWriter;
@@ -237,6 +268,11 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         Book is not null &&
         !IsLoading &&
         (IsOwner || IsAdmin);
+
+    public bool CanChooseLibrary =>
+        CanToggleLibraryActions &&
+        !IsLibraryActionInProgress &&
+        LibraryLists.Count > 0;
 
     public string Title => Book?.Title ?? "Без названия";
     public string AuthorName => $"Автор: {Book?.AuthorName ?? "Не указан"}";
@@ -377,6 +413,16 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
                 IsInLibrary = false;
             }
 
+            try
+            {
+                await ReloadLibraryStateAsync();
+            }
+            catch
+            {
+                LibraryLists.Clear();
+                IsInLibrary = false;
+            }
+
             RaiseBookDependentProperties();
         }
         catch
@@ -456,6 +502,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(SymbolsCountText));
         OnPropertyChanged(nameof(LibraryButtonText));
         OnPropertyChanged(nameof(ReadButtonText));
+        OnPropertyChanged(nameof(CanChooseLibrary));
 
         RaiseCommandStates();
     }
@@ -497,6 +544,80 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
         if (DeleteChapterCommand is AsyncRelayCommand deleteChapter)
             deleteChapter.RaiseCanExecuteChanged();
+    }
+
+    private async Task ReloadLibraryStateAsync()
+    {
+        if (_isDisposed || Book is null)
+            return;
+
+        var lists = IsAuthenticated
+            ? await _userLibraryService.GetListsAsync()
+            : [];
+
+        LibraryLists.Clear();
+        foreach (var list in lists)
+        {
+            if (list.ListId > 0 && !string.IsNullOrWhiteSpace(list.Name))
+                LibraryLists.Add(list);
+        }
+
+        IsInLibrary = IsAuthenticated
+            ? await _userLibraryService.IsBookInLibraryAsync(Book.BookId)
+            : false;
+
+        OnPropertyChanged(nameof(CanChooseLibrary));
+    }
+
+    private async Task AddToSelectedLibraryListAsync(int listId)
+    {
+        if (!CanToggleLibraryActions || Book is null || listId <= 0)
+            return;
+
+        if (!LibraryLists.Any(x => x.ListId == listId))
+        {
+            await _dialogService.ShowMessageAsync("Ошибка", "Список не найден.");
+            ResetSelectedLibrarySelection();
+            return;
+        }
+
+        await _libraryGate.WaitAsync();
+        try
+        {
+            IsLibraryActionInProgress = true;
+
+            var added = await _userLibraryService.AddBookToListAsync(listId, Book.BookId);
+
+            await ReloadLibraryStateAsync();
+
+            if (added)
+                await _dialogService.ShowMessageAsync("Готово", "Книга добавлена в список.");
+            else
+                await _dialogService.ShowMessageAsync("Готово", "Книга уже есть в этом списке.");
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+        }
+        finally
+        {
+            IsLibraryActionInProgress = false;
+            ResetSelectedLibrarySelection();
+            _libraryGate.Release();
+        }
+    }
+
+    private void ResetSelectedLibrarySelection()
+    {
+        try
+        {
+            _suppressLibrarySelection = true;
+            SelectedLibraryListId = null;
+        }
+        finally
+        {
+            _suppressLibrarySelection = false;
+        }
     }
 
     private async Task StartReadingAsync()
@@ -562,26 +683,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
     private async Task ToggleLibraryAsync()
     {
-        //if (!CanToggleLibraryActions || Book is null)
-        //    return;
-
-        //try
-        //{
-        //    if (IsInLibrary)
-        //    {
-        //        await _userLibraryService.RemoveFromLibraryAsync(Book.BookId);
-        //        IsInLibrary = false;
-        //    }
-        //    else
-        //    {
-        //        await _userLibraryService.AddToLibraryAsync(Book.BookId);
-        //        IsInLibrary = true;
-        //    }
-        //}
-        //catch
-        //{
-        //    await _dialogService.ShowMessageAsync("Ошибка", "Не удалось изменить список.");
-        //}
+        //!!! Заменить на добавление в какой-то личный список
     }
 
     private async Task AddCommentAsync()
@@ -814,6 +916,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         _isDisposed = true;
         _appState.PropertyChanged -= OnAppStatePropertyChanged;
         _loadGate.Dispose();
+        _libraryGate.Dispose();
     }
 
     public sealed class ChapterItem

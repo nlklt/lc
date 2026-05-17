@@ -12,7 +12,7 @@ public sealed class ReadingProgressRepository : IReadingProgressRepository
 
     public ReadingProgressRepository(AppDbContext db)
     {
-        _db = db;
+        _db = db ?? throw new ArgumentNullException(nameof(db));
     }
 
     public async Task<ReadingProgress?> GetAsync(int userId, int chapterId)
@@ -20,6 +20,15 @@ public sealed class ReadingProgressRepository : IReadingProgressRepository
         return await _db.ReadingProgresses
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.UserId == userId && x.ChapterId == chapterId);
+    }
+
+    public async Task<ReadingProgress?> GetLastByBookAsync(int userId, int bookId)
+    {
+        return await _db.ReadingProgresses
+            .AsNoTracking()
+            .Where(x => x.UserId == userId && x.BookId == bookId)
+            .OrderByDescending(x => x.UpdatedAt)
+            .FirstOrDefaultAsync();
     }
 
     public async Task<IReadOnlyList<ReadingProgress>> GetByUserIdAsync(int userId)
@@ -46,6 +55,15 @@ public sealed class ReadingProgressRepository : IReadingProgressRepository
     {
         ArgumentNullException.ThrowIfNull(progress);
 
+        if (progress.UserId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(progress.UserId));
+
+        if (progress.BookId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(progress.BookId));
+
+        if (progress.ChapterId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(progress.ChapterId));
+
         if (progress.ProgressPercent is < 0 or > 100)
             throw new ArgumentOutOfRangeException(nameof(progress.ProgressPercent), "ProgressPercent должен быть в диапазоне от 0 до 100.");
 
@@ -61,12 +79,31 @@ public sealed class ReadingProgressRepository : IReadingProgressRepository
         }
         else
         {
+            existing.BookId = progress.BookId;
             existing.ProgressPercent = progress.ProgressPercent;
             existing.LastPosition = progress.LastPosition;
             existing.UpdatedAt = DateTime.Now;
         }
 
-        await _db.SaveChangesAsync();
+        try
+        {
+            await _db.SaveChangesAsync();
+        }
+        catch (DbUpdateException)
+        {
+            var raceWinner = await _db.ReadingProgresses
+                .FirstOrDefaultAsync(x => x.UserId == progress.UserId && x.ChapterId == progress.ChapterId);
+
+            if (raceWinner is null)
+                throw;
+
+            raceWinner.BookId = progress.BookId;
+            raceWinner.ProgressPercent = progress.ProgressPercent;
+            raceWinner.LastPosition = progress.LastPosition;
+            raceWinner.UpdatedAt = DateTime.Now;
+
+            await _db.SaveChangesAsync();
+        }
     }
 
     public async Task DeleteAsync(int userId, int chapterId)

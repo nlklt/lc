@@ -77,6 +77,9 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
         if (list is null)
             return;
 
+        if (IsProtectedList(list.Name))
+            throw new InvalidOperationException("Системный список нельзя переименовать.");
+
         list.Name = NormalizeName(name);
         await _db.SaveChangesAsync();
     }
@@ -89,21 +92,25 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
         if (list is null)
             return;
 
+        if (IsProtectedList(list.Name))
+            throw new InvalidOperationException("Системный список нельзя удалить.");
+
         _db.UserLibraryLists.Remove(list);
         await _db.SaveChangesAsync();
     }
 
     public async Task EnsureDefaultListsAsync(int userId)
     {
-        var existingNames = await _db.UserLibraryLists
+        var existingNames = (await _db.UserLibraryLists
             .AsNoTracking()
             .Where(x => x.UserId == userId)
             .Select(x => x.Name)
-            .ToListAsync();
+            .ToListAsync())
+            .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         foreach (var name in DefaultListNames)
         {
-            if (existingNames.Any(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase)))
+            if (existingNames.Contains(name))
                 continue;
 
             _db.UserLibraryLists.Add(new UserLibraryList
@@ -118,8 +125,12 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
 
     private static string NormalizeName(string name)
     {
-        return string.IsNullOrWhiteSpace(name)
-            ? "Без названия"
-            : name.Trim();
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException("Название списка не может быть пустым.", nameof(name));
+
+        return name.Trim();
     }
+
+    private static bool IsProtectedList(string name)
+        => DefaultListNames.Any(x => string.Equals(x, name, StringComparison.OrdinalIgnoreCase));
 }

@@ -1,5 +1,6 @@
 ﻿using lc.Data.Repositories.Interfaces;
-using lc.Infrastructure.Repositories.Abstractions;
+using lc.Helpers;
+using lc.Infrastructure;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services.Interfaces;
@@ -9,14 +10,24 @@ namespace lc.Services;
 public sealed class ReaderService : IReaderService
 {
     private readonly IBookRepository _bookRepository;
+    private readonly AppState _appState;
+    private readonly IReadingProgressService _readingProgressService;
 
-    public ReaderService(IBookRepository bookRepository)
+    public ReaderService(
+        IBookRepository bookRepository,
+        AppState appState,
+        IReadingProgressService readingProgressService)
     {
         _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
+        _appState = appState ?? throw new ArgumentNullException(nameof(appState));
+        _readingProgressService = readingProgressService ?? throw new ArgumentNullException(nameof(readingProgressService));
     }
 
     public async Task<ReaderSession?> OpenAsync(int bookId, int? chapterNumber = null)
     {
+        if (bookId <= 0)
+            throw new ArgumentOutOfRangeException(nameof(bookId));
+
         var book = await _bookRepository.GetByIdAsync(bookId, includeChapters: true);
         if (book is null)
             return null;
@@ -32,9 +43,20 @@ public sealed class ReaderService : IReaderService
         if (chapters.Count == 0)
             throw new InvalidOperationException("У книги нет опубликованных глав.");
 
-        var currentChapter = chapterNumber.HasValue
-            ? chapters.FirstOrDefault(c => c.ChapterNumber == chapterNumber.Value) ?? chapters[0]
-            : chapters[0];
+        Chapter? currentChapter = null;
+
+        if (chapterNumber.HasValue)
+        {
+            currentChapter = chapters.FirstOrDefault(c => c.ChapterNumber == chapterNumber.Value);
+        }
+        else if (_appState.CurrentUser is not null)
+        {
+            var progress = await _readingProgressService.GetLastBookProgressAsync(_appState.CurrentUser.UserId, bookId);
+            if (progress is not null)
+                currentChapter = chapters.FirstOrDefault(c => c.ChapterId == progress.ChapterId);
+        }
+
+        currentChapter ??= chapters[0];
 
         var index = chapters.FindIndex(c => c.ChapterId == currentChapter.ChapterId);
 

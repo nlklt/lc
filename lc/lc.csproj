@@ -10,20 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Include=".Drafts\Filter.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Content Include="Data\Images\Logo\lc_logo.ico" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include=".Scripts\" />
     <Folder Include="Data\Images\Avatars\" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <None Include=".Scripts\ls.sql" />
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +31,21 @@
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="10.0.8" />
     <PackageReference Include="Microsoft.Office.Interop.Excel" Version="16.0.18925.20022" />
     <PackageReference Include="System.Runtime.Extensions" Version="4.3.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
   </ItemGroup>
 
 </Project>

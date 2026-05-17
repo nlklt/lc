@@ -37,29 +37,17 @@ public sealed class UserLibraryService : IUserLibraryService
     public Task<IReadOnlyList<BookListItemDto>> GetBooksFromListAsync(int listId)
         => _listBookRepository.GetBooksAsync(CurrentUserId, listId);
 
-    public Task AddBookToListAsync(int listId, int bookId)
+    public Task<bool> AddBookToListAsync(int listId, int bookId)
         => _listBookRepository.AddBookAsync(CurrentUserId, listId, bookId);
 
     public Task RemoveBookFromListAsync(int listId, int bookId)
         => _listBookRepository.RemoveBookAsync(CurrentUserId, listId, bookId);
 
-    public async Task<bool> IsBookInLibraryAsync(int bookId)
-    {
-        var lists = await _listRepository.GetListsAsync(CurrentUserId);
+    public Task<bool> IsBookInLibraryAsync(int bookId)
+        => _listBookRepository.ExistsInAnyListAsync(CurrentUserId, bookId);
 
-        foreach (var list in lists)
-        {
-            if (await _listBookRepository.ExistsAsync(CurrentUserId, list.ListId, bookId))
-                return true;
-        }
-
-        return false;
-    }
-
-    public async Task EnsureDefaultListsAsync()
-    {
-        await _listRepository.EnsureDefaultListsAsync(CurrentUserId);
-    }
+    public Task EnsureDefaultListsAsync()
+        => _listRepository.EnsureDefaultListsAsync(CurrentUserId);
 
     private int CurrentUserId =>
         _appState.CurrentUser?.UserId

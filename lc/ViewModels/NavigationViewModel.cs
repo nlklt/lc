@@ -17,8 +17,6 @@ namespace lc.ViewModels
         private readonly IAuthService           _auth;
         private readonly IDialogService         _dialog;
         private readonly INavigationService     _navigation;
-        private readonly IThemeService          _themeService;
-        private readonly ILocalizationService   _localizationService;
         private readonly IBookService           _bookService;
 
         public bool IsGuest =>          _appState.IsGuest;
@@ -27,9 +25,11 @@ namespace lc.ViewModels
         public bool IsReader =>         _appState.IsReader;
         public bool IsAuthenticated =>  _appState.IsAuthenticated;
 
+        public bool CanRequestAuthorRole =>  _appState.CanRequestAuthorRole;
+
+        public string AvatarPath =>         _appState.CurrentUser?.AvatarPath ?? string.Empty;
         public string CurrentUserName =>    _appState.CurrentUser?.UserName ?? "Гость";
         public UserRole CurrentUserRole =>  _appState.CurrentUser?.Role ?? UserRole.Guest;
-        public string AvatarPath =>         _appState.CurrentUser?.AvatarPath ?? string.Empty;
 
         // Гость 4/4
         public ICommand NavigateRegisterCommand { get; }
@@ -54,16 +54,12 @@ namespace lc.ViewModels
             IAuthService auth,
             IDialogService dialog,
             INavigationService navigation,
-            IThemeService themeService,
-            ILocalizationService localizationService,
             IBookService bookService)
         {
             _appState               = appState ?? throw new ArgumentNullException(nameof(appState));
             _auth                   = auth ?? throw new ArgumentNullException(nameof(auth));
             _dialog                 = dialog ?? throw new ArgumentNullException(nameof(dialog));
             _navigation             = navigation ?? throw new ArgumentNullException(nameof(navigation));
-            _themeService           = themeService ?? throw new ArgumentNullException(nameof(themeService));
-            _localizationService    = localizationService ?? throw new ArgumentNullException(nameof(localizationService));
             _bookService            = bookService ?? throw new ArgumentNullException(nameof(bookService));
 
             NavigateLoginCommand    = new RelayCommand(_ => _dialog.ShowLoginDialog());
@@ -74,18 +70,6 @@ namespace lc.ViewModels
             NavigateProfileCommand      = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
             NavigateSettingsCommand     = new RelayCommand(_ => _navigation.NavigateTo <ProfileViewModel>(true));
             LogoutCommand               = new RelayCommand(_ => Logout());
-            BecomeAuthorCommand         = new RelayCommand(_ =>
-            {
-                if (IsWriter || IsAdmin)
-                {
-                    _navigation.NavigateTo<EditBookViewModel>();
-                    return;
-                }
-
-                _ = _dialog.ShowMessageAsync(
-                    "Стать автором",
-                    "Запрос на повышение роли пока не реализован. Эта кнопка может вести на будущую форму заявки.");
-            });
 
             NavigateCreateBookCommand = new RelayCommand(_ =>
             {
@@ -137,9 +121,12 @@ namespace lc.ViewModels
                 OnPropertyChanged(nameof(IsAdmin));
                 OnPropertyChanged(nameof(IsReader));
                 OnPropertyChanged(nameof(IsAuthenticated));
+
+                OnPropertyChanged(nameof(CanRequestAuthorRole));
+
+                OnPropertyChanged(nameof(AvatarPath));
                 OnPropertyChanged(nameof(CurrentUserName));
                 OnPropertyChanged(nameof(CurrentUserRole));
-                OnPropertyChanged(nameof(AvatarPath));
             }
         }
     }

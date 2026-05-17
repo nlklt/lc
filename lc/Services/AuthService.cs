@@ -57,17 +57,19 @@ public sealed class AuthService : IAuthService
 
     public Task ApplyUserSettingsAsync(User user)
     {
-        _appState.CurrentLanguage = user.PreferredLanguage;
-        _appState.CurrentTheme = user.PreferredTheme;
+        _appState.CurrentUser = null;
+        _appState.CurrentLanguage = Language.Русский;
+        _appState.CurrentTheme = "Dark";
+        _appState.RefreshCurrentUser();
         return Task.CompletedTask;
     }
 
     public void Logout()
     {
-        _appState.CurrentUser = null;
         _appState.SelectedBook = null;
-
+        _appState.CurrentUser = null;
         _appState.CurrentLanguage = Language.Русский;
         _appState.CurrentTheme = "Dark";
+        _appState.RefreshCurrentUser();
     }
 }

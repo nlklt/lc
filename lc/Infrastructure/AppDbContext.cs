@@ -25,6 +25,8 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
     public DbSet<ReadingHistory> ReadingHistories => Set<ReadingHistory>();
     public DbSet<ReadingProgress> ReadingProgresses => Set<ReadingProgress>();
 
+    public DbSet<AuthorRequest> AuthorRequests => Set<AuthorRequest>();
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
@@ -311,9 +313,35 @@ public sealed class AppDbContext(DbContextOptions<AppDbContext> options) : DbCon
             entity.HasOne(x => x.Chapter)
                 .WithMany()
                 .HasForeignKey(x => x.ChapterId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.NoAction);
 
             entity.HasIndex(x => new { x.BookId, x.ChapterId });
+        });
+
+        modelBuilder.Entity<AuthorRequest>(entity =>
+        {
+            entity.ToTable("AuthorRequests");
+            entity.HasKey(x => x.RequestId);
+
+            entity.Property(x => x.Message).HasMaxLength(2000).IsRequired();
+            entity.Property(x => x.Status).HasConversion<int>().IsRequired();
+
+            entity.Property(x => x.CreatedAt).HasDefaultValueSql("SYSDATETIME()");
+            entity.Property(x => x.ReviewedAt);
+            entity.Property(x => x.ReviewComment).HasMaxLength(2000);
+
+            entity.HasOne(x => x.User)
+                .WithMany()
+                .HasForeignKey(x => x.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(x => x.Reviewer)
+                .WithMany()
+                .HasForeignKey(x => x.ReviewerId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasIndex(x => new { x.UserId, x.Status });
+            entity.HasIndex(x => x.Status);
         });
     }
 }

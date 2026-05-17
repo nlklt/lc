@@ -3,6 +3,8 @@ using lc.Helpers;
 using lc.Infrastructure;
 using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
+using lc.Models.Enums;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 namespace lc.Infrastructure.Repositories.Sql;
@@ -18,35 +20,16 @@ public sealed class UserLibraryListBookRepository : IUserLibraryListBookReposito
 
     public async Task<IReadOnlyList<BookListItemDto>> GetBooksAsync(int userId, int listId)
     {
-        var items = await _db.UserLibraryListBooks
+        return await _db.UserLibraryListBooks
             .AsNoTracking()
             .Where(x => x.ListId == listId && x.List.UserId == userId)
-            .OrderByDescending(x => x.AddedAt)
             .Select(x => new BookListItemDto
             {
-                BookId = x.Book.BookId,
-                PublisherId = x.Book.PublisherId,
+                BookId = x.BookId,
                 Title = x.Book.Title,
-                AuthorName = x.Book.AuthorName,
-                Description = x.Book.Description,
-                CoverImagePath = x.Book.CoverImagePath,
-                BookStatus = x.Book.BookStatus,
-                WritingStatus = x.Book.WritingStatus,
-                Language = x.Book.Language,
-                AgeRating = x.Book.AgeRating,
-                SymbolsCount = x.Book.Chapters.Sum(c => (long?)c.Text.Length) ?? 0,
-                ChaptersCount = x.Book.Chapters.Count,
-                Views = x.Book.Views,
-                Rating = x.Book.Rating,
-                CreatedAt = x.Book.CreatedAt,
-                UpdatedAt = x.Book.UpdatedAt
+                CoverImagePath = x.Book.CoverImagePath
             })
             .ToListAsync();
-
-        await PopulateRelationsAsync(items);
-        await PopulateReadingProgressAsync(userId, items);
-
-        return items;
     }
 
     private async Task PopulateReadingProgressAsync(int userId, List<BookListItemDto> items)
@@ -75,56 +58,88 @@ public sealed class UserLibraryListBookRepository : IUserLibraryListBookReposito
         }
     }
 
-    public async Task AddBookAsync(int userId, int listId, int bookId)
+    public async Task<bool> AddBookAsync(int userId, int listId, int bookId)
     {
-        var list = await _db.UserLibraryLists
-            .FirstOrDefaultAsync(x => x.ListId == listId && x.UserId == userId);
+        if (userId <= 0) throw new ArgumentOutOfRangeException(nameof(userId));
+        if (listId <= 0) throw new ArgumentOutOfRangeException(nameof(listId));
+        if (bookId <= 0) throw new ArgumentOutOfRangeException(nameof(bookId));
 
-        if (list is null)
-            throw new InvalidOperationException($"Список с ListId={listId} не найден.");
+        var listExists = await _db.UserLibraryLists
+            .AsNoTracking()
+            .AnyAsync(x => x.UserId == userId && x.ListId == listId);
 
-        var bookExists = await _db.Books.AnyAsync(x => x.BookId == bookId);
-        if (!bookExists)
-            throw new InvalidOperationException($"Книга с BookId={bookId} не найдена.");
+        if (!listExists)
+            throw new InvalidOperationException("Список не найден или не принадлежит пользователю.");
 
-        var exists = await _db.UserLibraryListBooks.AnyAsync(x =>
-            x.ListId == listId &&
-            x.BookId == bookId);
+        var book = await _db.Books
+            .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.BookId == bookId);
 
-        if (exists)
-            return;
+        if (book is null)
+            throw new InvalidOperationException("Книга не найдена.");
 
-        _db.UserLibraryListBooks.Add(new UserLibraryListBook
+        if (book.BookStatus != BookStatus.Published)
+            throw new InvalidOperationException("В личные списки можно добавлять только опубликованные книги.");
+
+        var entity = new UserLibraryListBook
         {
             ListId = listId,
-            BookId = bookId,
-            AddedAt = DateTime.Now
-        });
+            BookId = bookId
+        };
 
-        await _db.SaveChangesAsync();
+        _db.UserLibraryListBooks.Add(entity);
+
+        try
+        {
+            await _db.SaveChangesAsync();
+            return true;
+        }
+        catch (DbUpdateException ex) when (IsUniqueViolation(ex))
+        {
+            return false;
+        }
     }
 
     public async Task RemoveBookAsync(int userId, int listId, int bookId)
     {
-        var item = await _db.UserLibraryListBooks
-            .FirstOrDefaultAsync(x =>
-                x.ListId == listId &&
-                x.List.UserId == userId &&
-                x.BookId == bookId);
+        var entity = await _db.UserLibraryListBooks
+            .FirstOrDefaultAsync(x => x.ListId == listId &&
+                                      x.BookId == bookId &&
+                                      x.List.UserId == userId);
 
-        if (item is null)
+        if (entity is null)
             return;
 
-        _db.UserLibraryListBooks.Remove(item);
+        _db.UserLibraryListBooks.Remove(entity);
         await _db.SaveChangesAsync();
     }
 
-    public async Task<bool> ExistsAsync(int userId, int listId, int bookId)
+    private static bool IsUniqueViolation(Exception ex)
     {
-        return await _db.UserLibraryListBooks.AnyAsync(x =>
-            x.ListId == listId &&
-            x.List.UserId == userId &&
-            x.BookId == bookId);
+        for (var current = ex; current is not null; current = current.InnerException)
+        {
+            if (current is SqlException sql && (sql.Number == 2601 || sql.Number == 2627))
+                return true;
+        }
+
+        return false;
+    }
+
+    public Task<bool> ExistsAsync(int userId, int listId, int bookId)
+    {
+        return _db.UserLibraryListBooks
+            .AsNoTracking()
+            .AnyAsync(x => x.ListId == listId &&
+                           x.BookId == bookId &&
+                           x.List.UserId == userId);
+    }
+
+    public Task<bool> ExistsInAnyListAsync(int userId, int bookId)
+    {
+        return _db.UserLibraryListBooks
+            .AsNoTracking()
+            .AnyAsync(x => x.BookId == bookId &&
+                           x.List.UserId == userId);
     }
 
     private async Task PopulateRelationsAsync(List<BookListItemDto> items)

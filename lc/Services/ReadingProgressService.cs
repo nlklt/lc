@@ -1,4 +1,5 @@
 ﻿using lc.Data.Repositories.Interfaces;
+using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Services.Interfaces;
 
@@ -6,11 +7,15 @@ namespace lc.Services;
 
 public sealed class ReadingProgressService : IReadingProgressService
 {
-    private readonly IReadingProgressRepository _repository;
+    private readonly IReadingProgressRepository _progressRepository;
+    private readonly IReadingHistoryRepository _historyRepository;
 
-    public ReadingProgressService(IReadingProgressRepository repository)
+    public ReadingProgressService(
+        IReadingProgressRepository progressRepository,
+        IReadingHistoryRepository historyRepository)
     {
-        _repository = repository;
+        _progressRepository = progressRepository ?? throw new ArgumentNullException(nameof(progressRepository));
+        _historyRepository = historyRepository ?? throw new ArgumentNullException(nameof(historyRepository));
     }
 
     public async Task SaveProgressAsync(
@@ -30,16 +35,12 @@ public sealed class ReadingProgressService : IReadingProgressService
             UpdatedAt = DateTime.Now
         };
 
-        await _repository.AddOrUpdateAsync(progress);
+        await _progressRepository.AddOrUpdateAsync(progress);
     }
 
-    public async Task<ReadingProgress?> GetLastBookProgressAsync(int userId, int bookId)
-    {
-        var progresses = await _repository.GetByUserIdAsync(userId);
+    public Task<ReadingProgress?> GetLastBookProgressAsync(int userId, int bookId)
+        => _progressRepository.GetLastByBookAsync(userId, bookId);
 
-        return progresses
-            .Where(x => x.BookId == bookId)
-            .OrderByDescending(x => x.UpdatedAt)
-            .FirstOrDefault();
-    }
+    public Task MarkBookOpenedAsync(int userId, int bookId)
+        => _historyRepository.AddOrUpdateAsync(userId, bookId, DateTime.Now);
 }

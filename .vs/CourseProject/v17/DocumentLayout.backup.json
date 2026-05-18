@@ -3,40 +3,8 @@
   "WorkspaceRootPath": "D:\\eLibCloud\\lc\\",
   "Documents": [
     {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\app.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\windows\\inputdialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\inputdialog.xaml.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\views\\windows\\inputdialog.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\views\\windows\\inputdialog.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\infrastructure\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\infrastructure\\appdbcontext.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\windowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\windowservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\dialogservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\bookstatsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\bookstatsservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\services\\bookservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\services\\bookservice.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
-    },
-    {
-      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
-      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\viewmodels\\bookdetailsviewmodel.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+      "AbsoluteMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|d:\\elibcloud\\lc\\lc\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}",
+      "RelativeMoniker": "D:0:0:{7E3B0396-8E46-4890-BF70-FD16209CB765}|lc\\lc.csproj|solutionrelative:lc\\app.xaml||{F11ACC28-31D1-4C80-A34B-F4E09D3D753C}"
     }
   ],
   "DocumentGroupContainers": [
@@ -63,117 +31,13 @@
             {
               "$type": "Document",
               "DocumentIndex": 0,
-              "Title": "App.xaml.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\App.xaml.cs",
-              "RelativeDocumentMoniker": "lc\\App.xaml.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\App.xaml.cs",
-              "RelativeToolTip": "lc\\App.xaml.cs",
-              "ViewState": "AgIAAEgAAAAAAAAAAAAowF8AAAA4AAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:25:16.483Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 1,
-              "Title": "InputDialog.xaml.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\InputDialog.xaml.cs",
-              "RelativeDocumentMoniker": "lc\\Views\\Windows\\InputDialog.xaml.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\InputDialog.xaml.cs",
-              "RelativeToolTip": "lc\\Views\\Windows\\InputDialog.xaml.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAA0AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:25:09.045Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 2,
-              "Title": "InputDialog.xaml",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\InputDialog.xaml",
-              "RelativeDocumentMoniker": "lc\\Views\\Windows\\InputDialog.xaml",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Views\\Windows\\InputDialog.xaml",
-              "RelativeToolTip": "lc\\Views\\Windows\\InputDialog.xaml",
+              "Title": "App.xaml",
+              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\App.xaml",
+              "RelativeDocumentMoniker": "lc\\App.xaml",
+              "ToolTip": "D:\\eLibCloud\\lc\\lc\\App.xaml*",
+              "RelativeToolTip": "lc\\App.xaml*",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.003549|",
-              "WhenOpened": "2026-05-18T09:24:59.466Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 3,
-              "Title": "AppDbContext.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Infrastructure\\AppDbContext.cs",
-              "RelativeDocumentMoniker": "lc\\Infrastructure\\AppDbContext.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Infrastructure\\AppDbContext.cs",
-              "RelativeToolTip": "lc\\Infrastructure\\AppDbContext.cs",
-              "ViewState": "AgIAACQBAAAAAAAAAAAQwFoBAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:24:17.84Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 4,
-              "Title": "WindowService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\WindowService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\WindowService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\WindowService.cs",
-              "RelativeToolTip": "lc\\Services\\WindowService.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAACoAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:23:40.982Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 5,
-              "Title": "DialogService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\DialogService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\DialogService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\DialogService.cs",
-              "RelativeToolTip": "lc\\Services\\DialogService.cs",
-              "ViewState": "AgIAACcAAAAAAAAAAAAiwFsAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:23:32.506Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 6,
-              "Title": "BookStatsService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\BookStatsService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\BookStatsService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\BookStatsService.cs",
-              "RelativeToolTip": "lc\\Services\\BookStatsService.cs",
-              "ViewState": "AgIAABYAAAAAAAAAAAAUwEkAAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:23:28.364Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 7,
-              "Title": "BookService.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\Services\\BookService.cs",
-              "RelativeDocumentMoniker": "lc\\Services\\BookService.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\Services\\BookService.cs",
-              "RelativeToolTip": "lc\\Services\\BookService.cs",
-              "ViewState": "AgIAAHoAAAAAAAAAAAAqwK8AAAABAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:23:14.206Z",
-              "EditorCaption": ""
-            },
-            {
-              "$type": "Document",
-              "DocumentIndex": 8,
-              "Title": "BookDetailsViewModel.cs",
-              "DocumentMoniker": "D:\\eLibCloud\\lc\\lc\\ViewModels\\BookDetailsViewModel.cs",
-              "RelativeDocumentMoniker": "lc\\ViewModels\\BookDetailsViewModel.cs",
-              "ToolTip": "D:\\eLibCloud\\lc\\lc\\ViewModels\\BookDetailsViewModel.cs",
-              "RelativeToolTip": "lc\\ViewModels\\BookDetailsViewModel.cs",
-              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA==",
-              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
-              "WhenOpened": "2026-05-18T09:23:08.545Z",
+              "WhenOpened": "2026-05-18T15:04:21.221Z",
               "EditorCaption": ""
             }
           ]

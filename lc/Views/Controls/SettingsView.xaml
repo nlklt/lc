@@ -152,11 +152,11 @@
                         <TextBox Text="{Binding UserName, UpdateSourceTrigger=PropertyChanged}" 
                                  Style="{DynamicResource TextBoxPlaceholderStyle}" Margin="0,0,0,12"/>
 
-                        <TextBlock Text="Язык приложения" Margin="0,0,0,8"
+                        <!--<TextBlock Text="Язык приложения" Margin="0,0,0,8"
                                    Style="{DynamicResource BaseTextBlockStyle}"/>
                         <ComboBox ItemsSource="{Binding AllLanguages}" 
                                     SelectedItem="{Binding PreferredLanguage}"
-                                    Style="{DynamicResource ComboBoxBaseStyle}" Margin="0,0,0,12"/>
+                                    Style="{DynamicResource ComboBoxBaseStyle}" Margin="0,0,0,12"/>-->
 
                         <TextBlock Text="Тема оформления" Margin="0,0,0,8"
                                    Style="{DynamicResource BaseTextBlockStyle}"/>

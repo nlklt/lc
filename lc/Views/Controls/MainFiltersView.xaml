@@ -146,19 +146,25 @@
                                                      UpdateSourceTrigger=PropertyChanged, TargetNullValue=''}"/>
                                         </Grid>
 
-                                        <TextBlock Text="Дата публикации" Style="{DynamicResource FilterLabelStyle}" />
+                                        <TextBlock Text="Дата публикации"  Margin="8,8,8,4"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" />
 
-                                        <StackPanel Orientation="Horizontal" Margin="8,2">
-                                            <DatePicker SelectedDate="{Binding CreatedAt.From, Mode=TwoWay}"
-                                                        Tag="С даты"
-                                                        Style="{DynamicResource DatePickerPlaceholderStyle}" />
+                                        <Grid Margin="8,2">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="Auto"/>
+                                                <ColumnDefinition Width="*"/>
+                                            </Grid.ColumnDefinitions>
+                                            <DatePicker Grid.Column="0" SelectedDate="{Binding CreatedAt.From, Mode=TwoWay}"
+                                                        Style="{DynamicResource DatePickerPlaceholderStyle}"/>
 
-                                            <TextBlock Text=" — " VerticalAlignment="Center" />
+                                            <TextBlock Grid.Column="1" Text=" — " FontWeight="Bold"
+                                                       VerticalAlignment="Center" HorizontalAlignment="Center" 
+                                                       Foreground="{DynamicResource BorderBrush}"/>
 
-                                            <DatePicker SelectedDate="{Binding CreatedAt.To, Mode=TwoWay}"
-                                                        Tag="По дату"
-                                                        Style="{DynamicResource DatePickerPlaceholderStyle}" />
-                                        </StackPanel>
+                                            <DatePicker Grid.Column="2" SelectedDate="{Binding CreatedAt.To, Mode=TwoWay}"
+                                                        Style="{DynamicResource DatePickerPlaceholderStyle}"/>
+                                        </Grid>
 
                                         <TextBlock Text="Статус книги" Margin="8,8,8,4"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"/>
@@ -250,7 +256,7 @@
                                                 </DataTemplate>
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
-                                        <Grid Margin="0,8,0,8">
+                                        <!--<Grid Margin="0,8,0,8">
                                             <Grid.ColumnDefinitions>
                                                 <ColumnDefinition Width="*"/>
                                                 <ColumnDefinition Width="*"/>
@@ -258,10 +264,10 @@
                                             <Button Grid.Column="0" Style="{DynamicResource PrimaryButtonStyle}"
                                                     Command="{Binding ApplyFiltersCommand}"
                                                     Content="Применить" Margin="0,0,12,0"/>
+                                        </Grid>-->
                                             <Button Grid.Column="1" Style="{DynamicResource SecondaryButtonStyle}"
                                                     Command="{Binding ResetFiltersCommand}"
                                                     Content="Сбросить всё" />
-                                        </Grid>
                                     </StackPanel>
                                 </DataTemplate>
                             </Setter.Value>

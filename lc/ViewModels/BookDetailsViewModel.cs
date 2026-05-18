@@ -1,6 +1,7 @@
 ﻿using lc.Commands;
 using lc.Helpers;
 using lc.Infrastructure;
+using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services;
@@ -29,6 +30,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     private readonly IUserLibraryService _userLibraryService;
     private readonly IWindowService _windowService;
     private readonly IReadingProgressService _readingProgressService;
+    private readonly IUserRepository _userRepository;
 
     private readonly SemaphoreSlim _loadGate = new(1, 1);
     private readonly SemaphoreSlim _libraryGate = new(1, 1);
@@ -42,6 +44,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     private int _publishedChaptersCount;
     private string _newCommentText = string.Empty;
     private string _errorMessage = string.Empty;
+    private bool _viewRegistered;
 
     private bool _isLibraryActionInProgress;
     private int? _selectedLibraryListId;
@@ -58,6 +61,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     INavigationService navigationService,
     IUserLibraryService userLibraryService,
     IWindowService windowService,
+    IUserRepository userRepository,
     IReadingProgressService readingProgressService)
     {
         if (bookId <= 0)
@@ -73,19 +77,19 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         _navigationService = navigationService ?? throw new ArgumentNullException(nameof(navigationService));
         _userLibraryService = userLibraryService ?? throw new ArgumentNullException(nameof(userLibraryService));
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+        _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
         _readingProgressService = readingProgressService ?? throw new ArgumentNullException(nameof(readingProgressService));
 
         BackCommand = new RelayCommand(_ => _navigationService.NavigateBack());
         ReloadCommand = new AsyncRelayCommand(_ => ReloadAsync(), _ => !IsLoading);
 
-        //ToggleLibraryCommand = new AsyncRelayCommand(_ => ToggleLibraryAsync(), _ => CanToggleLibraryActions);
-
         AddCommentCommand = new AsyncRelayCommand(_ => AddCommentAsync(), _ => CanComment);
-        RateBookCommand = new AsyncRelayCommand(RateBookAsync, _ => CanRate);
+        RateBookCommand = new AsyncRelayCommand(param => RateBookAsync(param), _ => CanRate);
 
         EditBookCommand = new RelayCommand(_ => EditBook(), _ => CanEditBook);
         ToggleArchiveCommand = new AsyncRelayCommand(_ => ToggleArchiveAsync(), _ => CanToggleArchiveBook);
         DeleteBookCommand = new AsyncRelayCommand(_ => DeleteBookAsync(), _ => CanDeleteBook);
+        ArchiveBookCommand = new AsyncRelayCommand(_ => ArchiveBookAsync(), _ => CanArchiveBook);
 
         StartReadingCommand = new AsyncRelayCommand(
             StartReadingAsync,
@@ -96,6 +100,9 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             OpenChapterAsync,
             _ => !IsLoading,
             ex => _ = _dialogService.ShowMessageAsync("Ошибка", ex.Message));
+
+        DeleteCommentCommand = new AsyncRelayCommand(DeleteCommentAsync, _ => !IsLoading);
+        BlockCommentUserCommand = new AsyncRelayCommand(BlockCommentUserAsync, _ => !IsLoading);
 
         AddChapterCommand = new RelayCommand(_ => AddChapter(), _ => CanAddChapter);
         EditChapterCommand = new RelayCommand(EditChapter, _ => !IsLoading);
@@ -109,7 +116,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
     public ObservableCollection<string> Tags { get; } = [];
     public ObservableCollection<string> Categories { get; } = [];
-    public ObservableCollection<Comment> Comments { get; } = [];
+    public ObservableCollection<CommentItem> Comments { get; } = [];
     public ObservableCollection<ChapterItem> Chapters { get; } = []; 
     public ObservableCollection<UserLibraryListDto> LibraryLists { get; } = [];
 
@@ -233,18 +240,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         Book.BookStatus == BookStatus.Published &&
         !IsLoading;
 
-    public bool CanComment =>
-        IsAuthenticated &&
-        Book is not null &&
-        Book.BookStatus == BookStatus.Published &&
-        !string.IsNullOrWhiteSpace(NewCommentText) &&
-        !IsLoading;
-
-    public bool CanEditBook =>
-        Book is not null &&
-        !IsLoading &&
-        (IsOwner || IsAdmin) &&
-        Book.BookStatus != BookStatus.Archived;
+    public bool CanEditBook => Book is not null && !IsLoading && (IsOwner || IsAdmin);
 
     public bool CanToggleArchiveBook =>
         Book is not null &&
@@ -273,6 +269,42 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         CanToggleLibraryActions &&
         !IsLibraryActionInProgress &&
         LibraryLists.Count > 0;
+
+    public bool CanModerateComments =>
+    IsAuthenticated &&
+    Book is not null &&
+    !IsLoading &&
+    (IsAdmin || IsOwner);
+
+    public bool IsCommentBlocked =>
+        _appState.CurrentUser?.BlockedComments == true;
+
+    public bool CanShowCommentEditor =>
+        IsAuthenticated &&
+        Book is not null &&
+        Book.BookStatus == BookStatus.Published &&
+        !IsLoading;
+
+    public bool CanComment =>
+        CanShowCommentEditor &&
+        !IsCommentBlocked &&
+        !string.IsNullOrWhiteSpace(NewCommentText);
+
+    private bool CanDeleteComment(Comment comment)
+    {
+        if (comment is null || Book is null)
+            return false;
+
+        return IsAdmin || comment.UserId == _appState.CurrentUser.UserId;
+    }
+
+    private bool CanBlockComment(Comment comment)
+    {
+        if (comment is null || Book is null || _appState.CurrentUser is null)
+            return false;
+
+        return (IsAdmin);
+    }
 
     public string Title => Book?.Title ?? "Без названия";
     public string AuthorName => $"Автор: {Book?.AuthorName ?? "Не указан"}";
@@ -315,6 +347,9 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
     public ICommand ToggleArchiveCommand { get; }
     public ICommand DeleteBookCommand { get; }
 
+    public ICommand DeleteCommentCommand { get; }
+    public ICommand BlockCommentUserCommand { get; }
+
     public ICommand OpenChapterCommand { get; }
     public ICommand AddChapterCommand { get; }
     public ICommand EditChapterCommand { get; }
@@ -346,6 +381,23 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
             Book = book;
             CoverPath = LoadImageSource(book.CoverImagePath);
+
+            if (!_viewRegistered &&
+                IsAuthenticated &&
+                book.BookStatus == BookStatus.Published)
+            {
+                try
+                {
+                    await _bookStatsService.RegisterViewAsync(book.BookId);
+                    _viewRegistered = true;
+
+                    book = await _bookService.GetBookByIdAsync(BookId) ?? book;
+                    Book = book;
+                }
+                catch
+                {
+                }
+            }
 
             Tags.Clear();
             foreach (var tag in book.Tags ?? [])
@@ -395,7 +447,12 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
                 Comments.Clear();
                 foreach (var comment in orderedComments)
-                    Comments.Add(comment);
+                {
+                    Comments.Add(new CommentItem(
+                        comment,
+                        canDelete: CanDeleteComment(comment),
+                        canBlock: CanBlockComment(comment)));
+                }
             }
             catch
             {
@@ -443,6 +500,71 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         }
     }
 
+    private async Task DeleteCommentAsync(object? parameter)
+    {
+        if (parameter is not CommentItem item || !CanDeleteComment(item.Comment))
+            return;
+
+        var confirmed = await _dialogService.ShowConfirmAsync(
+            "Удалить комментарий",
+            $"Удалить комментарий пользователя «{item.UserName}»?");
+
+        if (!confirmed)
+            return;
+
+        try
+        {
+            await _commentService.DeleteAsync(item.Comment.CommentId);
+            await ReloadAsync();
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+        }
+    }
+
+    private async Task BlockCommentUserAsync(object? parameter)
+    {
+        if (parameter is not CommentItem item || !CanBlockComment(item.Comment))
+            return;
+
+        if (item.Comment.UserId <= 0)
+            return;
+
+        var user = await _userRepository.GetByIdAsync(item.Comment.UserId);
+        if (user is null)
+        {
+            await _dialogService.ShowMessageAsync("Ошибка", "Пользователь не найден.");
+            return;
+        }
+
+        if (user.BlockedComments)
+        {
+            await _dialogService.ShowMessageAsync("Готово", "Этот пользователь уже заблокирован для комментариев.");
+            return;
+        }
+
+        var confirmed = await _dialogService.ShowConfirmAsync(
+            "Запретить комментирование",
+            $"Запретить пользователю «{user.UserName}» оставлять комментарии?");
+
+        if (!confirmed)
+            return;
+
+        try
+        {
+            user.BlockedComments = true;
+            await _userRepository.UpdateAsync(user);
+
+            await _dialogService.ShowMessageAsync("Готово", "Пользователь заблокирован для комментариев.");
+            await ReloadAsync();
+        }
+        catch (Exception ex)
+        {
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
+        }
+    }
+
     private void ClearState()
     {
         Book = null;
@@ -486,6 +608,10 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         OnPropertyChanged(nameof(CanAddChapter));
         OnPropertyChanged(nameof(CanArchiveBook));
         OnPropertyChanged(nameof(CanDeleteBook));
+
+        OnPropertyChanged(nameof(CanModerateComments));
+        OnPropertyChanged(nameof(IsCommentBlocked));
+        OnPropertyChanged(nameof(CanShowCommentEditor));
 
         OnPropertyChanged(nameof(Title));
         OnPropertyChanged(nameof(AuthorName));
@@ -544,6 +670,12 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
 
         if (DeleteChapterCommand is AsyncRelayCommand deleteChapter)
             deleteChapter.RaiseCanExecuteChanged();
+
+        if (DeleteCommentCommand is AsyncRelayCommand deleteComment)
+            deleteComment.RaiseCanExecuteChanged();
+
+        if (BlockCommentUserCommand is AsyncRelayCommand blockComment)
+            blockComment.RaiseCanExecuteChanged();
     }
 
     private async Task ReloadLibraryStateAsync()
@@ -697,31 +829,32 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
             NewCommentText = string.Empty;
             await ReloadAsync();
         }
-        catch
+        catch (Exception ex)
         {
-            await _dialogService.ShowMessageAsync("Ошибка", "Не удалось добавить комментарий.");
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
         }
     }
 
-    private async Task RateBookAsync(object? parameter)
+    private async Task RateBookAsync(object? parameter = null)
     {
         if (!CanRate || Book is null)
             return;
 
-        if (!TryParseRating(parameter, out var rating))
-        {
-            await _dialogService.ShowMessageAsync("Ошибка", "Некорректная оценка.");
+        var rating = await _dialogService.ShowRatingAsync(
+            "Оценить книгу",
+            $"Поставьте оценку книге «{Book.Title}».");
+
+        if (rating is null)
             return;
-        }
 
         try
         {
-            await _bookStatsService.SetRatingAsync(Book.BookId, rating);
+            await _bookStatsService.SetRatingAsync(Book.BookId, rating.Value);
             await ReloadAsync();
         }
-        catch
+        catch (Exception ex)
         {
-            await _dialogService.ShowMessageAsync("Ошибка", "Не удалось сохранить оценку.");
+            await _dialogService.ShowMessageAsync("Ошибка", ex.Message);
         }
     }
 

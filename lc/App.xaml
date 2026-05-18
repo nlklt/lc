@@ -32,6 +32,10 @@
                 <vp:CatalogView />
             </DataTemplate>
 
+            <DataTemplate DataType="{x:Type vm:AdminUsersViewModel}">
+                <vp:AdminUsersView />
+            </DataTemplate>
+
             <DataTemplate DataType="{x:Type vm:EditBookViewModel}">
                 <vp:EditBookView />
             </DataTemplate>

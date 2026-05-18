@@ -5,6 +5,7 @@ using lc.Models.Enums;
 using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels.Base;
+using lc.Views.Pages;
 using System;
 using System.ComponentModel;
 using System.Windows.Input;
@@ -47,6 +48,7 @@ namespace lc.ViewModels
         public ICommand NavigateCreateBookCommand { get; }
 
         // Админ 0/0 + 2
+        public ICommand NavigateAdminUsersViewCommand { get; }
 
 
         public NavigationViewModel(
@@ -66,6 +68,7 @@ namespace lc.ViewModels
             NavigateRegisterCommand = new RelayCommand(_ => _dialog.ShowRegisterDialog());
             NavigateCatalogCommand  = new RelayCommand(_ => _navigation.NavigateTo<CatalogViewModel>());
             RandomBookCommand       = new AsyncRelayCommand(NavigateRandomBookAsync);
+            NavigateAdminUsersViewCommand = new RelayCommand(_ => _navigation.NavigateTo<AdminUsersViewModel>());
 
             NavigateProfileCommand      = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
             NavigateSettingsCommand     = new RelayCommand(_ => _navigation.NavigateTo <ProfileViewModel>(true));

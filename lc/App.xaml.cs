@@ -115,6 +115,12 @@ public partial class App : Application
         services.AddTransient<AdminAuthorRequestsViewModel>();
         services.AddTransient<ProfileView>();
 
+        services.AddTransient<RatingViewModel>();
+        services.AddTransient<RatingDialog>();
+
+        services.AddScoped<IAdminUserService, AdminUserService>();
+        services.AddTransient<AdminUsersViewModel>();
+        services.AddTransient<AdminUsersView>();
 
         services.AddSingleton<MainWindow>();
         services.AddTransient<LoginWindow>();

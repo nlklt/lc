@@ -11,7 +11,8 @@
         Height="700" 
         Width="1264"
         Background="{DynamicResource BackgroundBrush}"
-        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}">
+        d:DataContext="{d:DesignInstance Type=vm:MainViewModel}"
+        Icon="D:\eLibCloud\lc\lc\Data\Images\Logo\lc_logo.ico">
 
     <shell:WindowChrome.WindowChrome>
         <shell:WindowChrome CaptionHeight="32"

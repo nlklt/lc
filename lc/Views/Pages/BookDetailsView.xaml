@@ -207,7 +207,7 @@
                                         Style="{DynamicResource SecondaryButtonStyle}"
                                         Command="{Binding EditBookCommand}"
                                         Margin="0,0,4,4"
-                                        Visibility="{Binding CanEditBook, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                        Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
                                 <Button Grid.Row="0" Grid.Column="1"
                                         Content="{Binding ArchiveButtonText}"
@@ -247,6 +247,10 @@
                                    FontSize="22"
                                    FontWeight="SemiBold"
                                    TextWrapping="Wrap"/>
+
+                        <Button Grid.Column="1" Content="Оценить"
+                                Command="{Binding RateBookCommand}" 
+                                Style="{DynamicResource SecondaryButtonStyle}"/>
                     </Grid>
 
                     <WrapPanel Orientation="Horizontal" Margin="0,4" VerticalAlignment="Top">
@@ -331,42 +335,62 @@
                                                 Padding="0,8,0,8"
                                                 Margin="0,0,0,8">
                                             <Grid>
-                                                <Grid.ColumnDefinitions>
-                                                    <ColumnDefinition Width="*"/>
-                                                    <ColumnDefinition Width="Auto"/>
-                                                </Grid.ColumnDefinitions>
-
-                                                <StackPanel>
-                                                    <TextBlock Text="{Binding Chapter.ChapterNumber, StringFormat=Глава {0}}"
+                                                <Grid Cursor="Hand">
+                                                    <Grid.InputBindings>
+                                                        <MouseBinding MouseAction="LeftClick"
+                                                                      Command="{Binding DataContext.OpenChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                      CommandParameter="{Binding}" />
+                                                        <MouseBinding/>
+                                                    </Grid.InputBindings>
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+                                                    <TextBlock Grid.Column="0" Grid.Row="0" 
+                                                               FontSize="14" Margin="0,0,4,0"
+                                                               Text="{Binding Chapter.ChapterNumber, StringFormat=Глава {0}: }"
                                                                FontWeight="SemiBold"
-                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
-                                                    <TextBlock Text="{Binding Chapter.Title}"
                                                                Foreground="{DynamicResource TextSecondaryBrush}"/>
-                                                    <TextBlock Text="{Binding Chapter.Status}"
+                                                    <TextBlock Grid.Column="0" Grid.Row="1" 
+                                                               Text="{Binding Chapter.Status}"
+                                                               FontSize="14" Margin="0,8,0,0"
+                                                               Foreground="{DynamicResource TextMutedBrush}"
+                                                               Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                    <TextBlock Grid.Column="1" Grid.Row="0" 
+                                                               FontSize="14"
+                                                               Text="{Binding Chapter.Title}"
+                                                               Foreground="{DynamicResource TextPrimaryBrush}"/>
+                                                    <TextBlock Grid.Column="2" Grid.Row="0" 
                                                                FontSize="12"
-                                                               Foreground="{DynamicResource TextMutedBrush}"/>
-                                                </StackPanel>
+                                                               Text="{Binding Chapter.CreatedAt, StringFormat={}{0:dd.MM.yyyy}}"
+                                                               Foreground="{DynamicResource TextSecondaryBrush}"
+                                                               HorizontalAlignment="Right"/>
 
-                                                <StackPanel Grid.Column="1"
-                                                            Orientation="Horizontal"
-                                                            VerticalAlignment="Center">
-                                                    <Button Content="Открыть"
-                                                            Style="{DynamicResource SecondaryButtonStyle}"
-                                                            Command="{Binding DataContext.OpenChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            Margin="0,0,4,0"
-                                                            Visibility="{Binding CanOpen, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                    <StackPanel Grid.Column="2" Grid.Row="1" 
+                                                                Orientation="Horizontal"  Margin="0,4,0,0">
+                                                        <Button Content="✏️"
+                                                                Command="{Binding DataContext.EditChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SecondaryButtonStyle}"
+                                                                FontSize="10" Margin="0,0,4,0"
+                                                                Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"/>
 
-                                                    <Button Content="Редактировать"
-                                                            Command="{Binding DataContext.EditChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            Visibility="{Binding CanEdit, Converter={StaticResource BoolToVisibilityConverter}}"/>
-
-                                                    <Button Content="Удалить"
-                                                            Command="{Binding DataContext.DeleteChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                            CommandParameter="{Binding}"
-                                                            Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"/>
-                                                </StackPanel>
+                                                        <Button Content="Удалить"
+                                                                Command="{Binding DataContext.DeleteChapterCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SecondaryButtonStyle}"
+                                                                FontSize="10"
+                                                                Foreground="{DynamicResource WarningFrontBrush}"
+                                                                BorderBrush="{DynamicResource WarningFrontBrush}"
+                                                                Background="{DynamicResource WarningBackBrush}"
+                                                                Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                    </StackPanel>
+                                                </Grid>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>
@@ -377,7 +401,7 @@
 
                     <Border Style="{DynamicResource InfoCardStyle}">
                         <StackPanel>
-                            <Grid Visibility="{Binding IsAuthenticated, Converter={StaticResource BoolToVisibilityConverter}}">
+                            <Grid Visibility="{Binding CanShowCommentEditor, Converter={StaticResource BoolToVisibilityConverter}}">
                                 <StackPanel>
                                     <TextBlock Text="Написать комментарий"
                                                Foreground="{DynamicResource TextPrimaryBrush}"
@@ -424,19 +448,54 @@
                                                 Margin="0,0,0,8">
                                             <StackPanel>
                                                 <Grid>
-                                                    <TextBlock Text="{Binding User.UserName}"
-                                                               FontWeight="Bold"
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                        <ColumnDefinition Width="*"/>
+                                                        <ColumnDefinition Width="Auto"/>
+                                                    </Grid.ColumnDefinitions>
+                                                    <Grid.RowDefinitions>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                        <RowDefinition Height="Auto"/>
+                                                    </Grid.RowDefinitions>
+
+                                                    <StackPanel Grid.Column="0" Grid.Row="0" Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding UserName}"
+                                                                   FontWeight="SemiBold"
+                                                                   FontSize="14" Margin="0,0,4,0"
+                                                                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                                                        <TextBlock Text="{Binding CreatedAt, StringFormat='{}{0:dd.MM.yyyy HH:mm}'}"
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                   FontSize="12"
+                                                                   Margin="0,2,0,0"/>
+                                                    </StackPanel>
+
+                                                    <TextBlock Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="3"
+                                                               Text="{Binding Text}"
                                                                Foreground="{DynamicResource TextPrimaryBrush}"
-                                                               HorizontalAlignment="Left"/>
-                                                    <TextBlock Text="{Binding CreatedAt, StringFormat='dd.MM.yyyy HH:mm'}"
-                                                               Foreground="{DynamicResource TextMutedBrush}"
-                                                               FontSize="11"
-                                                               HorizontalAlignment="Right"/>
+                                                               TextWrapping="Wrap"
+                                                               Margin="0,4,0,0"/>
+
+                                                    <StackPanel Grid.Column="2" Grid.Row="2" Orientation="Horizontal">
+                                                        <Button Content="Запретить комментировать"
+                                                                Command="{Binding DataContext.BlockCommentUserCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SecondaryButtonStyle}"
+                                                                FontSize="12"
+                                                                Margin="0,0,4,0"
+                                                                Visibility="{Binding CanBlock, Converter={StaticResource BoolToVisibilityConverter}}"/>
+
+                                                        <Button Content="Удалить"
+                                                                Command="{Binding DataContext.DeleteCommentCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                                CommandParameter="{Binding}"
+                                                                Style="{DynamicResource SecondaryButtonStyle}"
+                                                                FontSize="12"
+                                                                Foreground="{DynamicResource WarningFrontBrush}"
+                                                                BorderBrush="{DynamicResource WarningFrontBrush}"
+                                                                Background="{DynamicResource WarningBackBrush}"
+                                                                Visibility="{Binding CanDelete, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                                    </StackPanel>
                                                 </Grid>
-                                                <TextBlock Text="{Binding Text}"
-                                                           Foreground="{DynamicResource TextPrimaryBrush}"
-                                                           TextWrapping="Wrap"
-                                                           Margin="0,4,0,0"/>
                                             </StackPanel>
                                         </Border>
                                     </DataTemplate>

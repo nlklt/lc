@@ -216,9 +216,10 @@
                         <TextBlock Text="АДМИНИСТРИРОВАНИЕ" 
                                    Style="{DynamicResource SectionTextStyle}" />
 
-                        <Button Style="{DynamicResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}"
+                                Command="{Binding NavigateAdminUsersViewCommand}">
                             <StackPanel Orientation="Horizontal">
-                                <TextBlock Text="☷" Style="{DynamicResource IconTextStyle}" />
+                                <TextBlock Text="☷" Style="{DynamicResource IconTextStyle}"/>
                                 <TextBlock Text="Таблица пользователей" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>

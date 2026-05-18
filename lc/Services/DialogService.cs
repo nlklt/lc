@@ -77,6 +77,38 @@ namespace lc.Services
             return null;
         }
 
+        public async Task<byte?> ShowRatingAsync(string title, string message, byte initialRating = 0)
+        {
+            return await Application.Current.Dispatcher.InvokeAsync<byte?>(() =>
+            {
+                var dialog = _provider.GetRequiredService<RatingDialog>();
+
+                if (dialog.DataContext is RatingViewModel vm)
+                {
+                    vm.Title = title;
+                    vm.Message = message;
+                    vm.SelectedRating = initialRating is >= 1 and <= 5 ? initialRating : (byte)0;
+
+                    dialog.Owner = Application.Current.MainWindow;
+
+                    vm.RequestClose = result =>
+                    {
+                        try
+                        {
+                            dialog.DialogResult = result;
+                        }
+                        catch { }
+
+                        dialog.Close();
+                    };
+
+                    return dialog.ShowDialog() == true ? vm.SelectedRating : null;
+                }
+
+                return null;
+            });
+        }
+
         public bool? ShowLoginDialog()
         {
             var loginWindow = _provider.GetRequiredService<LoginWindow>();

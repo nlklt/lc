@@ -14,8 +14,10 @@ namespace lc.Services
         Task ArchiveBookAsync(int bookId);
         Task RestoreBookAsync(int bookId);
         Task DeleteBookAsync(int bookId);
-
         Task PublishBookAsync(int bookId);
+
+
+        Task<IReadOnlyList<MyBookCardDto>> GetAuthoredBooksAsync(int userId);
 
         Task<IReadOnlyList<BookListItemDto>> GetCatalogAsync(BookFilterCriteria criteria);
         Task<IReadOnlyList<Category>> GetAllCategoriesAsync();

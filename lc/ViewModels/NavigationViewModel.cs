@@ -46,6 +46,7 @@ namespace lc.ViewModels
 
         // Писатель 1/1 + 2
         public ICommand NavigateCreateBookCommand { get; }
+        public ICommand NavigateMyBooksCommand { get; }
 
         // Админ 0/0 + 2
         public ICommand NavigateAdminUsersViewCommand { get; }
@@ -69,6 +70,14 @@ namespace lc.ViewModels
             NavigateCatalogCommand  = new RelayCommand(_ => _navigation.NavigateTo<CatalogViewModel>());
             RandomBookCommand       = new AsyncRelayCommand(NavigateRandomBookAsync);
             NavigateAdminUsersViewCommand = new RelayCommand(_ => _navigation.NavigateTo<AdminUsersViewModel>());
+
+            NavigateMyBooksCommand = new RelayCommand(_ =>
+            {
+                if (!IsWriter && !IsAdmin)
+                    return;
+
+                _navigation.NavigateTo<MyBooksViewModel>();
+            });
 
             NavigateProfileCommand      = new RelayCommand(_ => _navigation.NavigateTo<ProfileViewModel>());
             NavigateSettingsCommand     = new RelayCommand(_ => _navigation.NavigateTo <ProfileViewModel>(true));

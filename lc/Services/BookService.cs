@@ -1,6 +1,6 @@
 ﻿using lc.Data.Repositories.Interfaces;
 using lc.Helpers;
-using lc.Infrastructure.Repositories.Abstractions;
+using lc.Infrastructure;
 using lc.Models;
 using lc.Models.Enums;
 using lc.Services.Interfaces;
@@ -13,15 +13,18 @@ public sealed class BookService : IBookService
     private readonly IBookRepository _bookRepository;
     private readonly ITagRepository _tagRepository;
     private readonly ICategoryRepository _categoryRepository;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
     public BookService(
         IBookRepository bookRepository,
         ITagRepository tagRepository,
-        ICategoryRepository categoryRepository)
+        ICategoryRepository categoryRepository,
+        IDbContextFactory<AppDbContext> dbFactory)
     {
         _bookRepository = bookRepository ?? throw new ArgumentNullException(nameof(bookRepository));
         _tagRepository = tagRepository ?? throw new ArgumentNullException(nameof(tagRepository));
         _categoryRepository = categoryRepository ?? throw new ArgumentNullException(nameof(categoryRepository));
+        _dbFactory = dbFactory ?? throw new ArgumentNullException(nameof(dbFactory));
     }
 
     public Task<Book?> GetBookByIdAsync(int bookId)
@@ -35,6 +38,26 @@ public sealed class BookService : IBookService
 
     public Task<IReadOnlyList<Tag>> GetAllTagsAsync()
         => _tagRepository.GetAllAsync();
+
+    public async Task<IReadOnlyList<MyBookCardDto>> GetAuthoredBooksAsync(int userId)
+    {
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.Books
+            .AsNoTracking()
+            .Where(x => x.PublisherId == userId)
+            .OrderByDescending(x => x.UpdatedAt)
+            .Select(x => new MyBookCardDto
+            {
+                BookId = x.BookId,
+                Title = x.Title,
+                CoverImagePath = x.CoverImagePath,
+                BookStatus = x.BookStatus,
+                UpdatedAt = x.UpdatedAt,
+                ChaptersCount = x.ChaptersCount
+            })
+            .ToListAsync();
+    }
 
     public async Task<int> CreateBookAsync(Book book)
     {
@@ -65,7 +88,6 @@ public sealed class BookService : IBookService
         await _bookRepository.UpdateAsync(book);
     }
 
-    
     public async Task ArchiveBookAsync(int bookId)
     {
         var book = await _bookRepository.GetByIdAsync(bookId);
@@ -77,6 +99,7 @@ public sealed class BookService : IBookService
 
         await _bookRepository.UpdateStatusAsync(bookId, BookStatus.Archived);
     }
+
     public async Task RestoreBookAsync(int bookId)
     {
         var book = await _bookRepository.GetByIdAsync(bookId)

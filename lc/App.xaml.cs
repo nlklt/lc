@@ -122,6 +122,9 @@ public partial class App : Application
         services.AddTransient<AdminUsersViewModel>();
         services.AddTransient<AdminUsersView>();
 
+        services.AddTransient<MyBooksViewModel>();
+        services.AddTransient<MyBooksView>();
+
         services.AddSingleton<MainWindow>();
         services.AddTransient<LoginWindow>();
         services.AddTransient<RegisterWindow>();

@@ -203,10 +203,11 @@
                             </StackPanel>
                         </Button>
 
-                        <Button Style="{DynamicResource NavButtonStyle}">
+                        <Button Style="{DynamicResource NavButtonStyle}"
+                                Command="{Binding NavigateMyBooksCommand}">
                             <StackPanel Orientation="Horizontal">
                                 <TextBlock Text="📊" Style="{DynamicResource IconTextStyle}" />
-                                <TextBlock Text="Статистика по книгам" VerticalAlignment="Center" />
+                                <TextBlock Text="Мои книги" VerticalAlignment="Center" />
                             </StackPanel>
                         </Button>
                     </StackPanel>

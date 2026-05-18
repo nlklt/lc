@@ -10,16 +10,18 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class BookRepository : IBookRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public BookRepository(AppDbContext db)
+    public BookRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<Book?> GetByIdAsync(int bookId, bool includeChapters = false, bool includeComments = false)
     {
-        IQueryable<Book> query = _db.Books
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        IQueryable<Book> query = db.Books
             .AsNoTracking()
             .Include(b => b.Publisher)
             .Include(b => b.Tags)
@@ -39,6 +41,8 @@ public sealed class BookRepository : IBookRepository
     public async Task<int> CreateAsync(Book book)
     {
         ArgumentNullException.ThrowIfNull(book);
+
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
         var tagIds = book.Tags?.Select(t => t.TagId).Distinct().ToArray() ?? [];
         var categoryIds = book.Categories?.Select(c => c.CategoryId).Distinct().ToArray() ?? [];
@@ -64,20 +68,20 @@ public sealed class BookRepository : IBookRepository
 
         if (tagIds.Length > 0)
         {
-            entity.Tags = await _db.Tags
+            entity.Tags = await db.Tags
                 .Where(t => tagIds.Contains(t.TagId))
                 .ToListAsync();
         }
 
         if (categoryIds.Length > 0)
         {
-            entity.Categories = await _db.Categories
+            entity.Categories = await db.Categories
                 .Where(c => categoryIds.Contains(c.CategoryId))
                 .ToListAsync();
         }
 
-        _db.Books.Add(entity);
-        await _db.SaveChangesAsync();
+        db.Books.Add(entity);
+        await db.SaveChangesAsync();
 
         return entity.BookId;
     }
@@ -86,7 +90,9 @@ public sealed class BookRepository : IBookRepository
     {
         ArgumentNullException.ThrowIfNull(book);
 
-        var existing = await _db.Books
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var existing = await db.Books
             .Include(b => b.Tags)
             .Include(b => b.Categories)
             .FirstOrDefaultAsync(b => b.BookId == book.BookId)
@@ -113,7 +119,7 @@ public sealed class BookRepository : IBookRepository
         existing.Tags.Clear();
         if (tagIds.Length > 0)
         {
-            var tags = await _db.Tags
+            var tags = await db.Tags
                 .Where(t => tagIds.Contains(t.TagId))
                 .ToListAsync();
 
@@ -124,7 +130,7 @@ public sealed class BookRepository : IBookRepository
         existing.Categories.Clear();
         if (categoryIds.Length > 0)
         {
-            var categories = await _db.Categories
+            var categories = await db.Categories
                 .Where(c => categoryIds.Contains(c.CategoryId))
                 .ToListAsync();
 
@@ -132,7 +138,7 @@ public sealed class BookRepository : IBookRepository
                 existing.Categories.Add(category);
         }
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     private static string? NormalizeString(string? value)
@@ -140,19 +146,23 @@ public sealed class BookRepository : IBookRepository
 
     public async Task DeleteAsync(int bookId)
     {
-        var book = await _db.Books
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var book = await db.Books
             .FirstOrDefaultAsync(b => b.BookId == bookId);
 
         if (book is null)
             return;
 
-        _db.Books.Remove(book);
-        await _db.SaveChangesAsync();
+        db.Books.Remove(book);
+        await db.SaveChangesAsync();
     }
 
     public async Task UpdateStatusAsync(int bookId, BookStatus status)
     {
-        var book = await _db.Books
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var book = await db.Books
             .FirstOrDefaultAsync(b => b.BookId == bookId);
 
         if (book is null)
@@ -161,13 +171,14 @@ public sealed class BookRepository : IBookRepository
         book.BookStatus = status;
         book.UpdatedAt = DateTime.Now;
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task<IReadOnlyList<BookListItemDto>> SearchAsync(BookFilterCriteria criteria)
     {
-        IQueryable<Book> query = _db.Books.AsNoTracking();
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
+        IQueryable<Book> query = db.Books.AsNoTracking();
         query = ApplyFilters(query, criteria);
 
         IQueryable<BookListItemDto> projected = query.Select(b => new BookListItemDto
@@ -198,10 +209,10 @@ public sealed class BookRepository : IBookRepository
 
         var bookIds = items.Select(x => x.BookId).ToArray();
 
-        var tagsByBook = await _db.BookTags
+        var tagsByBook = await db.BookTags
             .AsNoTracking()
             .Where(bt => bookIds.Contains(bt.BookId))
-            .Join(_db.Tags.AsNoTracking(),
+            .Join(db.Tags.AsNoTracking(),
                 bt => bt.TagId,
                 t => t.TagId,
                 (bt, t) => new
@@ -217,10 +228,10 @@ public sealed class BookRepository : IBookRepository
                     .OrderBy(t => t.Name)
                     .ToList());
 
-        var categoriesByBook = await _db.BookCategories
+        var categoriesByBook = await db.BookCategories
             .AsNoTracking()
             .Where(bc => bookIds.Contains(bc.BookId))
-            .Join(_db.Categories.AsNoTracking(),
+            .Join(db.Categories.AsNoTracking(),
                 bc => bc.CategoryId,
                 c => c.CategoryId,
                 (bc, c) => new

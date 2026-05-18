@@ -1,5 +1,4 @@
-﻿using lc.Infrastructure;
-using lc.Infrastructure.Repositories.Abstractions;
+﻿using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Models.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -8,16 +7,18 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class AuthorRequestRepository : IAuthorRequestRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public AuthorRequestRepository(AppDbContext db)
+    public AuthorRequestRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<AuthorRequest?> GetByIdAsync(int requestId)
     {
-        return await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.AuthorRequests
             .AsNoTracking()
             .Include(x => x.User)
             .Include(x => x.Reviewer)
@@ -26,15 +27,21 @@ public sealed class AuthorRequestRepository : IAuthorRequestRepository
 
     public async Task<AuthorRequest?> GetPendingByUserIdAsync(int userId)
     {
-        return await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.AuthorRequests
             .AsNoTracking()
             .Include(x => x.User)
-            .FirstOrDefaultAsync(x => x.UserId == userId && x.Status == AuthorRequestStatus.Pending);
+            .FirstOrDefaultAsync(x =>
+                x.UserId == userId &&
+                x.Status == AuthorRequestStatus.Pending);
     }
 
     public async Task<IReadOnlyList<AuthorRequest>> GetPendingAsync()
     {
-        return await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.AuthorRequests
             .AsNoTracking()
             .Include(x => x.User)
             .Where(x => x.Status == AuthorRequestStatus.Pending)
@@ -44,7 +51,9 @@ public sealed class AuthorRequestRepository : IAuthorRequestRepository
 
     public async Task<IReadOnlyList<AuthorRequest>> GetByUserIdAsync(int userId)
     {
-        return await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.AuthorRequests
             .AsNoTracking()
             .Include(x => x.Reviewer)
             .Where(x => x.UserId == userId)
@@ -54,7 +63,9 @@ public sealed class AuthorRequestRepository : IAuthorRequestRepository
 
     public async Task<IReadOnlyList<AuthorRequest>> GetPendingRequestsAsync()
     {
-        return await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.AuthorRequests
             .AsNoTracking()
             .Include(x => x.User)
             .Include(x => x.Reviewer)
@@ -67,8 +78,10 @@ public sealed class AuthorRequestRepository : IAuthorRequestRepository
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        _db.AuthorRequests.Add(request);
-        await _db.SaveChangesAsync();
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        db.AuthorRequests.Add(request);
+        await db.SaveChangesAsync();
 
         return request.RequestId;
     }
@@ -77,56 +90,75 @@ public sealed class AuthorRequestRepository : IAuthorRequestRepository
     {
         ArgumentNullException.ThrowIfNull(request);
 
-        var existing = await _db.AuthorRequests
-            .FirstOrDefaultAsync(x => x.RequestId == request.RequestId)
-            ?? throw new InvalidOperationException($"Заявка с RequestId={request.RequestId} не найдена.");
+        await using var db = await _dbFactory.CreateDbContextAsync();
 
-        _db.Entry(existing).CurrentValues.SetValues(request);
-        await _db.SaveChangesAsync();
+        var existing = await db.AuthorRequests
+            .FirstOrDefaultAsync(x => x.RequestId == request.RequestId)
+            ?? throw new InvalidOperationException(
+                $"Заявка с RequestId={request.RequestId} не найдена.");
+
+        db.Entry(existing).CurrentValues.SetValues(request);
+
+        await db.SaveChangesAsync();
     }
 
     public async Task ApproveAsync(int requestId, int reviewerId, string? reviewComment = null)
     {
-        var request = await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var request = await db.AuthorRequests
             .FirstOrDefaultAsync(x => x.RequestId == requestId)
-            ?? throw new InvalidOperationException($"Заявка с RequestId={requestId} не найдена.");
+            ?? throw new InvalidOperationException(
+                $"Заявка с RequestId={requestId} не найдена.");
 
         if (request.Status != AuthorRequestStatus.Pending)
             throw new InvalidOperationException("Заявка уже обработана.");
 
-        var user = await _db.Users.FirstOrDefaultAsync(x => x.UserId == request.UserId)
+        var user = await db.Users
+            .FirstOrDefaultAsync(x => x.UserId == request.UserId)
             ?? throw new InvalidOperationException("Пользователь не найден.");
 
         request.Status = AuthorRequestStatus.Approved;
         request.ReviewerId = reviewerId;
-        request.ReviewComment = string.IsNullOrWhiteSpace(reviewComment) ? null : reviewComment.Trim();
+        request.ReviewComment = string.IsNullOrWhiteSpace(reviewComment)
+            ? null
+            : reviewComment.Trim();
+
         request.ReviewedAt = DateTime.Now;
 
         user.Role = UserRole.Writer;
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task RejectAsync(int requestId, int reviewerId, string? reviewComment = null)
     {
-        var request = await _db.AuthorRequests
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var request = await db.AuthorRequests
             .FirstOrDefaultAsync(x => x.RequestId == requestId)
-            ?? throw new InvalidOperationException($"Заявка с RequestId={requestId} не найдена.");
+            ?? throw new InvalidOperationException(
+                $"Заявка с RequestId={requestId} не найдена.");
 
         if (request.Status != AuthorRequestStatus.Pending)
             throw new InvalidOperationException("Заявка уже обработана.");
 
         request.Status = AuthorRequestStatus.Rejected;
         request.ReviewerId = reviewerId;
-        request.ReviewComment = string.IsNullOrWhiteSpace(reviewComment) ? null : reviewComment.Trim();
+        request.ReviewComment = string.IsNullOrWhiteSpace(reviewComment)
+            ? null
+            : reviewComment.Trim();
+
         request.ReviewedAt = DateTime.Now;
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task<bool> HasPendingRequestAsync(int userId)
     {
-        return await _db.AuthorRequests.AnyAsync(x =>
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.AuthorRequests.AnyAsync(x =>
             x.UserId == userId &&
             x.Status == AuthorRequestStatus.Pending);
     }

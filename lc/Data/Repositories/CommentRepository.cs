@@ -7,16 +7,18 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class CommentRepository : ICommentRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public CommentRepository(AppDbContext db)
+    public CommentRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<Comment?> GetByIdAsync(int commentId)
     {
-        return await _db.Comments
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.Comments
             .AsNoTracking()
             .Include(x => x.User)
             .FirstOrDefaultAsync(x => x.CommentId == commentId);
@@ -24,7 +26,9 @@ public sealed class CommentRepository : ICommentRepository
 
     public async Task<IReadOnlyList<Comment>> GetByBookIdAsync(int bookId)
     {
-        return await _db.Comments
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.Comments
             .AsNoTracking()
             .Include(x => x.User)
             .Where(x => x.BookId == bookId)
@@ -36,13 +40,15 @@ public sealed class CommentRepository : ICommentRepository
     {
         ArgumentNullException.ThrowIfNull(comment);
 
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
         if (comment.CreatedAt == default)
             comment.CreatedAt = DateTime.Now;
 
         comment.UpdatedAt = DateTime.Now;
 
-        _db.Comments.Add(comment);
-        await _db.SaveChangesAsync();
+        db.Comments.Add(comment);
+        await db.SaveChangesAsync();
 
         return comment.CommentId;
     }
@@ -51,28 +57,32 @@ public sealed class CommentRepository : ICommentRepository
     {
         ArgumentNullException.ThrowIfNull(comment);
 
-        var existing = await _db.Comments
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var existing = await db.Comments
             .FirstOrDefaultAsync(x => x.CommentId == comment.CommentId)
             ?? throw new InvalidOperationException($"Комментарий с CommentId={comment.CommentId} не найден.");
 
         var createdAt = existing.CreatedAt;
 
-        _db.Entry(existing).CurrentValues.SetValues(comment);
+        db.Entry(existing).CurrentValues.SetValues(comment);
         existing.CreatedAt = createdAt;
         existing.UpdatedAt = DateTime.Now;
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int commentId)
     {
-        var comment = await _db.Comments
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var comment = await db.Comments
             .FirstOrDefaultAsync(x => x.CommentId == commentId);
 
         if (comment is null)
             return;
 
-        _db.Comments.Remove(comment);
-        await _db.SaveChangesAsync();
+        db.Comments.Remove(comment);
+        await db.SaveChangesAsync();
     }
 }

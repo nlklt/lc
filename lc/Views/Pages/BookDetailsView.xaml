@@ -66,7 +66,7 @@
                             </Style>
                         </Border.Style>
                         <Grid>
-                            <TextBlock Text="Обложки нету" 
+                            <TextBlock Text="Обложки нет" 
                                        FontStyle="Italic"
                                        Foreground="{DynamicResource TextPrimaryBrush}"
                                        VerticalAlignment="Center" 
@@ -387,7 +387,7 @@
 
                                     <TextBox Text="{Binding NewCommentText, UpdateSourceTrigger=PropertyChanged}"
                                              Style="{DynamicResource TextBoxPlaceholderStyle}"
-                                             TextWrapping="Wrap"/>
+                                             TextWrapping="Wrap" Padding="4" />
 
                                     <StackPanel HorizontalAlignment="Right" Orientation="Horizontal" Margin="0,8,0,0">
                                         <Button Style="{DynamicResource PrimaryButtonStyle}"

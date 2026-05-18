@@ -7,16 +7,18 @@ namespace lc.Data.Repositories;
 
 public sealed class TagRepository : ITagRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public TagRepository(AppDbContext db)
+    public TagRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<IReadOnlyList<Tag>> GetAllAsync()
     {
-        return await _db.Tags
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.Tags
             .AsNoTracking()
             .OrderBy(x => x.Name)
             .ToListAsync();

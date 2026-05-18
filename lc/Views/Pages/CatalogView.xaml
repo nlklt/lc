@@ -134,7 +134,7 @@
                                         </Style>
                                     </Border.Style>
                                     <Grid>
-                                        <TextBlock Text="Обложки нету" 
+                                        <TextBlock Text="Обложки нет" 
                                                    FontStyle="Italic"
                                                    Foreground="{DynamicResource TextPrimaryBrush}"
                                                    VerticalAlignment="Center" 

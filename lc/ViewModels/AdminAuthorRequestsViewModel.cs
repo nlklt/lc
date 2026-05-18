@@ -22,6 +22,7 @@ public sealed class AdminAuthorRequestsViewModel : ViewModelBase, IDisposable
     private string _reviewComment = string.Empty;
     private bool _isDisposed;
     private int _loadVersion;
+    private bool IsAdmin => _appState.IsAdmin;
 
     public AdminAuthorRequestsViewModel(
         IAuthorRequestService authorRequestService,

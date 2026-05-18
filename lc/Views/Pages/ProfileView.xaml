@@ -96,10 +96,6 @@
                             <TextBlock Text="{Binding CurrentUserRole}"
                                        FontSize="14"
                                        Foreground="{DynamicResource TextSecondaryBrush}" />
-                            <TextBlock Text="{Binding CreatedAt, StringFormat=Дата регистрации: {0:dd.MM.yyyy}}"
-                                       FontSize="12"
-                                       Margin="0,4,0,0"
-                                       Foreground="{DynamicResource TextSecondaryBrush}" />
                         </StackPanel>
 
                         <Button Grid.Column="2"
@@ -127,10 +123,9 @@
                                         <Setter Property="Template">
                                             <Setter.Value>
                                                 <ControlTemplate>
-                                                    <TextBlock Text="Продолжать чтение пока нечего..."
+                                                    <TextBlock Text="Нет начатых книг..." Margin="4,0,0,0"
                                                                Foreground="{DynamicResource TextMutedBrush}"
-                                                               FontStyle="Italic"
-                                                               Margin="4,0,0,0" />
+                                                               FontStyle="Italic"/>
                                                 </ControlTemplate>
                                             </Setter.Value>
                                         </Setter>
@@ -148,45 +143,87 @@
                         <ItemsControl.ItemTemplate>
                             <DataTemplate>
                                 <Button Command="{Binding DataContext.OpenContinueReadingCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                            CommandParameter="{Binding}"
-                                            Background="Transparent"
-                                            BorderThickness="0"
-                                            Padding="0"
-                                            Margin="0,0,14,0"
-                                            Cursor="Hand">
-                                    <Border Width="130"
-                                                Background="Transparent">
-                                        <StackPanel>
-                                            <Border Height="180"
-                                                        CornerRadius="8"
-                                                        Background="{DynamicResource SurfaceAltBrush}"
-                                                        Margin="0,0,0,10">
-                                                <Image Source="{Binding CoverPath}"
-                                                           Stretch="UniformToFill" />
-                                            </Border>
+                                        CommandParameter="{Binding}"
+                                        Background="Transparent"
+                                        BorderThickness="0"
+                                        Padding="0"
+                                        Margin="0,0,8,10"
+                                        Cursor="Hand">
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="Button">
+                                                        <Border x:Name="Card"
+                                                                Width="130"
+                                                                Background="Transparent">
+                                                            <StackPanel>
+                                                                <Border Width="130"
+                                                                        Height="195"
+                                                                        CornerRadius="6">
+                                                                    <Border.Style>
+                                                                        <Style TargetType="Border">
+                                                                            <Setter Property="Background">
+                                                                                <Setter.Value>
+                                                                                    <ImageBrush ImageSource="{Binding CoverPath}"
+                                                                                Stretch="UniformToFill"/>
+                                                                                </Setter.Value>
+                                                                            </Setter>
 
-                                            <TextBlock Text="{Binding Title}"
-                                                           FontWeight="Medium"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           Margin="0,0,0,4" />
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding CoverPath}" Value="{x:Null}">
+                                                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                                                                </DataTrigger>
+                                                                                <DataTrigger Binding="{Binding CoverPath}" Value="">
+                                                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Border.Style>
 
-                                            <TextBlock Text="{Binding LastChapterText}"
-                                                           FontSize="12"
-                                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                                           TextTrimming="CharacterEllipsis"
-                                                           Margin="0,0,0,2" />
+                                                                    <Grid>
+                                                                        <TextBlock Text="Обложки нет"
+                                                                                   FontStyle="Italic"
+                                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                                   VerticalAlignment="Center"
+                                                                                   HorizontalAlignment="Center"
+                                                                                   FontSize="14">
+                                                                            <TextBlock.Style>
+                                                                                <Style TargetType="TextBlock">
+                                                                                    <Setter Property="Visibility" Value="Collapsed"/>
 
-                                            <TextBlock Text="{Binding ReadingProgressPercent, StringFormat=Прогресс: {0}%}"
-                                                           FontSize="12"
-                                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                                           Margin="0,0,0,4" />
+                                                                                    <Style.Triggers>
+                                                                                        <DataTrigger Binding="{Binding CoverPath}" Value="{x:Null}">
+                                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                                        </DataTrigger>
+                                                                                        <DataTrigger Binding="{Binding CoverPath}" Value="">
+                                                                                            <Setter Property="Visibility" Value="Visible"/>
+                                                                                        </DataTrigger>
+                                                                                    </Style.Triggers>
+                                                                                </Style>
+                                                                            </TextBlock.Style>
+                                                                        </TextBlock>
+                                                                    </Grid>
+                                                                </Border>
 
-                                            <ProgressBar Minimum="0"
-                                                             Maximum="100"
-                                                             Value="{Binding ReadingProgressPercent}"
-                                                             Height="6" />
-                                        </StackPanel>
-                                    </Border>
+                                                                <TextBlock Text="{Binding Title}"
+                                                                           FontSize="14"
+                                                                           Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                           TextTrimming="CharacterEllipsis"
+                                                                           Margin="0,4,0,0"/>
+
+                                                                <ProgressBar Minimum="0"
+                                                                             Maximum="100"
+                                                                             Value="{Binding ReadingProgressPercent}"
+                                                                             Foreground="{DynamicResource PrimaryBrush}"
+                                                                             Height="4" />
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </Button.Style>
                                 </Button>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -195,122 +232,91 @@
 
                 <Border Background="{DynamicResource SurfaceBrush}"
                         CornerRadius="8"
-                        Padding="12"
-                        Margin="0,0,0,16">
+                        Padding="12">
                     <StackPanel>
                         <Grid Margin="0,0,0,12">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBlock Text="Личные списки"
-                                       FontSize="18"
-                                       FontWeight="SemiBold"
-                                       Foreground="{DynamicResource TextPrimaryBrush}" />
-                        </Grid>
-
-                        <Grid Margin="0,0,0,12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
                                 <ColumnDefinition Width="Auto" />
                             </Grid.ColumnDefinitions>
 
-                            <TextBox Text="{Binding NewListName, UpdateSourceTrigger=PropertyChanged}"
-                                     MaxLength="100"
-                                     Style="{DynamicResource TextBoxPlaceholderStyle}"
-                                     Tag="Название нового списка" />
+                            <TextBlock Grid.Column="0"
+                                       Text="{Binding SelectedListName, TargetNullValue=Личные списки}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextPrimaryBrush}" />
 
-                            <Button Grid.Column="1"
-                                    Content="Создать"
-                                    Command="{Binding CreateListCommand}"
-                                    Style="{DynamicResource PrimaryButtonStyle}"
+                            <Button Grid.Column="1" Content="✏️" FontSize="12"
+                                    Command="{Binding RenameSelectedListCommand}"
+                                    Visibility="{Binding SelectedListCanBeEdited, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Style="{DynamicResource SecondaryButtonStyle}"
+                                    Margin="8,0,0,0" />
+
+                            <Button Grid.Column="2" Content="🗑️" FontSize="12"
+                                    Command="{Binding DeleteSelectedListCommand}"
+                                    Visibility="{Binding SelectedListCanBeEdited, Converter={StaticResource BoolToVisibilityConverter}}"
+                                    Style="{DynamicResource SecondaryButtonStyle}"
+                                    Foreground="{DynamicResource WarningFrontBrush}"
+                                    BorderBrush="{DynamicResource WarningFrontBrush}"
+                                    Background="{DynamicResource WarningBackBrush}"
                                     Margin="8,0,0,0" />
                         </Grid>
 
                         <ScrollViewer HorizontalScrollBarVisibility="Auto"
                                       VerticalScrollBarVisibility="Disabled"
-                                      Margin="0,0,0,10">
-                            <ItemsControl ItemsSource="{Binding UserLibraryLists}">
-                                <ItemsControl.ItemsPanel>
-                                    <ItemsPanelTemplate>
-                                        <StackPanel Orientation="Horizontal" />
-                                    </ItemsPanelTemplate>
-                                </ItemsControl.ItemsPanel>
+                                      Margin="0,0,0,16">
+                            <StackPanel Orientation="Horizontal">
+                                <ItemsControl ItemsSource="{Binding UserLibraryLists}">
+                                    <ItemsControl.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <StackPanel Orientation="Horizontal" />
+                                        </ItemsPanelTemplate>
+                                    </ItemsControl.ItemsPanel>
 
-                                <ItemsControl.ItemTemplate>
-                                    <DataTemplate>
-                                        <Button Command="{Binding DataContext.SelectListCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
-                                                CommandParameter="{Binding}"
-                                                Cursor="Hand"
-                                                Background="Transparent"
-                                                BorderThickness="0"
-                                                Padding="0"
-                                                Margin="0,0,10,0">
-                                            <Button.Style>
-                                                <Style TargetType="Button">
-                                                    <Setter Property="Template">
-                                                        <Setter.Value>
-                                                            <ControlTemplate TargetType="Button">
-                                                                <Border x:Name="BtnBorder"
-                                                                        CornerRadius="4"
-                                                                        Padding="8,5"
-                                                                        Background="{DynamicResource SurfaceAltBrush}">
-                                                                    <TextBlock Text="{Binding Name}"
-                                                                               FontSize="12"
-                                                                               Foreground="{DynamicResource TextPrimaryBrush}"
-                                                                               TextTrimming="CharacterEllipsis" />
-                                                                </Border>
-                                                                <ControlTemplate.Triggers>
-                                                                    <Trigger Property="IsMouseOver" Value="True">
-                                                                        <Setter TargetName="BtnBorder" Property="Opacity" Value="0.75" />
-                                                                    </Trigger>
-                                                                </ControlTemplate.Triggers>
-                                                            </ControlTemplate>
-                                                        </Setter.Value>
-                                                    </Setter>
-                                                </Style>
-                                            </Button.Style>
-                                        </Button>
-                                    </DataTemplate>
-                                </ItemsControl.ItemTemplate>
-                            </ItemsControl>
+                                    <ItemsControl.ItemTemplate>
+                                        <DataTemplate>
+                                            <Button Command="{Binding DataContext.SelectListCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                    CommandParameter="{Binding}"
+                                                    Cursor="Hand"
+                                                    Background="Transparent"
+                                                    BorderThickness="0"
+                                                    Padding="0"
+                                                    Margin="0,0,10,0">
+                                                <Button.Style>
+                                                    <Style TargetType="Button">
+                                                        <Setter Property="Template">
+                                                            <Setter.Value>
+                                                                <ControlTemplate TargetType="Button">
+                                                                    <Border x:Name="BtnBorder"
+                                                                            CornerRadius="4"
+                                                                            Padding="8,5"
+                                                                            Background="{DynamicResource SurfaceAltBrush}">
+                                                                        <TextBlock Text="{Binding Name}"
+                                                                                   FontSize="12"
+                                                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                                                   TextTrimming="CharacterEllipsis" />
+                                                                    </Border>
+                                                                    <ControlTemplate.Triggers>
+                                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                                            <Setter TargetName="BtnBorder" Property="Opacity" Value="0.6" />
+                                                                        </Trigger>
+                                                                    </ControlTemplate.Triggers>
+                                                                </ControlTemplate>
+                                                            </Setter.Value>
+                                                        </Setter>
+                                                    </Style>
+                                                </Button.Style>
+                                            </Button>
+                                        </DataTemplate>
+                                    </ItemsControl.ItemTemplate>
+                                </ItemsControl>
+
+                                <Button Content="+"
+                                        Command="{Binding CreateListCommand}"
+                                        Style="{DynamicResource SecondaryButtonStyle}"/>
+                            </StackPanel>
                         </ScrollViewer>
-
-                        <Grid Margin="0,0,0,10">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="*" />
-                                <ColumnDefinition Width="Auto" />
-                                <ColumnDefinition Width="Auto" />
-                            </Grid.ColumnDefinitions>
-
-                            <TextBox Text="{Binding SelectedListName, UpdateSourceTrigger=PropertyChanged}"
-                                     MaxLength="100"
-                                     IsEnabled="{Binding SelectedListCanBeEdited}"
-                                     Style="{DynamicResource TextBoxPlaceholderStyle}"
-                                     Tag="Название выбранного списка" />
-
-                            <Button Grid.Column="1"
-                                    Content="Переименовать"
-                                    Command="{Binding RenameSelectedListCommand}"
-                                    IsEnabled="{Binding SelectedListCanBeEdited}"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Margin="8,0,0,0" />
-
-                            <Button Grid.Column="2"
-                                    Content="Удалить"
-                                    Command="{Binding DeleteSelectedListCommand}"
-                                    IsEnabled="{Binding SelectedListCanBeEdited}"
-                                    Style="{DynamicResource SecondaryButtonStyle}"
-                                    Foreground="{DynamicResource WarningFrontBrush}"
-                                    BorderBrush="{DynamicResource WarningFrontBrush}"
-                                    Margin="8,0,0,0" />
-                        </Grid>
-
-                        <TextBlock Text="{Binding StatusMessage}"
-                                   Foreground="Tomato"
-                                   TextWrapping="Wrap"
-                                   Margin="0,0,0,8" />
 
                         <ItemsControl ItemsSource="{Binding SelectedListBooks}">
                             <ItemsControl.Style>
@@ -320,9 +326,9 @@
                                             <Setter Property="Template">
                                                 <Setter.Value>
                                                     <ControlTemplate>
-                                                        <TextBlock Text="В выбранном списке пока нет книг."
-                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                                                   FontStyle="Italic" />
+                                                        <TextBlock Text="Этот список пока пуст..."
+                                                                   Foreground="{DynamicResource TextMutedBrush}"
+                                                                   FontStyle="Italic"/>
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>
@@ -339,59 +345,49 @@
 
                             <ItemsControl.ItemTemplate>
                                 <DataTemplate>
-                                    <Border Background="Transparent"
-                                            Width="166" 
-                                            Cursor="Hand">
+                                    <Border Width="130"
+                                            Margin="0,0,8,10"
+                                            Background="Transparent">
                                         <Border.InputBindings>
-                                            <MouseBinding MouseAction="LeftClick" 
-                                                          Command="{Binding DataContext.OpenDetailsCommand, RelativeSource={RelativeSource AncestorType=ListBox}}"
-                                                          CommandParameter="{Binding}"/>
+                                            <MouseBinding MouseAction="LeftClick"
+                                                          Command="{Binding DataContext.OpenBookCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                                          CommandParameter="{Binding}" />
                                         </Border.InputBindings>
 
-                                        <Grid>
-                                            <Grid.RowDefinitions>
-                                                <RowDefinition Height="249"/>
-                                                <RowDefinition Height="Auto"/>
-                                            </Grid.RowDefinitions>
+                                        <StackPanel>
+                                            <Grid x:Name="CardRoot">
+                                                <Border Width="130"
+                                                        Height="195"
+                                                        CornerRadius="6">
+                                                    <Border.Style>
+                                                        <Style TargetType="Border">
+                                                            <Setter Property="Background">
+                                                                <Setter.Value>
+                                                                    <ImageBrush ImageSource="{Binding CoverImagePath}"
+                                                        Stretch="UniformToFill"/>
+                                                                </Setter.Value>
+                                                            </Setter>
 
-                                            <!-- Обложка -->
-                                            <Border Grid.Row="0"
-                                                    Width="166" Height="249" 
-                                                    CornerRadius="6">
-                                                <Border.Style>
-                                                    <Style TargetType="Border">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding CoverImagePath}" Value="{x:Null}">
+                                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                                                </DataTrigger>
+                                                                <DataTrigger Binding="{Binding CoverImagePath}" Value="">
+                                                                    <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Border.Style>
 
-                                                        <Setter Property="Background">
-                                                            <Setter.Value>
-                                                                <ImageBrush ImageSource="{Binding CoverImagePath}"
-                                                                            Stretch="UniformToFill"/>
-                                                            </Setter.Value>
-                                                        </Setter>
-
-                                                        <Style.Triggers>
-
-                                                            <DataTrigger Binding="{Binding CoverImagePath}" Value="{x:Null}">
-                                                                <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
-                                                            </DataTrigger>
-
-                                                            <DataTrigger Binding="{Binding CoverImagePath}" Value="">
-                                                                <Setter Property="Background" Value="{DynamicResource SurfaceAltBrush}"/>
-                                                            </DataTrigger>
-
-                                                        </Style.Triggers>
-                                                    </Style>
-                                                </Border.Style>
-                                                <Grid>
-                                                    <TextBlock Text="Обложки нету" 
+                                                    <TextBlock Text="Обложки нет"
                                                                FontStyle="Italic"
                                                                Foreground="{DynamicResource TextPrimaryBrush}"
-                                                               VerticalAlignment="Center" 
+                                                               VerticalAlignment="Center"
                                                                HorizontalAlignment="Center"
                                                                FontSize="14">
                                                         <TextBlock.Style>
                                                             <Style TargetType="TextBlock">
                                                                 <Setter Property="Visibility" Value="Collapsed"/>
-
                                                                 <Style.Triggers>
                                                                     <DataTrigger Binding="{Binding CoverImagePath}" Value="{x:Null}">
                                                                         <Setter Property="Visibility" Value="Visible"/>
@@ -403,25 +399,36 @@
                                                             </Style>
                                                         </TextBlock.Style>
                                                     </TextBlock>
-                                                </Grid>
-                                            </Border>
+                                                </Border>
 
-                                            <!-- Инфо -->
-                                            <StackPanel Grid.Row="1" Margin="0,0,0,0">
-                                                <TextBlock Text="{Binding Title}"
-                                                           FontSize="14"
-                                                           FontWeight="SemiBold"
-                                                           Foreground="{DynamicResource TextPrimaryBrush}"
-                                                           TextWrapping="Wrap"
-                                                           MaxHeight="40"
-                                                           TextTrimming="CharacterEllipsis"/>
-
-                                                <Button Content="Удалить из списка"
+                                                <Button HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="4"
+                                                        Content="🗑"
+                                                        Background="{DynamicResource WarningBackBrush}"
                                                         Command="{Binding DataContext.RemoveBookFromSelectedListCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
                                                         CommandParameter="{Binding}"
-                                                        Style="{DynamicResource SecondaryButtonStyle}"/>
-                                            </StackPanel>
-                                        </Grid>
+                                                        Cursor="Hand">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource SecondaryButtonStyle}">
+                                                            <Setter Property="FontSize" Value="10" />
+                                                            <Setter Property="Opacity" Value="0" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsMouseOver, ElementName=CardRoot}" Value="True">
+                                                                    <Setter Property="Opacity" Value="1" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                            </Grid>
+
+                                            <TextBlock Text="{Binding Title}"
+                                                       FontSize="14"
+                                                       Foreground="{DynamicResource TextPrimaryBrush}"
+                                                       TextTrimming="CharacterEllipsis"
+                                                       Margin="2,4,2,0"/>
+                                        </StackPanel>
                                     </Border>
                                 </DataTemplate>
                             </ItemsControl.ItemTemplate>
@@ -429,51 +436,50 @@
                     </StackPanel>
                 </Border>
 
-                <vc:AdminAuthorRequestsView 
-                Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                <Grid Visibility="{Binding IsAdmin, Converter={StaticResource BoolToVisibilityConverter}}" Margin="0,4">
+                    <vc:AdminAuthorRequestsView DataContext="{Binding AdminRequestsVM}"/>
+                </Grid>
 
                 <Border Background="{DynamicResource SurfaceBrush}"
                         CornerRadius="8"
                         Padding="12"
-                        Margin="0,0,0,16"
                         Visibility="{Binding IsReader, Converter={StaticResource BoolToVisibilityConverter}}">
                     <StackPanel>
                         <TextBlock Text="Заявка на становление автором"
-                   FontSize="18"
-                   FontWeight="SemiBold"
-                   Margin="0,0,0,10"
-                   Foreground="{DynamicResource TextPrimaryBrush}" />
+                                   FontSize="18"
+                                   FontWeight="SemiBold"
+                                   Margin="0,0,0,10"
+                                   Foreground="{DynamicResource TextPrimaryBrush}" />
 
                         <TextBlock Text="{Binding AuthorRequestStatusText}"
-                   Foreground="{DynamicResource TextSecondaryBrush}"
-                   TextWrapping="Wrap"
-                   Margin="0,0,0,8" />
+                                   Foreground="{DynamicResource TextMutedBrush}"
+                                   TextWrapping="Wrap"
+                                   Margin="0,0,0,8" />
 
                         <TextBox Text="{Binding AuthorRequestMessage, UpdateSourceTrigger=PropertyChanged}"
-                 MaxLength="2000"
-                 AcceptsReturn="True"
-                 TextWrapping="Wrap"
-                 MinLines="3"
-                 Style="{DynamicResource TextBoxPlaceholderStyle}"
-                 Tag="Напишите, почему хотите стать автором..."
-                 Visibility="{Binding IsReader, Converter={StaticResource BoolToVisibilityConverter}}"
-                 Margin="0,0,0,8" />
+                                 MaxLength="2000"
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 Style="{DynamicResource TextBoxPlaceholderStyle}"
+                                 Tag="Я хочу стать автором потому что..."
+                                 Visibility="{Binding IsReader, Converter={StaticResource BoolToVisibilityConverter}}"
+                                 Margin="0,0,0,8" Padding="4" />
 
                         <StackPanel Orientation="Horizontal"
-                    HorizontalAlignment="Right"
-                    Visibility="{Binding IsReader, Converter={StaticResource BoolToVisibilityConverter}}">
+                                    HorizontalAlignment="Right"
+                                    Visibility="{Binding IsReader, Converter={StaticResource BoolToVisibilityConverter}}">
+
                             <Button Content="Отправить заявку"
-                    Command="{Binding SendAuthorRequestCommand}"
-                    Style="{DynamicResource PrimaryButtonStyle}"
-                    Margin="0,0,8,0" />
+                                    Command="{Binding SendAuthorRequestCommand}"
+                                    Style="{DynamicResource PrimaryButtonStyle}"
+                                    Margin="0,0,8,0" />
 
                             <Button Content="Отменить заявку"
-                    Command="{Binding CancelAuthorRequestCommand}"
-                    Style="{DynamicResource SecondaryButtonStyle}" />
+                                    Command="{Binding CancelAuthorRequestCommand}"
+                                    Style="{DynamicResource SecondaryButtonStyle}" />
                         </StackPanel>
 
-                        <ItemsControl ItemsSource="{Binding AuthorRequests}"
-                      Margin="0,12,0,0">
+                        <ItemsControl ItemsSource="{Binding AuthorRequests}" Margin="0,12,0,0">
                             <ItemsControl.Style>
                                 <Style TargetType="ItemsControl">
                                     <Style.Triggers>
@@ -482,8 +488,8 @@
                                                 <Setter.Value>
                                                     <ControlTemplate>
                                                         <TextBlock Text="История заявок пока пуста."
-                                                   Foreground="{DynamicResource TextSecondaryBrush}"
-                                                   FontStyle="Italic" />
+                                                                   Foreground="{DynamicResource TextSecondaryBrush}"
+                                                                   FontStyle="Italic" />        
                                                     </ControlTemplate>
                                                 </Setter.Value>
                                             </Setter>

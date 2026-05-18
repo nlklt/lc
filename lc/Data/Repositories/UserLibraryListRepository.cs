@@ -1,6 +1,5 @@
 ﻿using lc.Data.Repositories.Interfaces;
 using lc.Infrastructure;
-using lc.Infrastructure.Repositories.Abstractions;
 using lc.Models;
 using lc.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -13,24 +12,28 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
     [
         "Читаю",
         "В планах",
-        "Брошено"
+        "Брошено",
+        "Прочитано"
     ];
 
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public UserLibraryListRepository(AppDbContext db)
+    public UserLibraryListRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<IReadOnlyList<UserLibraryListDto>> GetListsAsync(int userId)
     {
-        return await _db.UserLibraryLists
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.UserLibraryLists
             .AsNoTracking()
             .Where(x => x.UserId == userId)
             .OrderBy(x => x.Name == "Читаю" ? 0 :
                           x.Name == "В планах" ? 1 :
-                          x.Name == "Брошено" ? 2 : 100)
+                          x.Name == "Брошено" ? 2 :
+                          x.Name == "Прочитано" ? 3 : 100)
             .ThenBy(x => x.Name)
             .Select(x => new UserLibraryListDto
             {
@@ -42,16 +45,20 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
 
     public async Task<UserLibraryList?> GetByIdAsync(int userId, int listId)
     {
-        return await _db.UserLibraryLists
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.UserLibraryLists
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.UserId == userId && x.ListId == listId);
     }
 
     public async Task<int> CreateAsync(int userId, string name)
     {
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
         var normalizedName = NormalizeName(name);
 
-        var existing = await _db.UserLibraryLists
+        var existing = await db.UserLibraryLists
             .FirstOrDefaultAsync(x => x.UserId == userId && x.Name == normalizedName);
 
         if (existing is not null)
@@ -63,15 +70,17 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
             Name = normalizedName
         };
 
-        _db.UserLibraryLists.Add(list);
-        await _db.SaveChangesAsync();
+        db.UserLibraryLists.Add(list);
+        await db.SaveChangesAsync();
 
         return list.ListId;
     }
 
     public async Task RenameAsync(int userId, int listId, string name)
     {
-        var list = await _db.UserLibraryLists
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var list = await db.UserLibraryLists
             .FirstOrDefaultAsync(x => x.UserId == userId && x.ListId == listId);
 
         if (list is null)
@@ -81,12 +90,14 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
             throw new InvalidOperationException("Системный список нельзя переименовать.");
 
         list.Name = NormalizeName(name);
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int userId, int listId)
     {
-        var list = await _db.UserLibraryLists
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var list = await db.UserLibraryLists
             .FirstOrDefaultAsync(x => x.UserId == userId && x.ListId == listId);
 
         if (list is null)
@@ -95,13 +106,15 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
         if (IsProtectedList(list.Name))
             throw new InvalidOperationException("Системный список нельзя удалить.");
 
-        _db.UserLibraryLists.Remove(list);
-        await _db.SaveChangesAsync();
+        db.UserLibraryLists.Remove(list);
+        await db.SaveChangesAsync();
     }
 
     public async Task EnsureDefaultListsAsync(int userId)
     {
-        var existingNames = (await _db.UserLibraryLists
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var existingNames = (await db.UserLibraryLists
             .AsNoTracking()
             .Where(x => x.UserId == userId)
             .Select(x => x.Name)
@@ -113,14 +126,14 @@ public sealed class UserLibraryListRepository : IUserLibraryListRepository
             if (existingNames.Contains(name))
                 continue;
 
-            _db.UserLibraryLists.Add(new UserLibraryList
+            db.UserLibraryLists.Add(new UserLibraryList
             {
                 UserId = userId,
                 Name = name
             });
         }
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     private static string NormalizeName(string name)

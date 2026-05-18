@@ -8,23 +8,27 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class ReadingHistoryRepository : IReadingHistoryRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public ReadingHistoryRepository(AppDbContext db)
+    public ReadingHistoryRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<ReadingHistory?> GetLatestAsync(int userId, int bookId)
     {
-        return await _db.ReadingHistories
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.ReadingHistories
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.UserId == userId && x.BookId == bookId);
     }
 
     public async Task<IReadOnlyList<ReadingHistory>> GetByUserIdAsync(int userId)
     {
-        return await _db.ReadingHistories
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.ReadingHistories
             .AsNoTracking()
             .Include(x => x.Book)
             .Where(x => x.UserId == userId)
@@ -34,7 +38,9 @@ public sealed class ReadingHistoryRepository : IReadingHistoryRepository
 
     public async Task<IReadOnlyList<ReadingHistory>> GetByBookIdAsync(int bookId)
     {
-        return await _db.ReadingHistories
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.ReadingHistories
             .AsNoTracking()
             .Include(x => x.User)
             .Where(x => x.BookId == bookId)
@@ -44,14 +50,16 @@ public sealed class ReadingHistoryRepository : IReadingHistoryRepository
 
     public async Task AddOrUpdateAsync(int userId, int bookId, DateTime lastOpenedAt)
     {
-        var existing = await _db.ReadingHistories
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var existing = await db.ReadingHistories
             .FirstOrDefaultAsync(x => x.UserId == userId && x.BookId == bookId);
 
         var stamp = lastOpenedAt == default ? DateTime.Now : lastOpenedAt;
 
         if (existing is null)
         {
-            _db.ReadingHistories.Add(new ReadingHistory
+            db.ReadingHistories.Add(new ReadingHistory
             {
                 UserId = userId,
                 BookId = bookId,
@@ -63,18 +71,20 @@ public sealed class ReadingHistoryRepository : IReadingHistoryRepository
             existing.LastOpenedAt = stamp;
         }
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int historyId)
     {
-        var history = await _db.ReadingHistories
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var history = await db.ReadingHistories
             .FirstOrDefaultAsync(x => x.HistoryId == historyId);
 
         if (history is null)
             return;
 
-        _db.ReadingHistories.Remove(history);
-        await _db.SaveChangesAsync();
+        db.ReadingHistories.Remove(history);
+        await db.SaveChangesAsync();
     }
 }

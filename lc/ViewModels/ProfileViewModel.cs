@@ -25,7 +25,8 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     [
         "Читаю",
         "В планах",
-        "Брошено"
+        "Брошено",
+        "Прочитано"
     ];
 
     private readonly AppState _appState;
@@ -40,6 +41,8 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     private readonly IReadingHistoryRepository _readingHistoryRepository;
     private readonly IReadingProgressRepository _readingProgressRepository;
     private readonly IWindowService _windowService;
+
+    public AdminAuthorRequestsViewModel AdminRequestsVM { get; }
 
     private readonly SemaphoreSlim _dbLock = new(1, 1);
 
@@ -84,13 +87,13 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     private AuthorRequest?      _latestAuthorRequest;
     private bool                _hasPendingAuthorRequest;
 
-    private async Task SelectListAsync(object? parameter)
+    private Task SelectListAsync(object? parameter)
     {
         if (parameter is not UserLibraryListDto list)
-            return;
+            return Task.CompletedTask;
 
         SelectedList = list;
-        await LoadSelectedListBooksAsync(list.ListId);
+        return Task.CompletedTask;
     }
 
     public ProfileViewModel(
@@ -105,7 +108,8 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         IUserLibraryService userLibraryService,
         IReadingHistoryRepository readingHistoryRepository,
         IReadingProgressRepository readingProgressRepository,
-        IWindowService windowService)
+        IWindowService windowService,
+        AdminAuthorRequestsViewModel adminRequestsVM)
     {
         _appState = appState ?? throw new ArgumentNullException(nameof(appState));
         _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
@@ -119,6 +123,8 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         _readingHistoryRepository = readingHistoryRepository ?? throw new ArgumentNullException(nameof(readingHistoryRepository));
         _readingProgressRepository = readingProgressRepository ?? throw new ArgumentNullException(nameof(readingProgressRepository));
         _windowService = windowService ?? throw new ArgumentNullException(nameof(windowService));
+
+        AdminRequestsVM = adminRequestsVM;
 
         _appState.PropertyChanged += OnAppStatePropertyChanged;
 
@@ -135,10 +141,10 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         LogoutCommand           = new AsyncRelayCommand(_ => LogoutAsync(), _ => IsAuthenticated && !IsBusy);
 
         LoadLibraryListsCommand           = new AsyncRelayCommand(_ => LoadLibraryListsAsync(), _ => IsAuthenticated && !IsBusy);
-        CreateListCommand                 = new AsyncRelayCommand(_ => CreateListAsync(), _ => IsAuthenticated && !IsBusy && !string.IsNullOrWhiteSpace(NewListName));
-        RenameSelectedListCommand         = new AsyncRelayCommand(_ => RenameSelectedListAsync(), _ => IsAuthenticated && !IsBusy && SelectedList is not null && SelectedListCanBeEdited && !string.IsNullOrWhiteSpace(SelectedListName));
+        CreateListCommand                 = new AsyncRelayCommand(_ => CreateListAsync(), _ => IsAuthenticated && !IsBusy);
+        RenameSelectedListCommand         = new AsyncRelayCommand(_ => RenameSelectedListAsync(), _ => IsAuthenticated && !IsBusy && SelectedList is not null && SelectedListCanBeEdited);
         DeleteSelectedListCommand         = new AsyncRelayCommand(_ => DeleteSelectedListAsync(), _ => IsAuthenticated && !IsBusy && SelectedList is not null && SelectedListCanBeEdited);
-        RemoveBookFromSelectedListCommand = new AsyncRelayCommand(RemoveBookFromSelectedListAsync, _ => IsAuthenticated && !IsBusy && SelectedList is not null && SelectedListCanBeEdited);
+        RemoveBookFromSelectedListCommand = new AsyncRelayCommand(RemoveBookFromSelectedListAsync, _ => IsAuthenticated && !IsBusy && SelectedList is not null);
 
         OpenBookCommand = new RelayCommand(OpenBookDetails, _ => !IsBusy);
 
@@ -342,9 +348,7 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         !IsBusy &&
         HasPendingAuthorRequest;
 
-    public bool SelectedListCanBeEdited =>
-        SelectedList is not null &&
-        !IsProtectedList(SelectedList.Name);
+    public bool SelectedListCanBeEdited => SelectedList is not null && !IsProtectedList(SelectedList.Name);
 
     public IReadOnlyList<string> AvailableThemes { get; } = ["Light", "Dark"];
     public IEnumerable<Language> AllLanguages => [Language.Русский, Language.Английский];
@@ -363,6 +367,8 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
                 return;
 
             SelectedListName = value?.Name ?? string.Empty;
+
+            OnPropertyChanged(nameof(SelectedListCanBeEdited));
             RefreshCommandStates();
 
             if (_suppressSelectedListBooksLoad)
@@ -705,10 +711,7 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
             // Guard: the user may have switched lists while we were awaiting.
             if (SelectedList?.ListId != selectedListId.Value)
                 return;
-            if (books != null && books.Count > 0)
-            {
-                ReplaceCollection(SelectedListBooks, books);
-            }
+            ReplaceCollection(SelectedListBooks, books ?? []);
         }
         catch
         {
@@ -724,9 +727,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
     {
         if (!IsAuthenticated)
             return;
-
-        var name = NewListName.Trim();
-        if (!ValidateListName(name, out var error))
+            
+        var newName = await _dialogService.ShowInputAsync("Создание списка", "Введите новое имя списка:", "Мой новый список");
+        if (!ValidateListName(newName, SelectedList.ListId, out var error))
         {
             StatusMessage = error;
             return;
@@ -736,7 +739,7 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         {
             IsBusy = true;
 
-            await _userLibraryService.CreateListAsync(name);
+            await _userLibraryService.CreateListAsync(newName);
             NewListName = string.Empty;
             await LoadLibraryListsAsync();
         }
@@ -755,8 +758,8 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
         if (SelectedList is null || !SelectedListCanBeEdited)
             return;
 
-        var newName = SelectedListName.Trim();
-        if (!ValidateListName(newName, out var error))
+        var newName = await _dialogService.ShowInputAsync("Переименование списка", "Введите новое имя списка:", SelectedListName);
+        if (!ValidateListName(newName, SelectedList.ListId, out var error))
         {
             StatusMessage = error;
             return;
@@ -1032,7 +1035,7 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
 
     // Validation helpers
 
-    private bool ValidateListName(string name, out string error)
+    private bool ValidateListName(string name, int? currentListId, out string error)
     {
         if (string.IsNullOrWhiteSpace(name))
         {
@@ -1046,7 +1049,9 @@ public sealed class ProfileViewModel : ViewModelBase, IDisposable
             return false;
         }
 
-        if (UserLibraryLists.Any(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase)))
+        if (UserLibraryLists.Any(x =>
+                x.ListId != currentListId &&
+                string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase)))
         {
             error = "Список с таким названием уже существует.";
             return false;

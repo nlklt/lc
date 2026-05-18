@@ -68,7 +68,7 @@ public sealed class AuthorRequestService : IAuthorRequestService
         => _requestRepository.GetByUserIdAsync(userId);
 
     public Task<IReadOnlyList<AuthorRequest>> GetPendingRequestsAsync()
-        => _requestRepository.GetPendingAsync();
+        => _requestRepository.GetPendingRequestsAsync();
 
     public Task ApproveAsync(int requestId, int reviewerId, string? reviewComment = null)
         => _requestRepository.ApproveAsync(requestId, reviewerId, reviewComment);

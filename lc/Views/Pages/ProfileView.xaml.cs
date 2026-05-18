@@ -1,28 +1,32 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using lc.ViewModels;
 
-namespace lc.Views.Pages
+namespace lc.Views.Pages;
+
+public partial class ProfileView : UserControl
 {
-    /// <summary>
-    /// Логика взаимодействия для ProfileView.xaml
-    /// </summary>
-    public partial class ProfileView : UserControl
+    public static readonly DependencyProperty AdminRequestsVMProperty =
+        DependencyProperty.Register(
+            nameof(AdminRequestsVM),
+            typeof(AdminAuthorRequestsViewModel),
+            typeof(ProfileView),
+            new PropertyMetadata(null));
+
+    public AdminAuthorRequestsViewModel? AdminRequestsVM
     {
-        public ProfileView()
-        {
-            InitializeComponent();
-        }
+        get => (AdminAuthorRequestsViewModel?)GetValue(AdminRequestsVMProperty);
+        set => SetValue(AdminRequestsVMProperty, value);
+    }
+
+    public ProfileView()
+    {
+        InitializeComponent();
+    }
+
+    public ProfileView(ProfileViewModel profileVm, AdminAuthorRequestsViewModel adminRequestsVm) : this()
+    {
+        DataContext = profileVm;
+        AdminRequestsVM = adminRequestsVm;
     }
 }

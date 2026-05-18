@@ -8,23 +8,27 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class BookRatingRepository : IBookRatingRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public BookRatingRepository(AppDbContext db)
+    public BookRatingRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<BookRating?> GetAsync(int userId, int bookId)
     {
-        return await _db.BookRatings
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.BookRatings
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.UserId == userId && x.BookId == bookId);
     }
 
     public async Task<IReadOnlyList<BookRating>> GetByBookIdAsync(int bookId)
     {
-        return await _db.BookRatings
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.BookRatings
             .AsNoTracking()
             .Include(x => x.User)
             .Where(x => x.BookId == bookId)
@@ -34,7 +38,9 @@ public sealed class BookRatingRepository : IBookRatingRepository
 
     public async Task<IReadOnlyList<BookRating>> GetByUserIdAsync(int userId)
     {
-        return await _db.BookRatings
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.BookRatings
             .AsNoTracking()
             .Include(x => x.Book)
             .Where(x => x.UserId == userId)
@@ -47,16 +53,18 @@ public sealed class BookRatingRepository : IBookRatingRepository
         if (rating is < 1 or > 5)
             throw new ArgumentOutOfRangeException(nameof(rating), "Rating должен быть в диапазоне от 1 до 5.");
 
-        var bookExists = await _db.Books.AnyAsync(x => x.BookId == bookId);
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var bookExists = await db.Books.AnyAsync(x => x.BookId == bookId);
         if (!bookExists)
             throw new InvalidOperationException($"Книга с BookId={bookId} не найдена.");
 
-        var existing = await _db.BookRatings
+        var existing = await db.BookRatings
             .FirstOrDefaultAsync(x => x.UserId == userId && x.BookId == bookId);
 
         if (existing is null)
         {
-            _db.BookRatings.Add(new BookRating
+            db.BookRatings.Add(new BookRating
             {
                 UserId = userId,
                 BookId = bookId,
@@ -70,27 +78,36 @@ public sealed class BookRatingRepository : IBookRatingRepository
             existing.RatedAt = DateTime.Now;
         }
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
         await RecalculateBookRatingAsync(bookId);
     }
 
     public async Task RemoveAsync(int userId, int bookId)
     {
-        var rating = await _db.BookRatings
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var rating = await db.BookRatings
             .FirstOrDefaultAsync(x => x.UserId == userId && x.BookId == bookId);
 
         if (rating is null)
             return;
 
-        _db.BookRatings.Remove(rating);
-        await _db.SaveChangesAsync();
+        db.BookRatings.Remove(rating);
+        await db.SaveChangesAsync();
 
         await RecalculateBookRatingAsync(bookId);
     }
 
     public async Task<decimal> GetAverageRatingAsync(int bookId)
     {
-        var average = await _db.BookRatings
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await GetAverageRatingAsync(db, bookId);
+    }
+
+    private static async Task<decimal> GetAverageRatingAsync(AppDbContext db, int bookId)
+    {
+        var average = await db.BookRatings
             .AsNoTracking()
             .Where(x => x.BookId == bookId)
             .AverageAsync(x => (decimal?)x.Rating);
@@ -100,11 +117,13 @@ public sealed class BookRatingRepository : IBookRatingRepository
 
     private async Task RecalculateBookRatingAsync(int bookId)
     {
-        var book = await _db.Books.FirstOrDefaultAsync(x => x.BookId == bookId);
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var book = await db.Books.FirstOrDefaultAsync(x => x.BookId == bookId);
         if (book is null)
             return;
 
-        book.Rating = await GetAverageRatingAsync(bookId);
-        await _db.SaveChangesAsync();
+        book.Rating = await GetAverageRatingAsync(db, bookId);
+        await db.SaveChangesAsync();
     }
 }

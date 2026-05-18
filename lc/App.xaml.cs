@@ -7,6 +7,7 @@ using lc.Services;
 using lc.Services.Interfaces;
 using lc.ViewModels;
 using lc.Views;
+using lc.Views.Pages;
 using lc.Views.Windows;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -55,7 +56,7 @@ public partial class App : Application
 
     private static void ConfigureServices(IServiceCollection services)
     {
-        services.AddDbContext<AppDbContext>(options =>
+        services.AddDbContextFactory<AppDbContext>(options =>
         {
             options.UseSqlServer(ConnectionStrings.ELibDb);
         });
@@ -111,6 +112,9 @@ public partial class App : Application
         services.AddTransient<EditChapterViewModel>();
         services.AddTransient<NavigationViewModel>();
         services.AddTransient<InputViewModel>();
+        services.AddTransient<AdminAuthorRequestsViewModel>();
+        services.AddTransient<ProfileView>();
+
 
         services.AddSingleton<MainWindow>();
         services.AddTransient<LoginWindow>();

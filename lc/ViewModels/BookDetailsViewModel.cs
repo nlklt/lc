@@ -78,7 +78,7 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         BackCommand = new RelayCommand(_ => _navigationService.NavigateBack());
         ReloadCommand = new AsyncRelayCommand(_ => ReloadAsync(), _ => !IsLoading);
 
-        ToggleLibraryCommand = new AsyncRelayCommand(_ => ToggleLibraryAsync(), _ => CanToggleLibraryActions);
+        //ToggleLibraryCommand = new AsyncRelayCommand(_ => ToggleLibraryAsync(), _ => CanToggleLibraryActions);
 
         AddCommentCommand = new AsyncRelayCommand(_ => AddCommentAsync(), _ => CanComment);
         RateBookCommand = new AsyncRelayCommand(RateBookAsync, _ => CanRate);
@@ -681,10 +681,6 @@ public sealed class BookDetailsViewModel : ViewModelBase, IDisposable
         }
     }
 
-    private async Task ToggleLibraryAsync()
-    {
-        //!!! Заменить на добавление в какой-то личный список
-    }
 
     private async Task AddCommentAsync()
     {

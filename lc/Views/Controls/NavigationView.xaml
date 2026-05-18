@@ -142,13 +142,13 @@
 
                 <StackPanel>
 
-                    <Button Style="{DynamicResource NavButtonStyle}"
+                    <!--<Button Style="{DynamicResource NavButtonStyle}"
                         Command="{Binding LogoutCommand}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text=" :3 " Style="{DynamicResource IconTextStyle}" />
                             <TextBlock Text="Бокавая панель" VerticalAlignment="Center"/>
                         </StackPanel>
-                    </Button>
+                    </Button>-->
 
                     <TextBlock Text="ОСНОВНОЕ" 
                                Style="{DynamicResource SectionTextStyle}" />

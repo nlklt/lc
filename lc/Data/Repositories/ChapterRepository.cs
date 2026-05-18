@@ -8,23 +8,27 @@ namespace lc.Infrastructure.Repositories.Sql;
 
 public sealed class ChapterRepository : IChapterRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public ChapterRepository(AppDbContext db)
+    public ChapterRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<Chapter?> GetByIdAsync(int chapterId)
     {
-        return await _db.Chapters
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.Chapters
             .AsNoTracking()
             .FirstOrDefaultAsync(x => x.ChapterId == chapterId);
     }
 
     public async Task<IReadOnlyList<Chapter>> GetByBookIdAsync(int bookId, bool includeDrafts = true)
     {
-        var query = _db.Chapters
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var query = db.Chapters
             .AsNoTracking()
             .Where(x => x.BookId == bookId);
 
@@ -40,13 +44,15 @@ public sealed class ChapterRepository : IChapterRepository
     {
         ArgumentNullException.ThrowIfNull(chapter);
 
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
         if (chapter.CreatedAt == default)
             chapter.CreatedAt = DateTime.Now;
 
         chapter.UpdatedAt = DateTime.Now;
 
-        _db.Chapters.Add(chapter);
-        await _db.SaveChangesAsync();
+        db.Chapters.Add(chapter);
+        await db.SaveChangesAsync();
 
         return chapter.ChapterId;
     }
@@ -55,28 +61,32 @@ public sealed class ChapterRepository : IChapterRepository
     {
         ArgumentNullException.ThrowIfNull(chapter);
 
-        var existing = await _db.Chapters
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var existing = await db.Chapters
             .FirstOrDefaultAsync(x => x.ChapterId == chapter.ChapterId)
             ?? throw new InvalidOperationException($"Глава с ChapterId={chapter.ChapterId} не найдена.");
 
         var createdAt = existing.CreatedAt;
 
-        _db.Entry(existing).CurrentValues.SetValues(chapter);
+        db.Entry(existing).CurrentValues.SetValues(chapter);
         existing.CreatedAt = createdAt;
         existing.UpdatedAt = DateTime.Now;
 
-        await _db.SaveChangesAsync();
+        await db.SaveChangesAsync();
     }
 
     public async Task DeleteAsync(int chapterId)
     {
-        var chapter = await _db.Chapters
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        var chapter = await db.Chapters
             .FirstOrDefaultAsync(x => x.ChapterId == chapterId);
 
         if (chapter is null)
             return;
 
-        _db.Chapters.Remove(chapter);
-        await _db.SaveChangesAsync();
+        db.Chapters.Remove(chapter);
+        await db.SaveChangesAsync();
     }
 }

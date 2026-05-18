@@ -6,11 +6,11 @@
              xmlns:local="clr-namespace:lc.Views.Controls" 
              xmlns:viewmodels="clr-namespace:lc.ViewModels" 
              mc:Ignorable="d" 
-             d:DataContext="{d:DesignInstance Type=viewmodels:AdminAuthorRequestsViewModel}">
-    
-    <Grid Background="{DynamicResource BackgroundBrush}" Margin="4">
+             d:DataContext="{d:DesignInstance Type=viewmodels:AdminAuthorRequestsViewModel}" d:DesignHeight="218.853" d:DesignWidth="959.307">
+
+    <Grid Background="{DynamicResource BackgroundBrush}">
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="380" />
+            <ColumnDefinition Width="2*" />
             <ColumnDefinition Width="*" />
         </Grid.ColumnDefinitions>
 
@@ -18,7 +18,7 @@
             Background="{DynamicResource SurfaceBrush}"
             CornerRadius="8"
             Padding="12"
-            Margin="4,4,0,4">
+            Margin="0,0,4,0">
 
             <StackPanel>
                 <Grid Margin="0,0,0,12">
@@ -28,7 +28,7 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock Text="Заявки на авторство"
-                           FontSize="18"
+                           FontSize="16"
                            FontWeight="SemiBold"
                            Foreground="{DynamicResource TextPrimaryBrush}" />
 
@@ -44,34 +44,42 @@
                        Margin="0,0,0,10" />
 
                 <ListBox ItemsSource="{Binding Requests}"
-                     SelectedItem="{Binding SelectedRequest, Mode=TwoWay}"
-                     BorderThickness="0"
-                     Background="Transparent"
-                     ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                         SelectedItem="{Binding SelectedRequest, Mode=TwoWay}"
+                         BorderThickness="0"
+                         Background="Transparent"
+                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
                     <ListBox.ItemTemplate>
                         <DataTemplate>
                             <Border BorderBrush="{DynamicResource BorderBrush}"
                                 BorderThickness="0,0,0,1"
                                 Padding="0,8,0,8">
                                 <StackPanel>
-                                    <TextBlock Text="{Binding User.UserName}"
-                                           FontWeight="SemiBold"
-                                           Foreground="{DynamicResource TextPrimaryBrush}" />
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="Auto"/>
+                                        </Grid.RowDefinitions>
 
-                                    <TextBlock Text="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
-                                           FontSize="11"
-                                           Foreground="{DynamicResource TextSecondaryBrush}" />
+                                        <TextBlock Grid.Column="0" Grid.Row="0" 
+                                                   Text="{Binding User.UserName}"
+                                                   FontWeight="SemiBold"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}" />
 
-                                    <TextBlock Text="{Binding Status}"
-                                           FontSize="12"
-                                           Foreground="{DynamicResource TextSecondaryBrush}"
-                                           Margin="0,2,0,0" />
-
-                                    <TextBlock Text="{Binding Message}"
-                                           TextWrapping="Wrap"
-                                           Foreground="{DynamicResource TextPrimaryBrush}"
-                                           Margin="0,4,0,0"
-                                           MaxHeight="80" />
+                                        <TextBlock Grid.Column="0" Grid.Row="1" 
+                                                   Text="{Binding CreatedAt, StringFormat={}{0:dd.MM.yyyy HH:mm}}"
+                                                   FontSize="11"
+                                                   Foreground="{DynamicResource TextSecondaryBrush}" />
+                                        <TextBlock Grid.Column="1" Grid.Row="1" Grid.ColumnSpan="2"
+                                                   Text="{Binding Message}"
+                                                   TextWrapping="Wrap"
+                                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                                   Margin="0,4,0,0"
+                                                   MaxHeight="80" />
+                                    </Grid>
                                 </StackPanel>
                             </Border>
                         </DataTemplate>
@@ -83,8 +91,7 @@
         <Border Grid.Column="1"
             Background="{DynamicResource SurfaceBrush}"
             CornerRadius="8"
-            Padding="12"
-            Margin="4">
+            Padding="12">
 
             <Grid>
                 <Grid.RowDefinitions>
@@ -92,61 +99,23 @@
                     <RowDefinition Height="*" />
                 </Grid.RowDefinitions>
 
-                <TextBlock Text="Детали заявки"
-                       FontSize="18"
-                       FontWeight="SemiBold"
-                       Foreground="{DynamicResource TextPrimaryBrush}"
-                       Margin="0,0,0,12" />
-
                 <ScrollViewer Grid.Row="1"
                           VerticalScrollBarVisibility="Auto"
                           HorizontalScrollBarVisibility="Disabled">
                     <StackPanel>
-                        <Border Background="{DynamicResource BackgroundBrush}"
-                            CornerRadius="8"
-                            Padding="12"
-                            Margin="0,0,0,12">
-                            <StackPanel>
-                                <TextBlock Text="{Binding SelectedRequestUserName}"
-           FontSize="16"
-           FontWeight="SemiBold"
-           Foreground="{DynamicResource TextPrimaryBrush}" />
-
-                                <TextBlock Text="{Binding SelectedRequestMessage}"
-           TextWrapping="Wrap"
-           Margin="0,8,0,0"
-           Foreground="{DynamicResource TextPrimaryBrush}" />
-
-                                <TextBlock Text="{Binding SelectedRequestCreatedAtText}"
-           Margin="0,8,0,0"
-           Foreground="{DynamicResource TextSecondaryBrush}" />
-
-                                <TextBlock Text="{Binding SelectedRequestReviewedAtText}"
-           Margin="0,4,0,0"
-           Foreground="{DynamicResource TextSecondaryBrush}" />
-
-                                <TextBlock Text="{Binding SelectedRequestReviewerText}"
-           Margin="0,4,0,0"
-           Foreground="{DynamicResource TextSecondaryBrush}" />
-
-                                <TextBlock Text="{Binding SelectedRequestReviewCommentText}"
-           Margin="0,4,0,0"
-           Foreground="{DynamicResource TextSecondaryBrush}"
-           TextWrapping="Wrap" />
-                            </StackPanel>
-                        </Border>
 
                         <TextBlock Text="Комментарий администратора"
-                               Foreground="{DynamicResource TextPrimaryBrush}"
-                               Margin="0,0,0,8" />
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   Foreground="{DynamicResource TextPrimaryBrush}"
+                                   Margin="0,0,0,8" />
 
                         <TextBox Text="{Binding ReviewComment, UpdateSourceTrigger=PropertyChanged}"
-                             AcceptsReturn="True"
-                             TextWrapping="Wrap"
-                             MinLines="4"
-                             MaxLength="2000"
-                             Style="{DynamicResource TextBoxPlaceholderStyle}"
-                             Tag="Комментарий к решению" />
+                                 AcceptsReturn="True"
+                                 TextWrapping="Wrap"
+                                 MaxLength="2000"
+                                 Style="{DynamicResource TextBoxPlaceholderStyle}"
+                                 Tag="Ну ок" />
 
                         <StackPanel Orientation="Horizontal"
                                 HorizontalAlignment="Right"

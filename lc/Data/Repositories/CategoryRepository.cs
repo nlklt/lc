@@ -7,16 +7,18 @@ namespace lc.Data.Repositories;
 
 public sealed class CategoryRepository : ICategoryRepository
 {
-    private readonly AppDbContext _db;
+    private readonly IDbContextFactory<AppDbContext> _dbFactory;
 
-    public CategoryRepository(AppDbContext db)
+    public CategoryRepository(IDbContextFactory<AppDbContext> dbFactory)
     {
-        _db = db;
+        _dbFactory = dbFactory;
     }
 
     public async Task<IReadOnlyList<Category>> GetAllAsync()
     {
-        return await _db.Categories
+        await using var db = await _dbFactory.CreateDbContextAsync();
+
+        return await db.Categories
             .AsNoTracking()
             .OrderBy(x => x.Name)
             .ToListAsync();
